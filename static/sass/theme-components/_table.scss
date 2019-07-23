@@ -1,0 +1,63 @@
+/*----------------------------------------
+    Tables
+------------------------------------------*/
+//@extend-elements
+//original selectors
+//.jsgrid-edit-row input[type="checkbox"], .jsgrid-insert-row input[type="checkbox"], .jsgrid-filter-row input[type="checkbox"], .jsgrid-alt-row input[type="checkbox"], .jsgrid-row input[type="checkbox"], .config-panel input[type=checkbox]
+%jsgrid_extend {
+	position: relative !important;
+	left: 0 !important;
+	visibility: visible !important;
+}
+
+.jsgrid-grid-body {
+	height: auto !important;
+}
+.jsgrid-edit-row {
+	select {
+		display: block !important;
+	}
+	input[type="checkbox"] {
+		@extend %jsgrid_extend;
+	}
+}
+.jsgrid-insert-row {
+	select {
+		display: block !important;
+	}
+	input[type="checkbox"] {
+		@extend %jsgrid_extend;
+	}
+	.select-wrapper {
+		.caret {
+			display: none !important;
+		}
+		.select-dropdown {
+			display: none !important;
+		}
+	}
+}
+#jsGrid-sorting {
+	height: 500px !important;
+	overflow: scroll !important;
+}
+#jsGrid-page {
+	height: 500px !important;
+	overflow: scroll !important;
+}
+#jsGrid-custom-row {
+	height: 500px !important;
+	overflow: scroll !important;
+}
+.jsgrid-filter-row input[type="checkbox"] {
+	@extend %jsgrid_extend;
+}
+.jsgrid-alt-row input[type="checkbox"] {
+	@extend %jsgrid_extend;
+}
+.jsgrid-row input[type="checkbox"] {
+	@extend %jsgrid_extend;
+}
+.config-panel input[type=checkbox] {
+	@extend %jsgrid_extend;
+}

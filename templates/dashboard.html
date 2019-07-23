@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-content">
+      <div class="row">
+          <h4>Welcome, {{ request.user.translator.name }}</h4>
+          <h5>
+            Translation Languages:
+          </h5>
+          <ul>
+          {% for langpairs in request.user.translator.translatorlangs.all %}
+            <li>{{ langpairs.langtolang }}</li>
+          {% endfor %}
+          </ul>
+      </div>
+    </div>  
+</div>
+{% endblock  %}

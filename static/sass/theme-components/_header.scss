@@ -1,0 +1,220 @@
+/*----------------------------------------
+    Page Header
+------------------------------------------*/
+
+h1 {
+	&.logo-wrapper {
+		margin: 0;
+	}
+	span.logo-text {
+		font-size: 26px;
+    padding-left: 8px;
+		visibility: visible;
+    	opacity: 1;
+    	transition: opacity 0.2s linear;
+	}
+}
+.menu-sidebar-collapse {
+	margin: 0 10px;
+	i {
+		line-height: 36px !important;
+	}
+}
+header .brand-logo {
+  margin: 1px 0px;
+  padding: 22px 20px;
+  line-height:0;
+  img {
+    height: 18px;
+  }
+}
+
+@media only screen and(max-width: 992px) {	
+	aside .nav-wrapper {
+		text-align: center;		
+		a.page-title {
+			font-size: 36px;
+		}
+	}
+	aside .brand-sidebar{
+		box-shadow: none;
+		left:calc(50% - 120px);
+		.navbar-toggler{
+			display: none;
+		}
+		.logo-wrapper{
+			padding:5px 18px;	
+		}
+		.sidebar-collapse {    		
+		    top: -48px;
+		}	    
+	}
+	ul.side-nav.leftside-navigation {
+		top: 56px !important;
+	}
+}
+/*Search box*/ 
+#header{
+	.header-search-wrapper {
+		margin: 10px auto 0 260px;
+		width: calc(100% - 600px);
+		height: 40px;
+		display: inline-block;
+		position: relative;
+		-webkit-transition: .3s ease all;
+	    -o-transition: .3s ease all;
+	    -moz-transition: .3s ease all;
+	    transition: .3s ease all;
+	    -webkit-backface-visibility: hidden;
+	    -moz-backface-visibility: hidden;
+	    backface-visibility: hidden;
+		&.sideNav-lock{
+			margin: 10px auto 0 260px;
+		}
+		i {
+			position: absolute;
+			font-size: 24px;
+			top: 6px;
+			left: 24px;
+			line-height: 32px !important;
+			-webkit-transition: color 200ms ease;			
+			transition: color 200ms ease;
+		}
+	}
+
+	input.header-search-input {
+		display: block;
+		padding: 8px 8px 8px 72px;
+		width: 87%;
+		background: rgba(255, 255, 255, 0.3);
+		height: 24px;
+		-webkit-transition: all 200ms ease;		
+		transition: all 200ms ease;
+		border: none;
+		font-size: 16px;
+		appearance: textfield;
+		font-weight: 400;
+		outline: none;		
+		border-radius: 3px;
+		&:hover {
+			background: rgba(255, 255, 255, 0.5);
+		}
+		&:focus {
+			color: #333;
+			background: $white;
+			border-bottom: none !important;			
+			box-shadow: none !important;
+		}
+	}
+	.header-search-wrapper-focus i {
+		color: #444;
+	}
+
+	.header-search-input::-webkit-input-placeholder {
+		color: $white;
+		font-size: 16px;
+		font-weight: 400;
+	}
+	.header-search-input::-moz-placeholder {
+		color: $white;
+		font-size: 16px;
+		font-weight: 400;
+	}
+	.header-search-input {
+		&:-ms-input-placeholder {
+			color: $white;
+			font-size: 16px;
+			font-weight: 400;
+		}
+		&:focus::-webkit-input-placeholder {
+			color: #333;
+			font-size: 16px;
+			font-weight: 400;
+		}
+		&:focus::-moz-placeholder {
+			color: #333;
+			font-size: 16px;
+			font-weight: 400;
+		}
+		&:focus::placeholder {
+			color: #333;
+			font-size: 16px;
+			font-weight: 400;
+		}
+		&:focus:-ms-input-placeholder {
+			color: #333;
+			font-size: 16px;
+			font-weight: 400;
+		}
+	}
+	.header-search-input::placeholder {
+		color: $white;
+		font-size: 16px;
+		font-weight: 400;
+	}
+}
+.search-out {
+	display: none;
+	input[type=text]:focus:not([readonly]) {
+		border-bottom: 1px solid $white !important;		
+		box-shadow: none;
+	}
+}
+.search-out-text {
+	border-bottom: 1px solid $white !important;
+}
+
+.translation-button {
+	img {
+	    position: relative;
+	    top: 12px;
+	}
+}
+#translation-dropdown {
+	.language-select{
+		position: relative;
+    	top: -9px;
+	}
+}
+.notification-badge {
+	font-family: $title;
+    position: relative;
+    right: 5px;
+    top: -20px;
+    color: #ffffff;
+    background-color: $primary-color;
+    margin: 0 -.8em;
+    border-radius: 50%;
+    padding: 2px 5px;
+}
+#notifications-dropdown {
+	h5 {
+		font-size: 1rem;
+		text-transform: capitalize;
+		font-weight: 500;
+	}
+	li {
+		padding: 8px 16px;
+		font-size: 1rem;
+		> a {
+			padding: 0;
+			font-size: 1.1rem;
+			font-weight: 300;
+			> span {
+				display: inline-block;
+				font-size: 1.2rem;
+				position: relative;
+				top: 4px;
+				margin-right:5px;
+			}
+		}
+		> time {
+			font-size: 0.8rem;
+    	font-weight: 400;
+    	margin-left: 38px;
+		}
+		&.divider {
+			padding: 0;
+		}
+	}
+}

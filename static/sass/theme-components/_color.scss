@@ -1,0 +1,274 @@
+// @import "../components/mixins";
+@import "../components/color";
+
+/// Convert angle
+/// @author Chris Eppstein
+/// @param {Number} $value - Value to convert
+/// @param {String} $unit - Unit to convert to
+/// @return {Number} Converted angle
+@function convert-angle($value, $unit) {
+  $convertable-units: deg grad turn rad;
+  $conversion-factors: 1 (10grad/9deg) (1turn/360deg) (3.1415926rad/180deg);
+  @if index($convertable-units, unit($value)) and index($convertable-units, $unit) {
+    @return $value
+             / nth($conversion-factors, index($convertable-units, unit($value)))
+             * nth($conversion-factors, index($convertable-units, $unit));
+  }
+  
+  @warn "Cannot convert `#{unit($value)}` to `#{$unit}`.";
+}
+
+/// Test if `$value` is an angle
+/// @param {*} $value - Value to test
+/// @return {Bool}
+@function is-direction($value) {
+  $is-direction: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
+  $is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
+  
+  @return $is-direction or $is-angle;
+}
+
+/// Convert a direction to legacy syntax
+/// @param {Keyword | Angle} $value - Value to convert
+/// @require {function} is-direction
+/// @require {function} convert-angle
+@function legacy-direction($value) {
+  @if is-direction($value) == false {
+    @warn "Cannot convert `#{$value}` to legacy syntax because it doesn't seem to be an angle or a direction";
+  }
+  
+  $conversion-map: ( 
+    to top          : bottom,
+    to top right    : bottom left,
+    to right top    : left bottom,
+    to right        : left,
+    to bottom right : top left,
+    to right bottom : left top,
+    to bottom       : top,
+    to bottom left  : top right,
+    to left bottom  : right top,
+    to left         : right,
+    to left top     : right bottom,
+    to top left     : bottom right
+  );
+    
+  @if map-has-key($conversion-map, $value) {
+    @return map-get($conversion-map, $value);
+  }
+  
+  @return 90deg - convert-angle($value, 'deg');
+}
+
+/// Mixin printing a linear-gradient 
+/// as well as a plain color fallback 
+/// and the `-webkit-` prefixed declaration
+/// @access public
+/// @param {String | List | Angle} $direction - Linear gradient direction
+/// @param {Arglist} $color-stops - List of color-stops composing the gradient
+@mixin linear-gradient($direction, $color-stops...) {
+  @if is-direction($direction) == false {
+    $color-stops: ($direction, $color-stops);
+    $direction: 180deg;
+  }
+  
+  background: nth(nth($color-stops, 1), 1);
+  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background: linear-gradient($direction, $color-stops);
+}
+
+
+/// Background Gradient
+
+.gradient-45deg-light-blue-teal {
+  @include linear-gradient(45deg, color("light-blue", "lighten-4") 0%, color("teal", "accent-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("teal", "accent-2"),0.5);
+  }
+}
+.gradient-45deg-indigo-light-blue {
+  @include linear-gradient(45deg, color("indigo", "lighten-4") 0%, color("light-blue", "lighten-4") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("light-blue", "lighten-4"),0.5);
+  }
+}
+.gradient-45deg-light-blue-indigo {
+  @include linear-gradient(45deg, color("light-blue", "lighten-4") 0%, color("indigo", "lighten-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("indigo", "lighten-3"),0.5);
+  }
+}
+.gradient-45deg-yellow-green {
+  @include linear-gradient(45deg, color("yellow", "accent-1") 0%, color("green", "accent-1") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("green", "accent-1"),0.5);
+  }
+}
+.gradient-45deg-orange-deep-orange {
+  @include linear-gradient(45deg, color("orange", "lighten-4") 0%, color("deep-orange", "lighten-4") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("deep-orange", "lighten-4"),0.5);
+  }
+}
+.gradient-45deg-deep-purple-purple {
+  @include linear-gradient(45deg, color("deep-purple", "lighten-4") 0%, color("purple", "lighten-5") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("purple", "lighten-5"),0.5);
+  }
+}
+.gradient-45deg-red-pink {
+  @include linear-gradient(45deg, color("red", "accent-2") 0%, color("pink", "lighten-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("pink", "lighten-3"),0.5);
+  }
+}
+.gradient-45deg-light-green-amber {
+  @include linear-gradient(45deg, color("light-green", "lighten-3") 0%, color("amber", "lighten-5") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("amber", "lighten-5"),0.5);
+  }
+}
+.gradient-45deg-amber-amber {
+  @include linear-gradient(45deg, color("amber", "darken-4") 0%, color("amber", "lighten-1") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("amber", "darken-4"),0.3);
+  }
+}
+.gradient-45deg-purple-pink {
+  @include linear-gradient(45deg, color("purple", "accent-1") 0%, color("pink", "lighten-5") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("pink", "lighten-5"),0.5);
+  }
+}
+.gradient-45deg-indigo-light-blue {
+  @include linear-gradient(45deg, color("indigo", "darken-1") 0%, color("light-blue", "lighten-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("light-blue", "lighten-2"),0.5);
+  }
+}
+.gradient-45deg-teal-cyan {
+  @include linear-gradient(45deg, color("teal", "lighten-5") 0%, color("cyan", "accent-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("cyan", "accent-3"),0.5);
+  }
+}
+.gradient-45deg-blue-grey-blue-grey {
+  @include linear-gradient(45deg, color("blue-grey", "lighten-4") 0%, color("blue-grey", "darken-1") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue-grey", "darken-1"),0.5);
+  }
+}
+.gradient-45deg-cyan-light-green {
+  @include linear-gradient(45deg, color("cyan" , "darken-2") 0%, color("light-green", "accent-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("light-green", "accent-2"),0.5);
+  }
+}
+.gradient-45deg-orange-amber {
+  @include linear-gradient(45deg, color("orange" , "darken-4") 0%, color("amber", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-indigo-blue {
+  @include linear-gradient(45deg, color("indigo" , "darken-2") 0%, color("blue", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-brown-brown {
+  @include linear-gradient(45deg, color("brown" , "darken-1") 0%, color("brown", "lighten-4") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue", "lighten-4"),0.5);
+  }
+}
+.gradient-45deg-blue-grey-blue {
+  @include linear-gradient(45deg, color("blue-grey" , "darken-4") 0%, color("blue", "accent-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue", "accent-3"),0.5);
+  }
+}
+.gradient-45deg-purple-deep-orange {
+  @include linear-gradient(45deg, color("purple" , "darken-1") 0%, color("deep-orange", "accent-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("deep-orange", "accent-2"),0.5);
+  }
+}
+.gradient-45deg-green-teal {
+  @include linear-gradient(45deg, color("green" , "darken-1") 0%, color("teal", "accent-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("teal", "lighten-2"),0.5);
+  }
+}
+.gradient-45deg-purple-light-blue {
+  @include linear-gradient(45deg, color("purple" , "accent-2") 0%, color("light-blue", "lighten-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("light-blue", "lighten-2"),0.5);
+  }
+}
+.gradient-45deg-cyan-cyan {
+  @include linear-gradient(45deg, color("cyan" , "accent-2") 0%, color("cyan", "accent-3") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("cyan", "accent-3"),0.5);
+  }
+}
+.gradient-45deg-yellow-teal {
+  @include linear-gradient(45deg, color("yellow" , "lighten-4") 0%, color("teal", "accent-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("teal", "accent-2"),0.5);
+  }
+}
+.gradient-45deg-purple-deep-purple {
+  @include linear-gradient(45deg, color("purple" , "darken-2") 0%, color("deep-purple", "accent-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("deep-purple", "accent-2"),0.5);
+  }
+}
+.gradient-45deg-cyan-light-green {
+  @include linear-gradient(45deg, color("cyan" , "accent-3") 0%, color("light-green", "accent-1") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("light-green", "accent-1"),0.5);
+  }
+}
+.gradient-45deg-purple-amber {
+  @include linear-gradient(45deg, color("purple" , "accent-3") 0%, color("amber", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("amber", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-indigo-purple {
+  @include linear-gradient(45deg, color("indigo" , "darken-2") 0%, color("purple", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("purple", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-deep-purple-blue {
+  @include linear-gradient(45deg, color("deep-purple" , "accent-4") 0%, color("blue", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("blue", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-deep-orange-orange {
+  @include linear-gradient(45deg, color("deep-orange" , "darken-4") 0%, color("orange", "darken-2") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("orange", "darken-2"),0.5);
+  }
+}
+.gradient-45deg-light-blue-cyan {
+  @include linear-gradient(45deg, color("light-blue" , "darken-2") 0%, color("cyan", "lighten-1") 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("cyan", "lighten-1"),0.5);
+  }
+}
+.gradient-45deg-blue-indigo {
+  @include linear-gradient(45deg, color("blue" , "accent-4") 0%, color("indigo", "darken-1") 100%);  
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(color("indigo", "darken-1"),0.5);
+  }
+}
+.gradient-45deg-semi-dark {
+  @include linear-gradient(-90deg, #00AEFF 0%, #3369E6 100%);
+  &.gradient-shadow{
+    box-shadow: 0 6px 20px 0 rgba(51, 105, 230, 0.5);
+  }
+}
+
