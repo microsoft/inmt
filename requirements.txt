@@ -1,0 +1,4 @@
+Django==2.2
+numpy==1.16.3
+torch==1.0.1.post2
+git+https://github.com/pytorch/text.git@master#wheel=torchtext

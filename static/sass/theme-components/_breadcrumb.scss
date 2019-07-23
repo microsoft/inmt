@@ -1,0 +1,40 @@
+/*----------------------------------------
+	Breadcrumb
+------------------------------------------*/
+
+#breadcrumbs-wrapper {
+	background: $breadcrumbs-bg;
+	.breadcrumbs-btn{
+		top:30px;
+	}
+	h5.breadcrumbs-header {
+		font-size: 1.64rem;
+		line-height: 1.804rem;
+		margin: 1.5rem 0 0 0;
+	}
+	.breadcrumbs {
+		padding: 0;
+		margin: 15px 0;
+		list-style: none;
+		> li {
+			display: inline-block;
+			+ li:before {
+				padding: 0 5px;
+				color: color("grey", "lighten-1");
+				content: "/\00a0";
+			}
+		}	
+		.active {
+			font-weight: normal;
+			color: color("grey", "base");
+		}
+	}
+	.breadcrumbs-title {
+		font-size: 1.5rem;
+		line-height: 1.804rem;
+		margin: 18px 0 0;
+	}
+	.breadcrumbs-nav {
+		margin: 8px 0 9px;
+	}
+}

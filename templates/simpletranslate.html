@@ -1,0 +1,1031 @@
+{% load static %}
+
+<html>
+    <link type="text/css" rel="stylesheet" href="{% static 'materialize.css' %}"  media="screen,projection"/>
+   <body>
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+   <!-- <script type="text/javascript" src="/static/js/pramukhime.js"></script>
+   <script type="text/javascript" src="/static/js/pramukhindic.js"></script>
+   <script type="text/javascript" src="/static/js/pramukhime-common.js"></script> -->
+
+    <script type="text/javascript" src="{% static 'materialize.js' %}"></script>
+
+    <script type="text/javascript">
+		
+
+
+      // focus on textbox
+      // document.getElementById('typingarea').focus();
+      // Setup pramukhIME
+      
+      // Add the keyboard plugin
+      // pramukhIME.addKeyboard("PramukhIndic");
+      // pramukhIME.addLanguage(PramukhIndic);
+      // pramukhIME.enable();
+      // // pramukhIME.onLanguageChange(scriptChangeCallback);
+      // pramukhIME.setLanguage("hindi","pramukhindic");
+      
+      // Register call back (PRO VERSION ONLY)
+      // pramukhIME.on('languagechange', languageChangeCallback);
+      
+      // Enable on whole page
+      
+  
+    </script>
+
+    <script type=text/javascript>
+      function strip(html)
+        {
+          var tmp = document.createElement("DIV");
+          tmp.innerHTML = html;
+          return tmp.textContent || tmp.innerText || "";
+        }
+
+      function resetcolors(elem, nums) {
+        for (i=0; i<nums; i++) {
+          $(elem + i).css({"background-color": "transparent"})
+        }
+      }
+
+      // function sharedStart(array){
+      //     var A= array.concat().sort(), 
+      //     a1= A[0], a2= A[A.length-1], L= a1.length, i= 0;
+      //     while(i<L && a1.charAt(i)=== a2.charAt(i)) i++;
+      //     return a1.substring(0, i);
+      // }
+
+      function sharedStart(feed, partial) {
+        // console.log(partial, "||")
+        // var textlist = partial.split(" ")
+        // console.log(textlist)
+        // var part2text = textlist.pop()
+        // var part1text = textlist.join(" ")
+
+        // Implement algo which checks
+        lastspace = partial.lastIndexOf(" ")
+        part1text = partial.substring(0, lastspace)
+        part2text = partial.substring(lastspace+1)
+        // console.log(part1text, "|" , part2text)
+        var count = 0
+        if (part1text) {
+          newfeed = feed.replace(part1text + " ", '')
+          
+        } else {
+          newfeed = feed
+        }
+        for (i=0; i<part2text.length; i++) {
+          if(part2text[i] === newfeed[i]){
+            count = count + 1;
+          } else {
+            break;
+          }
+        }
+        newfeedpre = newfeed.substring(0, count)
+        newfeedsuf = newfeed.substring(count)
+        if (newfeedpre == "" && newfeedsuf == "") {
+          return ""
+        }
+        return '<b>' + newfeedpre + '</b>' + newfeedsuf
+      }
+
+      function placeCaretAtEnd(el) {
+          el.focus();
+          if (typeof window.getSelection != "undefined"
+                  && typeof document.createRange != "undefined") {
+              var range = document.createRange();
+              range.selectNodeContents(el);
+              range.collapse(false);
+              var sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+          } else if (typeof document.body.createTextRange != "undefined") {
+              var textRange = document.body.createTextRange();
+              textRange.moveToElementText(el);
+              textRange.collapse(false);
+              textRange.select();
+          }
+      }
+
+      function endsWithSpace(str) {
+        var endSpace = /\s$/;
+        if (endSpace.test(str)) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+      function inputSpan(str) {
+        var strlist = str.split(" ");
+        var container = ""
+        for (k=0; k<strlist.length; k++) {
+          container += '<span class="hin_inp_part hin_inp_part' + k + '">' + strlist[k] + '</span> '
+        }
+        return container
+      }
+
+      function myFunction(str) {
+          // Get the snackbar DIV
+          var x = document.getElementById("snackbar");
+
+          // Add the "show" class to DIV
+          x.className = "show";
+          x.innerHTML = str;
+          // After 3 seconds, remove the show class from DIV
+          setTimeout(function(){ x.className = x.className.replace("show", ""); }, 300);
+        } 
+
+      function key2char(str) {
+        var keychar = String.fromCharCode(str);
+        switch (str) {
+            
+        case 1:
+            // left mouse click
+            keychar = "Mouse: left button";
+            break;
+        case 2:
+            // middle mouse click
+            keychar = "Mouse: middle button";
+            break;
+        case 3:
+            // right mouse click
+            keychar = "Mouse: right button";
+            break;
+                
+        case 8:
+            //  backspace
+            keychar = "Backspace &#8592;";
+            break;
+        case 9:
+            //  tab
+            keychar = "Tab &#8594";
+            break;
+        case 13:
+            //  enter
+            keychar = "Enter &#8629";
+            break;
+        case 16:
+            //  shift
+            keychar = "Shift";
+            break;
+        case 17:
+            //  ctrl
+            keychar = "Ctrl";
+            break;
+        case 18:
+            //  alt
+            keychar = "Alt";
+            break;
+        case 19:
+            //  pause/break
+            keychar = "Pause/Break";
+            break;
+        case 20:
+            //  caps lock
+            keychar = "Caps Lock";
+            break;
+        case 27:
+            //  escape
+            keychar = "Escape";
+            break;
+        case 33:
+            // page up, to avoid displaying alternate character and confusing people             
+            keychar = "Page ↑";
+            break;
+        case 34:
+            // page down
+            keychar = "Page ↓";
+            break;
+        case 35:
+            // end
+            keychar = "End";
+            break;
+        case 36:
+            // home
+            keychar = "Home";
+            break;
+        case 37:
+            // left arrow
+            keychar = "Arrow Left";
+            break;
+        case 38:
+            // up arrow
+            keychar = "Up ↑";
+            break;
+        case 39:
+            // right arrow
+            keychar = "Arrow Right";
+            break;
+        case 40:
+            // down arrow
+            keychar = "Down ↓";
+            break;
+        case 45:
+            // insert
+            keychar = "Insert";
+            break;
+        case 46:
+            // delete
+            keychar = "Delete";
+            break;
+        case 91:
+            // left window
+            keychar = "Window Left";
+            break;
+        case 92:
+            // right window
+            keychar = "Window Right";
+            break;
+        case 93:
+            // select key
+            keychar = "Context Menu (select key)";
+            break;
+        case 96:
+            // NumPad 0
+            keychar = "NumPad 0";
+            break;
+        case 97:
+            // NumPad 1
+            keychar = "NumPad 1";
+            break;
+        case 98:
+            // NumPad 2
+            keychar = "NumPad 2";
+            break;
+        case 99:
+            // NumPad 3
+            keychar = "NumPad 3";
+            break;
+        case 100:
+            // NumPad 4
+            keychar = "NumPad 4";
+            break;
+        case 101:
+            // NumPad 5
+            keychar = "NumPad 5";
+            break;
+        case 102:
+            // NumPad 6
+            keychar = "NumPad 6";
+            break;
+        case 103:
+            // NumPad 7
+            keychar = "NumPad 7";
+            break;
+        case 104:
+            // NumPad 8
+            keychar = "NumPad 8";
+            break;
+        case 105:
+            // NumPad 9
+            keychar = "NumPad 9";
+            break;
+        case 106:
+            // multiply
+            keychar = "NumPad * (multiply)";
+            break;
+        case 107:
+            // add
+            keychar = "NumPad + (add)";
+            break;
+        case 109:
+            // subtract
+            keychar = "NumPad - (subtract)";
+            break;
+        case 110:
+            // decimal point
+            keychar = "NumPad . (decimal point)";
+            break;
+        case 111:
+            // divide
+            keychar = "NumPad / (divide)";
+            break;
+        case 112:
+            // F1
+            keychar = "F1";
+            break;
+        case 113:
+            // F2
+            keychar = "F2";
+            break;
+        case 114:
+            // F3
+            keychar = "F3";
+            break;
+        case 115:
+            // F4
+            keychar = "F4";
+            break;
+        case 116:
+            // F5
+            keychar = "F5";
+            break;
+        case 117:
+            // F6
+            keychar = "F6";
+            break;
+        case 118:
+            // F7
+            keychar = "F7";
+            break;
+        case 119:
+            // F8
+            keychar = "F8";
+            break;
+        case 120:
+            // F9
+            keychar = "F9";
+            break;
+        case 121:
+            // F10
+            keychar = "F10";
+            break;
+        case 122:
+            // F11
+            keychar = "F11";
+            break;
+        case 123:
+            // F12
+            keychar = "F12";
+            break;
+        case 144:
+            // num lock
+            keychar = "Num Lock";
+            break;
+        case 145:
+            // scroll lock
+            keychar = "Scroll Lock";
+            break;
+        case 186:
+            // semi-colon
+            keychar = ";";
+            break;
+        case 187:
+            // equal-sign
+            keychar = "=";
+            break;
+        case 188:
+            // comma
+            keychar = ",";
+            break;
+        case 189:
+            // dash
+            keychar = "-";
+            break;
+        case 190:
+            // period
+            keychar = ".";
+            break;
+        case 191:
+            // forward slash
+            keychar = "/";
+            break;
+        case 192:
+            // grave accent
+            keychar = "`";
+            break;
+        case 219:
+            // open bracket
+            keychar = "[";
+            break;
+        case 220:
+            // back slash
+            keychar = "\\";
+            break;
+        case 221:
+            // close bracket
+            keychar = "]";
+            break;
+        case 222:
+            // single quote
+            keychar = "'";
+            break;
+        }
+        return keychar
+      }
+
+
+      $(document).ready(function(){
+        var searchRequest = null;
+        var debounceTimeout = null;
+        var searchInput = $("#partial");
+        var result = '';
+        var selecte = 0;
+        var outputs = [];
+        var highlight = $("#highlight").is(':checked');
+        var textlist = []
+        var part2text = ""
+        var part1text = ""
+        
+        var inputs = []
+
+        $.getJSON('/simple/getinput', {
+                   }, function(data) {
+                    // console.log(data.result);
+                    inputs=data.result;
+                    // console.log(inputs)
+                    $('#cardscoll').html('')
+                    for (i=0; i<inputs.length; i++) {
+                      // console.log()
+                      $('#cardscoll').append(
+                                              `<div class="card bmo">
+                                                <div class="card-content">
+                                                  <div class="row">
+                                                    <div class="col s5 m5">
+                                                      <div class="hin_inp transtext" contenteditable="false">` + inputSpan(inputs[i]) + `</div>
+                                                    </div>
+                                                    <div class="col s1 m1">
+                                                      <br>
+                                                      <img src="{% static 'forward.png' %}" style="height:15px">
+                                                    </div>
+                                                    <div class="col s6 m6">
+                                                      <div class="dropcontainer">
+                                                        <div class="partcontainer">
+                                                          <div class="suggest transtext" contenteditable="false"></div>
+                                                          <div class=" partial transtext" contenteditable="true"></div>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                        </div>
+                                                      </div>
+                                                      <div class="perinstr">
+                                                          | &nbsp; &nbsp; Select &#8645; Tab &#8594; Enter &#8608; &nbsp; &nbsp; | &nbsp; &nbsp; Page Down &#8609; Page Up &#8607; &nbsp; &nbsp; |
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>`
+                                            )
+                    }
+
+                    $('.bmo').not($('.bmo').first()).addClass('bmo--blur');
+
+                    var searchEvents = function(partial){
+                      if (searchRequest)
+                        searchRequest.abort()
+
+                      var hin_inp = partial.closest('.bmo').find('.hin_inp')
+
+                      // indic = $.ajax({
+                      //       url: '/simple/indic',
+                      //       data: {'lang': 'hindi', 'inString': partial.clone().children().remove().end().text()},
+                      //       type: 'GET',
+                      //       traditional: true,
+                      //       success: function(result) {
+                      //           console.log(result['twords']['0']['options']);
+                      //       }
+                      //   }); 
+
+                      searchRequest =  $.getJSON('/simple/translate_new', {
+                          a: strip(hin_inp.text()),
+                          b: partial.clone().children().remove().end().text()
+                        }, function(data) {
+                          // $("#result").text(data.result);
+                          result = data.result.split("\n")
+                          partialret = data.partial
+
+                          selecte = 0;
+                          
+                          // All to do with the user input
+                          if (selecte >= result.length) {
+                            selecte = 0;
+                          }
+
+                          if (result[selecte].includes(partial.text())) {
+                              partial.closest('.bmo').find('.suggest').text(result[selecte])
+                              partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
+                          }
+                          
+                          var container = $('<div />');
+
+                          var countcontainer = 0
+                          finalresult = []
+                          for(var i = 0; i < result.length; i++) {
+                              var repres = sharedStart(result[i], partialret)
+                              // console.log(repres)
+                              if (repres !== "") {
+                                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+                                countcontainer += 1;
+                                finalresult.push(result[i])
+                                // console.log(countcontainer, finalresult)
+                              }
+                          }
+
+                          result = finalresult
+
+                          partial.closest('.bmo').find('.dropdown').html(container);
+                          
+                          resetcolors('.res', $('.spanres').length)
+                          $('.res' + selecte).css("background-color","#eee")
+                          if (countcontainer>1) {
+                            partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
+                          }
+
+                          // All to do with the source sentence
+                          
+                          if (highlight == true) {
+                            var attn = data.attn
+                            $("span[class^='hin_inp_part']").css("background-color", "transparent");
+                            for (m=0; m<attn.length; m++) {
+                              
+                              if (attn[m] == 1) {
+                                partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5)')
+                              }
+                              else {
+                                partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
+                              }
+                            }
+                          }
+                        });
+                    }
+                    $(".partial").on('mousedown', function(e){
+                      myFunction(key2char(e.keyCode || e.which));
+                    });
+                    $(".partial").on('keydown', function(e){
+                      var keyCode = e.keyCode || e.which;
+                      
+                      myFunction(key2char(keyCode));
+
+                      if (keyCode == 9) {
+                        e.preventDefault();
+                        var partial = $(this).clone().children().remove().end().text().split(" ").filter(function(v){return v!==''})
+                        var step = partial.length
+                        var res = result[selecte].split(" ")[step-1]
+                        if (result[selecte].split(" ")[step-1] == partial[step-1]) {
+                          res = result[selecte].split(" ")[step]
+                        } else {
+                          partial.pop()
+                        }
+                        partial.push(res)
+                        $(this).html(partial.join(" ") + " ")
+                        $(this).closest('.bmo').find('.suggest').text(result[selecte])
+                        placeCaretAtEnd($(this).get(0))
+                        $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden')
+                        
+                      } else
+
+                      if (keyCode == 13) { 
+                        e.preventDefault();
+                        $(this).html(result[selecte])
+                        $(this).closest('.bmo').find('.suggest').text(result[selecte])
+                        placeCaretAtEnd($(this).get(0))
+                        $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden')
+                      } else
+
+                      if (keyCode == 40) { 
+                        e.preventDefault();
+                        if (selecte < $('.spanres').length - 1 )
+                          selecte = selecte + 1;
+                          resetcolors('.res', $('.spanres').length)
+                          $('.res' + selecte).css("background-color", "#ddd")
+                          $(this).closest('.bmo').find('.suggest').text(result[selecte])
+                      } else
+                      if (keyCode == 38) { 
+                        e.preventDefault();
+                        if (selecte > 0)
+                          selecte = selecte - 1;
+                          resetcolors('.res', $('.spanres').length)
+                          $('.res' + selecte).css("background-color", "#ddd")
+                          $(this).closest('.bmo').find('.suggest').text(result[selecte])
+                      } else
+                      if (keyCode == 34) { 
+                        e.preventDefault();
+                        // searchEvents($(this));
+                        $(this).closest('.bmo').next().find('.partial').focus()
+                      } else 
+                      if (keyCode == 33) { 
+                        e.preventDefault();
+                        // searchEvents($(this));
+                        $(this).closest('.bmo').prev().find('.partial').focus()
+                      } else
+                      if (keyCode == 35) { 
+                        e.preventDefault();
+                        // searchEvents($(this));
+                        $(".partial").each(function() {
+                          outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
+                        })
+                        // console.log(JSON.stringify({'ops': outputs}))
+
+
+                        $.ajax({
+                            url: '/simple/pushoutput',
+                            data: {'ops': JSON.stringify(outputs)},
+                            traditional: true,
+                            success: function(result) {
+                                // console.log(result.result);
+                                window.location.href='/simple/end';
+                            }
+                        }); 
+
+                        // $.getJSON('/pushoutput', {
+                        //   ops: outputs,
+                        // }, function(data) {
+                        //       console.log(data.result)
+                        //     })
+                      } else
+                      if ((e.ctrlKey && keyCode == 67)|| (e.ctrlKey && keyCode == 65)) {
+                      } else {
+                        $(this).closest('.bmo').find('.suggest').text('')
+                      } 
+                      
+                    })
+
+                    $('.transtext').one('focus', function() {
+                        $(this).html('');
+                    });
+
+                    $('.partial').focusin(function() {
+                      $(this).closest('.bmo').removeClass('bmo--blur');
+                      $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
+                      // $(this).closest('.bmo').css('filter', '');
+                      // $('.partial').closest('.bmo').not($(this).closest('.bmo')).css('filter', 'blur(3px)');
+                      // $(this).closest('.bmo').css('filter', '');
+                      searchEvents($(this));
+                      var dropdown = $(this).parent().parent().children('.dropdown');
+                      dropdown.css('visibility', 'visible')
+                      var firsttext =  $(this).text()
+                      textlist = firsttext.split(" ")
+                      part2text = textlist.pop()
+                      part1text = textlist.join(" ") + " "
+
+                      $(this).html(part1text + '<div id="dummy"></div>' + part2text)
+                      if (firsttext) {
+                        dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+7);
+                      } else {
+                        dropdown.css('left', $('#dummy')[0].offsetLeft-5).css('top', $('#dummy')[0].offsetTop+7);
+                      }
+                      // if ($('#dummy')[0].offsetLeft <= 10) {
+                      //   dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                      // } else {
+                      //   dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+7);
+                      // }
+                      $(this).html(firsttext)
+                      $(this).closest('.bmo').find('.suggest').css('visibility', 'visible');
+                      placeCaretAtEnd($(this).get(0))
+                    });
+
+                    $(".partial").on('focusout',function() {
+                      var dropdown = $(this).closest('.bmo').find('.dropdown');
+                      dropdown.css('visibility', 'hidden')
+                      $(this).closest('.bmo').find('.suggest').css('visibility', 'hidden')
+                    })
+
+                    $(".partial").on('scroll', function() {
+                      $(this).closest('.bmo').find('.suggest').scrollTop($(this).scrollTop());
+                    })
+
+                    $(".partial").keyup(function(e){
+                      var keyCode = e.keyCode || e.which;
+                      // console.log(!(e.ctrlKey && keyCode == 65))
+                      if (keyCode != 40 && keyCode != 38 && keyCode != 37 && keyCode != 39 && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != 35 ) {
+
+                        $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
+
+                        var dropdown = $(this).parent().parent().children('.dropdown');
+                        var firsttext =  $(this).text()
+                        textlist = firsttext.split(" ")
+                        part2text = textlist.pop()
+                        part1text = textlist.join(" ")
+
+                        $(this).html(part1text + '<div id="dummy"></div>' + part2text)
+                        if (firsttext) {
+                          dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
+                        } else {
+                          dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                        }
+                        $(this).html(firsttext)
+                        placeCaretAtEnd($(this).get(0)) 
+
+
+                        // var hin = new RegExp('([^\s\u0900-\u097F])');
+
+                        // if (firsttext && hin.text(firsttext.slice(-1))) {
+
+                        //   indic = $.ajax({
+                        //     url: '/simple/indic',
+                        //     data: {'lang': 'hindi', 'inString': part2text},
+                        //     type: 'GET',
+                        //     traditional: true,
+                        //     success: function(result) {
+                        //         console.log(result['twords']['0']['options']);
+                        //     }
+                        // }); 
+
+                        // }
+                        
+                        
+
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(searchEvents($(this)), 5);
+                      }
+                    });
+
+                    $(".hin_inp").focusout(function(){
+                      // $('#hin_inp').html(strip($('#hin_inp').html()))
+                      searchEvents($(this));
+                    })
+
+                    $("#highlight").change(function(){
+                      // $('#hin_inp').html(strip($('#hin_inp').html()))
+                      highlight = $(this).is(':checked')
+                      if (highlight == false) {
+                        $("span[class^='hin_inp_part']").css("background-color", "transparent");
+                      }
+                    })
+
+                    $("#darkmode").change(function(){
+                      if ($(this).is(':checked') == true) {
+                        $('.bmo--blur').css('background-color', '#2d3f50');
+                        $('body').css('color', '#fff');
+                        $('body').css('background-color', '#aaa');
+                        $('.card').css('background-color', '#2a3d4e');
+                        // $('.dropdown').css('border-color', 'rgba(255, 255, 255, 0.25)');
+                        $('.dropdown').css('background-color', '#2d3f50');
+                        // $('.spanres').css('border-color', 'rgba(255, 255, 255, 0.25)');
+                      } else {
+                        $('.bmo--blur').css('background-color', '#ddd');
+                        $('body').css('color', '#404040');
+                        $('body').css('background-color', '#404040');
+                        $('.card').css('background-color', '#fff');
+                        // $('.dropdown').css('border-color', 'rgba(0, 0, 255, 0.25)');
+                        $('.dropdown').css('background-color', '#eee');
+                        // $('.spanres').css('border-color', 'rgba(0, 0, 255, 0.25)');
+                      }
+                    })
+
+                  });
+                });
+
+        // var inputs = ['आज थका देने वाला दिन था','चलिए आज हम एक फिल्म के लिए चलते हैं','यह मेरा मूड फ्रेश कर देगा','मैं कल अपने काम पर ध्यान केंद्रित कर सकता हूं'];
+        // var inputs = ['मुझे कल एक ट्रेन पकड़नी है']
+
+        
+        // .css('filter', '');
+ 
+        
+    </script>
+    <div class="container">
+        <div id="snackbar">Some text some message..</div>
+      <div class="row">
+          <div class="pad-top"></div>
+      </div>
+      <div class="card">
+        <div class="card-title center ttt">
+          Interactive Neural Machine Translation
+        </div>
+        <div class="switch">
+          <label>
+              Highlight? 
+            <input id="highlight" type="checkbox">
+            <span class="lever"></span>
+          </label>
+          <label>
+              Dark? 
+            <input id="darkmode" type="checkbox">
+            <span class="lever"></span>
+          </label>
+          <label>
+              Edit Distance? 
+            <input id="editdistance" type="checkbox">
+            <span class="lever"></span>
+          </label>
+        </div>    
+      </div>
+      <div class="row">
+          <div class="pad-top"></div>
+      </div>
+      <div id="cardscoll">
+        <!-- <div class="card bmo">
+          <div class="card-content">
+            <div class="row">
+              <div class="col s6 m6">
+                Input
+                <div class="transtext" contenteditable="true" id="hin_inp"></div>
+              </div>
+            
+              <div class="col s6 m6">
+                  Output
+                  <div id="dropcontainer">
+                    <div id="partcontainer">
+                      <div id="suggest" class="transtext" contenteditable="false"></div>
+                      <div id="partial" class="transtext" contenteditable="true"></div>
+                    </div>
+                    <div class="dropdown">
+                    </div>
+                  </div>
+                <div class="row">
+                    <div class="col s12 left-align">
+                      <div id=result style="white-space: pre-line"></div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <!-- <div class="row bottom">
+        <div class="col s12">
+          <img src="{% static 'microsoft_white.png' %}" height=70px>
+        </div>
+      </div> -->
+    </div>
+  </body>
+  <style>
+    body {
+        background: url(data:image/png;base64,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) fixed; 
+        background-color: #404040;
+      }
+
+      .bmo {
+        transition: all 0.12s ease-out;
+      }
+
+      .bmo--blur {
+          filter: blur(3px);
+          background-color: #ddd;
+      }
+
+     .ttt {
+       padding:15px;
+     } 
+    .pad-top {
+        height: 4vh;
+      }
+      .card-title {
+        /* color: #404040;? */
+        height: 8vh;
+      }
+      #result {
+        color: #404040;
+        text-align: left;
+      }
+      .card {
+        /* min-height: 15vh; */
+        background-color: #fff;
+        border-radius: 7px;
+      }
+      .bottom {
+        position: fixed;
+        bottom:0;
+        right:10;
+      }
+      #drop {
+        /* display: none; */
+        color: #404040;
+        position: absolute;
+        background-color: #ddd;
+        text-align: left;
+        padding: 10px;
+      }
+      .transtext {
+        /* -moz-appearance: textfield-multiline;
+        -webkit-appearance: textarea; */
+        /* overflow: auto;
+        white-space: nowrap; */
+        /* word-break: break-all; */
+        padding: 5px;
+        height: 100px;
+      }
+
+      .hin_inp {
+        padding: 10px;
+        /* word-wrap: break-word; */
+        /* width: 100%; */
+      }
+
+      .hin_inp_part {
+        padding: 2px;
+        border-radius: 4px;
+      }
+
+      .partial {
+        /* border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee; */
+        background-color: rgba(209, 209, 209, 0.274);
+      }
+      #result {
+        padding: 20px;
+      }
+
+      .partcontainer {
+        position: relative;
+        width: 100%;
+        /* overflow-x: hidden;
+        overflow-y: auto; */
+      }
+
+      .dropcontainer {
+        position: relative;
+        width: 100%;
+      }
+
+      .suggest,.partial {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        white-space: pre-wrap;
+        overflow-x:hidden;
+        overflow-y:auto;
+      }
+
+      .partial {
+        z-index: 10;
+      }
+      .suggest {
+        color: #999;
+        overflow-x:hidden;
+        overflow-y:auto;
+        /* overflow : hidden; */
+      }
+      .res0 {
+        display: none !important;
+      }
+      .dropdown {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #eee;
+        border: 1px solid rgba(0, 0, 255, 0.25);
+        /* border-color: #ddd; */
+        /* padding: 5px; */
+        /* padding-top: 1px; */
+        /* padding-left: 1px; */
+        /* padding-right: 5px; */
+        /* padding-bottom: 5px; */
+        z-index: 20;
+        /* border:1px solid rgb(97, 97, 197); */
+        visibility: hidden;
+      }
+      #dummy {
+        display: inline-block;
+      }
+      .spanres {
+        padding-right: 7px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 1px;
+        border: 1px solid rgba(0, 0, 255, 0.25);
+        display: block;
+        
+      }
+
+      .perinstr {
+        font-size: 12px;
+        bottom: 10;
+        right: 10;
+        position: absolute;
+      }
+
+      .switch {
+        padding: 15px;
+      }
+
+
+      /*Toast*/
+      #snackbar {
+        visibility: hidden; /* Hidden by default. Visible on click */
+        /* min-width: 250px; Set a default minimum width */
+        margin-left: -125px; /* Divide value of min-width by 2 */
+        background-color: #333; /* Black background color */
+        color: #fff; /* White text color */
+        text-align: center; /* Centered text */
+        border-radius: 2px; /* Rounded borders */
+        padding: 16px; /* Padding */
+        position: fixed; /* Sit on top of the screen */
+        z-index: 1; /* Add a z-index if needed */
+        left: 50%; /* Center the snackbar */
+        top: 120px; /* 30px from the bottom */
+      }
+
+      /* Show the snackbar when clicking on a button (class added with JavaScript) */
+      #snackbar.show {
+        visibility: visible; /* Show the snackbar */
+        /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+        However, delay the fade out process for 2.5 seconds */
+        /* -webkit-animation: fadein 0.2s, fadeout 0.2s .5s;
+        animation: fadein 0.2s, fadeout 0.2s .3s; */
+      }
+
+      /* Animations to fade the snackbar in and out */
+      /* @-webkit-keyframes fadein {
+        from {top: 50px; opacity: 0;}
+        to {top: 50px; opacity: 1;}
+      }
+
+      @keyframes fadein {
+        from {top: 50px; opacity: 0;}
+        to {top: 50px; opacity: 1;}
+      }
+
+      @-webkit-keyframes fadeout {
+        from {top: 50px; opacity: 1;}
+        to {top: 50px; opacity: 0;}
+      }
+
+      @keyframes fadeout {
+        from {top: 50px; opacity: 1;}
+        to {top: 50px; opacity: 0;}
+      } */
+   </style>
+</html>

@@ -1,0 +1,30 @@
+// ==========================================================================
+// Materialize theme variables
+// ==========================================================================
+//
+// Table of Contents:
+//
+//  1. Colors
+//  2. Sidenav
+//  3. SlideOut
+
+//colors
+$body-bg: #f9f9f9;
+$breadcrumbs-bg: #f3f3f3;
+$pre_loader_bg: #eceff1;
+$pre_loader_color_1: #3498db;
+$pre_loader_color_2: #e74c3c;
+$pre_loader_color_3: #f9c922;
+$white: #fff;
+$black: #000;
+
+//Sidenav
+$sidenav-width: 240px;
+$sidenav-expanded-width: 240px;
+$sidenav-collapsed-width: 64px;
+$right-sidenav-width: 300px;
+$sidenav-active-bg: rgba(0, 0, 0, 0.04);
+$sidenav-img-bg: url('../../images/gallary/12.png');
+
+// SlideOut width
+$slide_out_width: 280px;
