@@ -354,6 +354,21 @@ function key2char(str) {
   return keychar
 }
 
+var connectSocket = new WebSocket(
+  'ws://' + window.location.host + '/ws/simple/translation-socket'
+);
+console.log("The socket is")
+console.log(connectSocket)
+
+
+connectSocket.onmessage = function(e){
+  console.log("HAHAH THE SOCKET: ", e.data)
+}
+
+connectSocket.onclose = function(e){
+  console.error()
+}
+
 
 $(document).ready(function(){
   var searchRequest = null;
@@ -368,6 +383,8 @@ $(document).ready(function(){
   var part1text = ""
   
   var inputs = []
+
+
 
   $.getJSON('/simple/getinput', {}, function(data) {
     // console.log(data.result);
@@ -413,8 +430,13 @@ $(document).ready(function(){
         searchRequest.abort()
 
       var hin_inp = partial.closest('.bmo').find('.hin_inp')
-      console.log("hin_inp: ", hin_inp.text())
-      console.log("partial: ", partial.clone().children().remove().end().text())
+
+      //NEW STUFF, TO ADD SOCKET 
+      connectSocket.send(JSON.stringify({
+        'message': partial.clone().children().remove().end().text(),
+        'original': hin_inp.text()
+      }));
+      //END NEW SOCKET STUFF
 
       searchRequest =  $.getJSON('/simple/translate_new', {
           a: strip(hin_inp.text()),
