@@ -4,6 +4,21 @@ function strip(html){
   return tmp.textContent || tmp.innerText || "";
 }
 
+var globalPartial
+var searchRequest = null;
+var debounceTimeout = null;
+var searchInput = $("#partial");
+var result = '';
+var selecte = 0;
+var outputs = [];
+var highlight = $("#highlight").is(':checked');
+var textlist = []
+var part2text = ""
+var part1text = ""
+
+var inputs = []
+var langspec = ""
+
 function resetcolors(elem, nums) {
   for (i=0; i<nums; i++) {
     $(elem + i).css({"background-color": "transparent"})
@@ -354,42 +369,95 @@ function key2char(str) {
   return keychar
 }
 
+function parseProcessedJsonResultsfunction(data, partial) {
+  console.log("The data from the request is: ", data)
+  result = data.result.split("\n")
+  partialret = data.partial
+
+  selecte = 0;
+  
+  // All to do with the user input
+  if (selecte >= result.length) {
+    selecte = 0;
+  }
+
+  if (result[selecte].includes(partial.text())) {
+      partial.closest('.bmo').find('.suggest').text(result[selecte])
+      partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
+  }
+  
+  var container = $('<div />');
+
+  var countcontainer = 0
+  finalresult = []
+  for(var i = 0; i < result.length; i++) {
+      var repres = sharedStart(result[i], partialret)
+      if (repres !== "") {
+        container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+        countcontainer += 1;
+        finalresult.push(result[i])
+      }
+  }
+
+  result = finalresult
+
+  partial.closest('.bmo').find('.dropdown').html(container);
+  console.log("The container is:", container)
+  
+  resetcolors('.res', $('.spanres').length)
+  $('.res' + selecte).css("background-color","#eee")
+  if (countcontainer>1) {
+    partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
+  }
+
+  // All to do with the source sentence
+  
+  if (highlight == true) {
+    var attn = data.attn
+    $("span[class^='hin_inp_part']").css("background-color", "transparent");
+    for (m=0; m<attn.length; m++) {
+      
+      if (attn[m] == 1) {
+        partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5)')
+      }
+      else {
+        partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
+      }
+    }
+  }
+}
+
 var connectSocket = new WebSocket(
   'ws://' + window.location.host + '/ws/simple/translation-socket'
 );
-console.log("The socket is")
+console.log("The socket is (changed):")
 console.log(connectSocket)
 
+console.log("Going to get json!! first")
 
 connectSocket.onmessage = function(e){
   console.log("HAHAH THE SOCKET: ", e.data)
+  data = JSON.parse(e.data)
+  console.log(data)
+  searchRequest = parseProcessedJsonResultsfunction(data, globalPartial)
 }
+
+console.log("define after onmessage")
 
 connectSocket.onclose = function(e){
   console.error()
 }
 
+console.log("define after onclose")
+
 
 $(document).ready(function(){
-  var searchRequest = null;
-  var debounceTimeout = null;
-  var searchInput = $("#partial");
-  var result = '';
-  var selecte = 0;
-  var outputs = [];
-  var highlight = $("#highlight").is(':checked');
-  var textlist = []
-  var part2text = ""
-  var part1text = ""
-  
-  var inputs = []
-
 
 
   $.getJSON('/simple/getinput', {}, function(data) {
-    // console.log(data.result);
+    console.log("The getJSON data result to start is (modified): ", data);
     inputs=data.result;
-    // console.log(inputs)
+    langspec = data.langspec;
     $('#cardscoll').html('')
     for (i=0; i<inputs.length; i++) {
       // console.log()
@@ -430,73 +498,22 @@ $(document).ready(function(){
         searchRequest.abort()
 
       var hin_inp = partial.closest('.bmo').find('.hin_inp')
+      globalPartial = partial;
 
       //NEW STUFF, TO ADD SOCKET 
       connectSocket.send(JSON.stringify({
-        'message': partial.clone().children().remove().end().text(),
-        'original': hin_inp.text()
+        'partial_translation': partial.clone().children().remove().end().text(),
+        'original': hin_inp.text(),
+        'langspec': langspec
       }));
       //END NEW SOCKET STUFF
-
-      searchRequest =  $.getJSON('/simple/translate_new', {
+      
+      /*
+      searchRequest =  $.getJSON('/sipmle/translate_new', {
           a: strip(hin_inp.text()),
           b: partial.clone().children().remove().end().text()
-        }, function(data) {
-          result = data.result.split("\n")
-          partialret = data.partial
-
-          selecte = 0;
-          
-          // All to do with the user input
-          if (selecte >= result.length) {
-            selecte = 0;
-          }
-
-          if (result[selecte].includes(partial.text())) {
-              partial.closest('.bmo').find('.suggest').text(result[selecte])
-              partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
-          }
-          
-          var container = $('<div />');
-
-          var countcontainer = 0
-          finalresult = []
-          for(var i = 0; i < result.length; i++) {
-              var repres = sharedStart(result[i], partialret)
-              if (repres !== "") {
-                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
-                countcontainer += 1;
-                finalresult.push(result[i])
-              }
-          }
-
-          result = finalresult
-
-          partial.closest('.bmo').find('.dropdown').html(container);
-          console.log("The container is:", container)
-          
-          resetcolors('.res', $('.spanres').length)
-          $('.res' + selecte).css("background-color","#eee")
-          if (countcontainer>1) {
-            partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
-          }
-
-          // All to do with the source sentence
-          
-          if (highlight == true) {
-            var attn = data.attn
-            $("span[class^='hin_inp_part']").css("background-color", "transparent");
-            for (m=0; m<attn.length; m++) {
-              
-              if (attn[m] == 1) {
-                partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5)')
-              }
-              else {
-                partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
-              }
-            }
-          }
-        });
+        }, 
+        */
     }
     $(".partial").on('mousedown', function(e){
       myFunction(key2char(e.keyCode || e.which));
