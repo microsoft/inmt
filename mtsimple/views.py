@@ -59,27 +59,10 @@ langspecs = {
     # }
 }
 
-# langspec = langspecs['hi-en']
-# langspec = langspecs['en-hi']
 global langspec
 langspec = None
 
 global translatorbest, translatorbigram
-
-# opt.models = [os.path.join(dir_path, 'model', langspec['model'])]
-
-# opt.n_best = 1
-# ArgumentParser.validate_translate_opts(opt)
-# logger = init_logger(opt.log_file)
-# translatorbest = build_translator(opt, report_score=True)
-
-# opt.models = [os.path.join(dir_path, 'model', langspec['model'])]
-# opt.n_best = 5
-# opt.max_length = 2
-# ArgumentParser.validate_translate_opts(opt)
-# logger = init_logger(opt.log_file)
-# translatorbigram = build_translator(opt, report_score=True)
-
 
 def quotaposto(s, lang="en"):
     s = re.sub(r"&quot;", r'"', s)
@@ -122,37 +105,12 @@ for key, value in langspecs.items():
     ArgumentParser.validate_translate_opts(opt)
     engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
 
-# def prepare_translators(langspecf, request):
-#     with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
-#         opt = pickle.load(f)
-
-#     if "langspec" not in request.session or request.session["langspec"] != langspecf:
-#         opt.models = [os.path.join(dir_path, 'model', langspecf['model'])]
-#         opt.n_best = 1
-#         opt.global_attention_function = 'sparsemax'
-#         ArgumentParser.validate_translate_opts(opt)
-#         request.session["translatorbest"] = build_translator(opt, report_score=True)
-
-#         opt.models = [os.path.join(dir_path, 'model', langspecf['model'])]
-#         opt.n_best = 5
-#         opt.max_length = 2
-#         opt.global_attention_function = 'sparsemax'
-#         ArgumentParser.validate_translate_opts(opt)
-#         request.session["translatorbigram"] = build_translator(opt, report_score=True)
-
-#         request.session["langspec"] = langspecf
 
 global corpusinps, corpusid, corpusops, translatedsetid
 corpusinps = []
 corpusops = []
 corpusid = 0
 translatedsetid = 0
-
-# Split sentence if it is too long
- 
-# def checksenlen(st):
-#     MAX_LEN = 10
-#     for i in st
 
 def corpus(request):
     return render(request, 'simplecorpus.html')
@@ -184,7 +142,7 @@ def corpusinput(request):
     return HttpResponse('Success')
 
 def getinput(request):
-    return JsonResponse({'result': request.session["corpusinps"]})
+    return JsonResponse({'result': request.session["corpusinps"], 'langspec': request.session["langspec"]})
 
 def translate_new(request):
     translatorbest = engines[request.session["langspec"]]["translatorbest"]
@@ -192,6 +150,10 @@ def translate_new(request):
     L1 = toquotapos(request.GET.get('a').strip())
     L2 = request.GET.get('b', "")
     L2split = L2.split()
+
+    return JsonResponse({'result': 'sentence', 'attn': 'sumattn', 'partial': 'L2'})
+
+
 
     if langspecs[request.session["langspec"]]['indic_code']:
         if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
@@ -224,8 +186,6 @@ def translate_new(request):
         dymax_len = 2,
         )
 
-
-    # print(covatn2d)
     if L2 != '':
         transpattn = [*zip(*covatn2d)]
         attnind = [attn.index(max(attn)) for attn in transpattn]
@@ -234,15 +194,6 @@ def translate_new(request):
         for i in attndist:
             for k in i:
                 sumattn[k] = 0
-        # attn = covatn2d[:len(L2.strip().split(" "))]
-        # sumattn = [sum(i) for i in zip(*attn)]
-        # for i in range(len(attn)):
-        #     if max(attn[i]) > 0.30:
-        #         sumattn[attn[i].index(max(attn[i]))] = 1
-        #     print(max(attn[i]))
-        # newattn = [float("{0:.2f}".format(1-(k/max(sumattn)))) for k in sumattn]
-        # # sumattn = [float("{0:.2f}".format(k/sum(newattn))) for k in newattn]
-        # newattn = [ 1.66*max(0, (k-0.4)) for k in newattn]
 
     else:
         sumattn = [1.00] * len(L1.split(" "))    
@@ -261,6 +212,7 @@ def translate_new(request):
     print(sentence)
     # print(scores)
     return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
+
 
 def pushoutput(request):
     global corpusops
