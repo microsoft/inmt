@@ -370,7 +370,6 @@ function key2char(str) {
 }
 
 function parseProcessedJsonResultsfunction(data, partial) {
-  console.log("The data from the request is: ", data)
   result = data.result.split("\n")
   partialret = data.partial
 
@@ -430,37 +429,24 @@ function parseProcessedJsonResultsfunction(data, partial) {
 var connectSocket = new WebSocket(
   'ws://' + window.location.host + '/ws/simple/translation-socket'
 );
-console.log("The socket is (changed):")
-console.log(connectSocket)
-
-console.log("Going to get json!! first")
 
 connectSocket.onmessage = function(e){
-  console.log("HAHAH THE SOCKET: ", e.data)
   data = JSON.parse(e.data)
-  console.log(data)
   searchRequest = parseProcessedJsonResultsfunction(data, globalPartial)
 }
-
-console.log("define after onmessage")
 
 connectSocket.onclose = function(e){
   console.error()
 }
 
-console.log("define after onclose")
-
-
 $(document).ready(function(){
 
 
   $.getJSON('/simple/getinput', {}, function(data) {
-    console.log("The getJSON data result to start is (modified): ", data);
     inputs=data.result;
     langspec = data.langspec;
     $('#cardscoll').html('')
     for (i=0; i<inputs.length; i++) {
-      // console.log()
       $('#cardscoll').append(
         `<div class="card bmo">
           <div class="card-content">
@@ -500,29 +486,19 @@ $(document).ready(function(){
       var hin_inp = partial.closest('.bmo').find('.hin_inp')
       globalPartial = partial;
 
-      //NEW STUFF, TO ADD SOCKET 
+      //Make a communication request using the socket 
       connectSocket.send(JSON.stringify({
         'partial_translation': partial.clone().children().remove().end().text(),
         'original': hin_inp.text(),
         'langspec': langspec
       }));
-      //END NEW SOCKET STUFF
       
-      /*
-      searchRequest =  $.getJSON('/sipmle/translate_new', {
-          a: strip(hin_inp.text()),
-          b: partial.clone().children().remove().end().text()
-        }, 
-        */
     }
     $(".partial").on('mousedown', function(e){
       myFunction(key2char(e.keyCode || e.which));
     });
     $(".partial").on('keydown', function(e){
       var keyCode = e.keyCode || e.which;
-      console.log("KeyCode:", e.keyCode)
-      console.log("Which:", e.keyCode)
-      
       myFunction(key2char(keyCode));
 
       if (keyCode == 9) {
@@ -581,13 +557,11 @@ $(document).ready(function(){
           outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
         })
 
-
         $.ajax({
             url: '/simple/pushoutput',
             data: {'ops': JSON.stringify(outputs)},
             traditional: true,
             success: function(result) {
-                // console.log(result.result);
                 window.location.href='/simple/end';
             }
         }); 
@@ -665,12 +639,10 @@ $(document).ready(function(){
     });
 
     $(".hin_inp").focusout(function(){
-      // $('#hin_inp').html(strip($('#hin_inp').html()))
       searchEvents($(this));
     })
 
     $("#highlight").change(function(){
-      // $('#hin_inp').html(strip($('#hin_inp').html()))
       highlight = $(this).is(':checked')
       if (highlight == false) {
         $("span[class^='hin_inp_part']").css("background-color", "transparent");
@@ -683,17 +655,13 @@ $(document).ready(function(){
         $('body').css('color', '#fff');
         $('body').css('background-color', '#aaa');
         $('.card').css('background-color', '#2a3d4e');
-        // $('.dropdown').css('border-color', 'rgba(255, 255, 255, 0.25)');
         $('.dropdown').css('background-color', '#2d3f50');
-        // $('.spanres').css('border-color', 'rgba(255, 255, 255, 0.25)');
       } else {
         $('.bmo--blur').css('background-color', '#ddd');
         $('body').css('color', '#404040');
         $('body').css('background-color', '#404040');
         $('.card').css('background-color', '#fff');
-        // $('.dropdown').css('border-color', 'rgba(0, 0, 255, 0.25)');
         $('.dropdown').css('background-color', '#eee');
-        // $('.spanres').css('border-color', 'rgba(0, 0, 255, 0.25)');
       }
     })
 

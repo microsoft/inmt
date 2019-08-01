@@ -113,19 +113,9 @@ class TranslationConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         partial_translation = text_data_json['partial_translation']
         original_text = text_data_json['original']
-        langspec = text_data_json['langspec']
+        langspec = text_data_json['langspec'] 
 
-        print("THE SOCKET LIVES ONE WAY!!!!!")
-        '''
-        self.send(text_data=json.dumps({
-            'message':message + " I have recieved the socket stuff!!!"
-        }))
-        '''
-        ###HERES THE ORIGINAL STUFF FROM THE OTHER FILE
-        #1. I need to get the request session data. Possibly even send that to start out with, or just 
-        # send the right information regarding translated languages. 
-        #2. I need to get the other variables from 
-
+        #Slightly Modified, original code from views.py translate_new
         translatorbest = engines[langspec]["translatorbest"]
         translatorbigram = engines[langspec]["translatorbigram"]
         L1 = toquotapos(original_text.strip())
@@ -193,7 +183,6 @@ class TranslationConsumer(WebsocketConsumer):
             'attn': sumattn,
             'partial': L2
         }))
-        #return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
         return
 
 
