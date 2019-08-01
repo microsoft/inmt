@@ -10,7 +10,6 @@ urlpatterns = [
     path('corpusinput', views.corpusinput, name='corpusinput'),
     path('getinput', views.getinput, name='getinput'),
     path('pushoutput', views.pushoutput, name='pushoutput'),
-    path('translate_new', views.translate_new, name='translate_new'),
     path('getoutput', views.getoutput, name='getoutput'),
     path('indic', views.indic, name='indic'),
     # path('dashboard', views.dashboard, name='dashboard'),
