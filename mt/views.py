@@ -206,17 +206,42 @@ def getinput(request):
 
 
 def quotapos(s, lang="en"):
-    s = re.sub(r"&quot;", r'"', s)
-    return re.sub(r"&apos;", r"'", s)
+    # s = re.sub(r"&quot;", r'"', s)
+    # return re.sub(r"&apos;", r"'", s)
+    return s
 
 def quotaposr(s, lang="en"):
+    # s = re.sub(r'"', r'&quot;', s)
+    # return re.sub(r"'", r"&apos;", s)
+    return s
+
+def quotaposto(s, lang="en"):
+    s = re.sub(r"&quot;", r'"', s)
+    s = re.sub(r"&apos;", r"'", s)
+    s = re.sub(r"(@@ )|(@@ ?$)", r"", s)
+    #This is work in progress to make writing as natural as possible. taking care of spaces before and after certain characters.
+    # s = re.sub(r"(\s+)([!:?,.।\']+)", r"\2", s)
+    # s = re.sub(r"([({\[<]+)(\s+)", r"\1", s)
+    # s = re.sub(r"(\s+)([)}\]>]+)", r"\2", s)
+    return s
+
+def toquotapos(s, lang="en"):
+    # if lang=="en":
+    s = s.lower()
+    s = re.sub(r"([\“\”])", r'"', s)
+    s = re.sub(r"([\‘\’])", r"'", s)
+    s = re.sub(r"([\ः])", r":", s)
+    s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
     s = re.sub(r'"', r'&quot;', s)
-    return re.sub(r"'", r"&apos;", s)
+    s = re.sub(r"'", r"&apos;", s)
+    s = re.sub(r"(\s+)", r" ", s)
+    
+    return s
 
 @login_required
 def translate_new(request):
-    L1 = request.GET.get('a').strip()
-    L2 = quotaposr(request.GET.get('b', ""))
+    L1 = toquotapos(request.GET.get('a').strip())
+    L2 = request.GET.get('b', "")
     L2split = L2.split()
 
     langtolangid = request.session['langtolangid']
@@ -236,7 +261,7 @@ def translate_new(request):
         src_dir='',
         batch_size=30,
         attn_debug=True,
-        partial = L2
+        partial = toquotapos(L2)
         )
 
     scores, predictions = translatordict[langtolangid]['translatorbigram'].translate(
@@ -245,7 +270,7 @@ def translate_new(request):
         src_dir='',
         batch_size=30,
         attn_debug=False,
-        partial = L2,
+        partial = toquotapos(L2),
         dymax_len = 2,
         )
 
@@ -268,16 +293,17 @@ def translate_new(request):
     print(predictions)
     seen = set()
     seen_add = seen.add
-    sentence = [quotapos(L2 + x.capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + " " for x in predictions if not (x in seen or seen_add(x))]
+    sentence = [quotaposto(L2 + quotaposto(x).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + " " for x in predictions if not (x in seen or seen_add(x))]
     # sentence = [x.replace(L2, "") for x in sentence]
     sentence = '\n'.join(sentence)
     if langspecs[langtolangid]['provide_help'] and L2:
-        sentence = quotapos(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + L2 + '\n' + sentence
+        sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + L2 + '\n' + sentence
     else:
-        sentence = quotapos(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + sentence
+        sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + sentence
     
+    print(sentence)
     # print(scores)
-    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': quotapos(L2)})
+    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
 
 
 

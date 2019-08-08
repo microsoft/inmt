@@ -507,6 +507,7 @@ Translate according the instructions
       .card {
         /* min-height: 15vh; */
         background-color: #fff;
+        border-radius: 7px;
       }
       .bottom {
         position: fixed;
@@ -523,7 +524,7 @@ Translate according the instructions
       }
       .transtext {
         padding: 5px;
-        min-height: 50px;
+        min-height: 100px;
       }
 
       .hin_inp {
@@ -548,10 +549,13 @@ Translate according the instructions
 
       .partcontainer {
         position: relative;
+        width: 100%;
+        /* overflow-y: auto; */
       }
 
       .dropcontainer {
         position: relative;
+        
       }
 
       .suggest,.partial {
@@ -561,7 +565,9 @@ Translate according the instructions
         top: 0;
         left: 0;
         padding: 10px;
-        white-space: pre;
+        white-space: pre-wrap;
+			  overflow-x:hidden;
+			  overflow-y:auto;
       }
 
       .partial {

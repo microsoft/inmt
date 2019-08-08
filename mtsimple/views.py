@@ -46,7 +46,7 @@ langspecs = {
     'hi-en' : {
         'src' : 'hi',
         'tgt' : 'en',
-        'model': 'full_iitb_bpe_hien.pt',
+        'model': 'onmt-hien.pt',
         'indic_code': None,
         'provide_help' : False,
     },
