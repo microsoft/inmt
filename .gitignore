@@ -2,3 +2,4 @@ model/
 *.pyc
 db.sqlite3
 opennmt/.git
+pred.txt
