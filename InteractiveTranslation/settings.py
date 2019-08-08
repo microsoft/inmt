@@ -146,8 +146,8 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/dashboard'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
-DEFAULT_FILE_STORAGE = 'InteractiveTranslation.custom_azure.AzureMediaStorage'
-STATICFILES_STORAGE = 'InteractiveTranslation.custom_azure.AzureStaticStorage'
+# DEFAULT_FILE_STORAGE = 'InteractiveTranslation.custom_azure.AzureMediaStorage'
+# STATICFILES_STORAGE = 'InteractiveTranslation.custom_azure.AzureStaticStorage'
 
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"

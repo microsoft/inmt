@@ -87,6 +87,285 @@ Translate according the instructions
         return container
       }
 
+      function myFunction(str) {
+          // Get the snackbar DIV
+          var x = document.getElementById("snackbar");
+
+          // Add the "show" class to DIV
+          x.className = "show";
+          x.innerHTML = str;
+          // After 3 seconds, remove the show class from DIV
+          setTimeout(function(){ x.className = x.className.replace("show", ""); }, 300);
+        } 
+
+      function key2char(str) {
+        var keychar = String.fromCharCode(str);
+        switch (str) {
+            
+        case 1:
+            // left mouse click
+            keychar = "Mouse: left button";
+            break;
+        case 2:
+            // middle mouse click
+            keychar = "Mouse: middle button";
+            break;
+        case 3:
+            // right mouse click
+            keychar = "Mouse: right button";
+            break;
+                
+        case 8:
+            //  backspace
+            keychar = "Backspace &#8592;";
+            break;
+        case 9:
+            //  tab
+            keychar = "Tab &#8594";
+            break;
+        case 13:
+            //  enter
+            keychar = "Enter &#8629";
+            break;
+        case 16:
+            //  shift
+            keychar = "Shift";
+            break;
+        case 17:
+            //  ctrl
+            keychar = "Ctrl";
+            break;
+        case 18:
+            //  alt
+            keychar = "Alt";
+            break;
+        case 19:
+            //  pause/break
+            keychar = "Pause/Break";
+            break;
+        case 20:
+            //  caps lock
+            keychar = "Caps Lock";
+            break;
+        case 27:
+            //  escape
+            keychar = "Escape";
+            break;
+        case 33:
+            // page up, to avoid displaying alternate character and confusing people             
+            keychar = "Page ↑";
+            break;
+        case 34:
+            // page down
+            keychar = "Page ↓";
+            break;
+        case 35:
+            // end
+            keychar = "End";
+            break;
+        case 36:
+            // home
+            keychar = "Home";
+            break;
+        case 37:
+            // left arrow
+            keychar = "Arrow Left";
+            break;
+        case 38:
+            // up arrow
+            keychar = "Up ↑";
+            break;
+        case 39:
+            // right arrow
+            keychar = "Arrow Right";
+            break;
+        case 40:
+            // down arrow
+            keychar = "Down ↓";
+            break;
+        case 45:
+            // insert
+            keychar = "Insert";
+            break;
+        case 46:
+            // delete
+            keychar = "Delete";
+            break;
+        case 91:
+            // left window
+            keychar = "Window Left";
+            break;
+        case 92:
+            // right window
+            keychar = "Window Right";
+            break;
+        case 93:
+            // select key
+            keychar = "Context Menu (select key)";
+            break;
+        case 96:
+            // NumPad 0
+            keychar = "NumPad 0";
+            break;
+        case 97:
+            // NumPad 1
+            keychar = "NumPad 1";
+            break;
+        case 98:
+            // NumPad 2
+            keychar = "NumPad 2";
+            break;
+        case 99:
+            // NumPad 3
+            keychar = "NumPad 3";
+            break;
+        case 100:
+            // NumPad 4
+            keychar = "NumPad 4";
+            break;
+        case 101:
+            // NumPad 5
+            keychar = "NumPad 5";
+            break;
+        case 102:
+            // NumPad 6
+            keychar = "NumPad 6";
+            break;
+        case 103:
+            // NumPad 7
+            keychar = "NumPad 7";
+            break;
+        case 104:
+            // NumPad 8
+            keychar = "NumPad 8";
+            break;
+        case 105:
+            // NumPad 9
+            keychar = "NumPad 9";
+            break;
+        case 106:
+            // multiply
+            keychar = "NumPad * (multiply)";
+            break;
+        case 107:
+            // add
+            keychar = "NumPad + (add)";
+            break;
+        case 109:
+            // subtract
+            keychar = "NumPad - (subtract)";
+            break;
+        case 110:
+            // decimal point
+            keychar = "NumPad . (decimal point)";
+            break;
+        case 111:
+            // divide
+            keychar = "NumPad / (divide)";
+            break;
+        case 112:
+            // F1
+            keychar = "F1";
+            break;
+        case 113:
+            // F2
+            keychar = "F2";
+            break;
+        case 114:
+            // F3
+            keychar = "F3";
+            break;
+        case 115:
+            // F4
+            keychar = "F4";
+            break;
+        case 116:
+            // F5
+            keychar = "F5";
+            break;
+        case 117:
+            // F6
+            keychar = "F6";
+            break;
+        case 118:
+            // F7
+            keychar = "F7";
+            break;
+        case 119:
+            // F8
+            keychar = "F8";
+            break;
+        case 120:
+            // F9
+            keychar = "F9";
+            break;
+        case 121:
+            // F10
+            keychar = "F10";
+            break;
+        case 122:
+            // F11
+            keychar = "F11";
+            break;
+        case 123:
+            // F12
+            keychar = "F12";
+            break;
+        case 144:
+            // num lock
+            keychar = "Num Lock";
+            break;
+        case 145:
+            // scroll lock
+            keychar = "Scroll Lock";
+            break;
+        case 186:
+            // semi-colon
+            keychar = ";";
+            break;
+        case 187:
+            // equal-sign
+            keychar = "=";
+            break;
+        case 188:
+            // comma
+            keychar = ",";
+            break;
+        case 189:
+            // dash
+            keychar = "-";
+            break;
+        case 190:
+            // period
+            keychar = ".";
+            break;
+        case 191:
+            // forward slash
+            keychar = "/";
+            break;
+        case 192:
+            // grave accent
+            keychar = "`";
+            break;
+        case 219:
+            // open bracket
+            keychar = "[";
+            break;
+        case 220:
+            // back slash
+            keychar = "\\";
+            break;
+        case 221:
+            // close bracket
+            keychar = "]";
+            break;
+        case 222:
+            // single quote
+            keychar = "'";
+            break;
+        }
+        return keychar
+      }
 
       $(document).ready(function(){
         var searchRequest = null;
@@ -171,6 +450,7 @@ Translate according the instructions
 
                           if (result[selecte].includes(partial.text())) {
                               partial.closest('.bmo').find('.suggest').text(result[selecte])
+                              partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
                           }
                           
                           var container = $('<div />');
@@ -193,7 +473,7 @@ Translate according the instructions
                           partial.closest('.bmo').find('.dropdown').html(container);
                           
                           resetcolors('.res', $('.spanres').length)
-                          $('.res' + selecte).css({"background-color": "#eee"})
+                          $('.res' + selecte).css("background-color","#eee")
                           if (countcontainer>1) {
                             partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
                           }
@@ -521,6 +801,7 @@ Translate according the instructions
       .card {
         /* min-height: 15vh; */
         background-color: #fff;
+        border-radius: 7px;
       }
       .bottom {
         position: fixed;
@@ -537,7 +818,7 @@ Translate according the instructions
       }
       .transtext {
         padding: 5px;
-        min-height: 50px;
+        min-height: 100px;
       }
 
       .hin_inp {
@@ -562,10 +843,13 @@ Translate according the instructions
 
       .partcontainer {
         position: relative;
+        width: 100%;
+        /* overflow-y: auto; */
       }
 
       .dropcontainer {
         position: relative;
+        
       }
 
       .suggest,.partial {
@@ -575,7 +859,9 @@ Translate according the instructions
         top: 0;
         left: 0;
         padding: 10px;
-        white-space: pre;
+        white-space: pre-wrap;
+			  overflow-x:hidden;
+			  overflow-y:auto;
       }
 
       .partial {

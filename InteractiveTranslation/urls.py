@@ -22,7 +22,7 @@ urlpatterns = [
     path('', include('mt.urls')),
     path('simple/', include('mtsimple.urls')),
     path('para/', include('mtpara.urls')),
-    path('gpt/', include('gpt.urls')),
+    # path('gpt/', include('gpt.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
