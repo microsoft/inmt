@@ -586,7 +586,13 @@ Translate according the instructions
                       if (keyCode == 34) { 
                         e.preventDefault();
                         // searchEvents($(this));
-                        $(this).closest('.bmo').next().find('.partial').focus()
+                        //$(this).closest('.bmo').next().find('.partial').focus()
+                        var currentDiv = $(this).closest('.bmo').find('.partial')
+                        var nextDiv = $(this).closest('.bmo').next().find('.partial');
+                        var heightDiff = nextDiv.offset().top - currentDiv.offset().top
+                        nextDiv.focus()
+                        window.scrollBy(0,heightDiff);
+                        //Place click data into the server
                         $(this).data("pgdn", parseInt($(this).data("pgdn")) + 1)
                       } else 
                       if (keyCode == 33) { 
