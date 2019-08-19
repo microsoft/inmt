@@ -1,5 +1,11 @@
 Django==2.2
 numpy==1.16.3
-torch==1.0.1.post2
+six
+tqdm==4.30.*
+torch==1.1 -f https://download.pytorch.org/whl/torch_stable.html
 git+https://github.com/pytorch/text.git@master#wheel=torchtext
+future
 channels
+configargparse
+editdistance
+indic_transliteration
