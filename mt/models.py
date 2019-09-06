@@ -200,6 +200,32 @@ class time(models.Model):
 
     # def __str__(self):
     
+#Ok, so it's possible for the model to be updated automatically in the code. I would like to see how the time model is updated in the code!
+class customKeyboardCommands(models.Model):
+    select_entire_suggestion = models.IntegerField()
+    select_single_word_from_suggestion = models.IntegerField()
+    navigate_to_next_corpus_fragment = models.IntegerField()
+    navigate_to_previous_corpus_fragment = models.IntegerField()
+    submit_translation = models.IntegerField()
+    select_next_translation_suggestion = models.IntegerField()
+    select_previous_translation_suggestion = models.IntegerField()
+    custom_layout_name = models.CharField(max_length=30)
 
+    class Meta: 
+        verbose_name = "Custom Keyboard Command Set"
+        verbose_name_plural = "Custom Keyboard Command Sets"
 
+    def __str__(self):
+        return self.custom_layout_name
 
+class translatorKeyboardLayouts(models.Model):
+    translator = models.ForeignKey(translator, on_delete = models.CASCADE, related_name="translatorconfigs")
+    customKeyboardCommands = models.ForeignKey(customKeyboardCommands, on_delete = models.CASCADE, related_name="translatorconfigs")
+
+    class Meta:
+        verbose_name = "Translator Keyboard Layout Specified"
+        verbose_name_plural = "Translator Keyboard Layout Specified"
+        unique_together = (("translator", "customKeyboardCommands"))
+
+    def __str__(self):
+        return self.translator.name + " | " + self.customKeyboardCommands.__str__()

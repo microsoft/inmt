@@ -1,7 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card">
+<script>
+
+    function clickModal(){
+      /*elem = $("#modal1").get(0)
+      console.log(elem)
+      var instance = M.Modal.getInstance('#modal1');
+      console.log(instance)
+      instance.open();*/
+
+      var controlSchemeIsDefined = $.getJSON('/iscontrolschemedefined', {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+      }, function(data) {
+          console.log(data.result);
+          //Data.result is true, if the control scheme is defined. 
+          if (data.result){
+            window.location.pathname = '/corpus';
+          } 
+          else{
+            var loginModal = document.querySelector('#modal1');
+            var loginModal_options = {};
+            var loginModal_instance = M.Modal.init( loginModal, loginModal_options);
+
+            console.log(loginModal_instance);
+            loginModal_instance.open();
+
+            var instance = M.Modal.getInstance(loginModal);
+            instance.open();
+          }
+      });
+    }
+
+
+/*
+    $.getJSON('/iscontrolschemedefined', {
+        ops: outputs,
+      }, function(data) {
+          console.log(data.result)
+      })
+*/
+
+    function getStatus(input){      
+      searchRequest =  $.post('/set_keyboard_controls', {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          keyboardControlScheme: input,
+        }, function(data) {
+          console.log("WE DONE BOYS!!")
+          window.location.pathname = '/corpus'
+          return data;
+        });
+    }
+  
+</script>
+
+<div class="card teal lighten-4">
     <div class="card-content">
       <div class="row">
           <h4>Welcome, {{ request.user.translator.name }}</h4>
@@ -12,8 +65,96 @@
           {% for langpairs in request.user.translator.translatorlangs.all %}
             <li>{{ langpairs.langtolang }}</li>
           {% endfor %}
+
+          <!--p>Translator: </p>
+          <p>{{ request.user.translator.translatorconfigs }}</p-->
+
+          Welcome to the Translation Study! We are excited to have you!!!
           </ul>
       </div>
     </div>  
 </div>
+
+
+<div class="card outline teal lighten-4">
+    <div class="card-content">
+      <div class="row">
+          <h4>Instruction Video</h4>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/DHan93R8d84" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+         
+          <ol>
+            <li>Translate Story 1</li>
+            <li>Translate Story 2</li>
+            <li>Translate Story 3</li>
+
+          </ol>
+      </div>
+    </div>  
+</div>
+
+<div class="row">
+  <div class="col s4">
+    <div class="card teal lighten-4">
+        <div class="card-content centered">
+
+          <i class="material-icons Large">import_contacts</i>
+          <p>Instructions</p>
+        </div>
+    </div>
+  </div>
+  <div class="col s4">
+    <div class="card teal lighten-4" onclick="clickModal()">
+      <div class="card-content centered">
+        <i class="material-icons Large">play_arrow</i>
+        <p>Get Started</p>
+      </div>
+    </div>
+  </div>
+  <div class="col s4">
+    <div class="card teal lighten-4">
+        <div class="card-content centered">
+          <i class="material-icons Large">keyboard</i>
+          <p>Keyboard Control Settings</p>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pop Up Select Keyboard Layout Modals -->
+<div id="modal1" class="modal">
+  <div class="modal-content">
+    <h4>Please select a keyboard control scheme for your session</h4>
+      {% for config in request.user.translator.translatorconfigs.all %}
+        <button class="waves-red waves-effect btn" onclick="getStatus('{{config.customKeyboardCommands}}')">{{ config.customKeyboardCommands }}</button>
+      {% endfor %}
+  </div>
+</div>
+
+<!-- Select and Define keyboard settings -->
+<div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Please select a keyboard control scheme for your session</h4>
+        {% for config in request.user.translator.translatorconfigs.all %}
+          <button class="waves-red waves-effect btn" onclick="getStatus('{{config.customKeyboardCommands}}')">{{ config.customKeyboardCommands }}</button>
+        {% endfor %}
+    </div>
+  </div>
+
 {% endblock  %}
+
+
+<style>
+  .box{
+    color: brown;
+    background-color: blue;
+    padding:150px; 
+  }
+
+  .card{
+    outline: 20px;
+    background-color: turquoise;
+    outline-color: black;
+  }
+
+</style>
+
