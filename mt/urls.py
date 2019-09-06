@@ -15,4 +15,6 @@ urlpatterns = [
     path('preview', views.end, name='preview'),
     path('transdelete', views.transdelete, name='transdelete'),
     path('exportcsv', views.export_keystroke_csv, name='export_keystroke_csv'),
+    path('set_keyboard_controls', views.set_keyboard_controls, name = 'set_keyboard_controls'),
+    path('iscontrolschemedefined', views.isControlSchemeDefined, name = 'iscontrolschemedefined' )
 ]

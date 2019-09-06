@@ -97,6 +97,19 @@ def export_keystroke_csv(request):
                 pass
     return response
 
+@login_required
+def set_keyboard_controls(request):
+    controlScheme = request.POST['keyboardControlScheme']
+    #Here, I should grab the entire control scheme model with this name; 
+    request.session["controlscheme"] = controlScheme
+    return render(request, 'dashboard.html')
+
+@login_required
+def isControlSchemeDefined(request):
+    session = False
+    if 'controlscheme' in request.session:
+        session = True
+    return JsonResponse({'result': session })
 
 @login_required
 def tstart(request):
@@ -166,10 +179,29 @@ def new(request):
     if request.session['translatedsetid'] == 0:
         return redirect('/corpus')
     
-    if translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision:
-        return render(request, 'inmt.html')
+
+    #Get the correct object. If there is not an object that exists, then handle that error correctly. 
+    
+    #please, PLEASE ACCOUNT FOR THE CASE WHERE THERE IS NO MODEL. Maybe, that can happen in the JS. But still. 
+
+    #controlName = request.session["controlscheme"]
+
+    #HONESTLY, I JUST NEED TO ADD AN ID FEATURE TO THE 
+    if 'controlscheme' in request.session:
+        controlScheme = request.session["controlscheme"]
+        objects = customKeyboardCommands.objects.filter(custom_layout_name=controlScheme)
+        #Here, I should grab the entire control scheme model with this name; 
+    else: 
+        objects = []
+    if len(objects) > 0: 
+        selectedControlScheme = objects[0]
     else:
-        return render(request, 'inmth.html')
+        selectedControlScheme = "default"
+
+    if translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision:
+        return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme})
+    else:
+        return render(request, 'inmth.html', {'selectedControlScheme': selectedControlScheme})
 
 
 @login_required
@@ -311,7 +343,6 @@ def translate_new(request):
 def pushoutput(request):
     corpusops = json.loads(request.POST.get('ops'))
     request.session["corpusops"] = corpusops
-    # keystroke = json.loads(request.POST.get('keys'))
     keytimeseries = json.loads(request.POST.get('keytimeseries'))
 
     translatedsets= translatedSet.objects.get(user=request.user, corpus=corpus.objects.get(pk=request.session["corpusid"]), langtolang=langtolang.objects.get(pk=request.session['langtolangid']))
@@ -320,31 +351,9 @@ def pushoutput(request):
     for i in range(len(corpusops)):
         translatedsent= translatedSentence.objects.get(translatedSet=translatedsets, src=corpusops[i][0].strip())
         translatedsent.tgt = corpusops[i][1]
-        # keystrokes.objects.get_or_create(translatedSentence=translatedsent, atoz=0, space=0, **keystrokes[i])
-        # print(keystrokes[i]["tab"])
-        # keystrokesobj, created = keystrokes.objects.get_or_create(translatedSentence=translatedsent)
-        # if created:
-        #     keystrokesobj.atoz=0
-        #     keystrokesobj.space=0
-        #     print(keystroke[i])
-        #     keystrokesobj.tab = keystroke[i]["tab"]
-        #     keystrokesobj.enter = keystroke[i]["enter"]
-        #     keystrokesobj.up = keystroke[i]["up"]
-        #     keystrokesobj.down = keystroke[i]["down"]
-        #     keystrokesobj.pgdn = keystroke[i]["pgdn"]
-        #     keystrokesobj.pgup = keystroke[i]["pgup"]
-        #     keystrokesobj.right = keystroke[i]["right"]
-        #     keystrokesobj.left = keystroke[i]["left"]
-        #     keystrokesobj.bkspc = keystroke[i]["bkspc"]
-        #     keystrokesobj.end = keystroke[i]["end"]
-        #     keystrokesobj.others = keystroke[i]["others"]
-        #     time(translatedSentence=translatedsent, writetime=keystroke[i]["time"], thinktime=0).save()
-        #     keystrokesobj.save()
         translatedsent.save()
 
     dockeystroke.objects.update_or_create(translatedSet=translatedsets, defaults={'keystrokeseries': keytimeseries, 'trump': 'Y'})
-    # else:
-    #     dockeystroke.objects.create(translatedSet=translatedsets, keystrokeseries=keytimeseries, trump='N')
     return HttpResponse('Success')
 
 @login_required    
