@@ -103,15 +103,6 @@ def quotaposto(s, lang="en"):
     # s = re.sub(r"(\s+)([)}\]>]+)", r"\2", s)
     return s
 
-
-
-
-
-
-
-
-
-
 def processReceivedData(self, text_data):
     text_data_json = json.loads(text_data)
     partial_translation = text_data_json['partial_translation']
@@ -203,21 +194,13 @@ def processReceivedData(self, text_data):
 
 
 requestStack = []
+stop_threads = False
 
-class Request:
-    def __init__(self, requestSelf, text_data):
-        self.requestSelf = requestSelf
-        self.text_data = text_data
-
-
-
-# I need to parallelize this code and properly kill the threads. 
-class TranslationConsumer(WebsocketConsumer):
-
-    def printWhile():
+def printWhile():
         global requestStack
         print("Am I going? Yeeee!!")
-        while True:
+        #t = threading.currentThread()
+        while True:#getattr(t, "do_run", True):
             #time.sleep(.005)
             #print("YEEEEE")
 
@@ -230,23 +213,60 @@ class TranslationConsumer(WebsocketConsumer):
                 processReceivedData(thisRequest.requestSelf, thisRequest.text_data)
                 #Then Clear the list so that you don't run through the wasteful requests
                 requestStack.clear()
+            
+            global stop_threads
+            if stop_threads:
+                print("Stop is this:")
+                #print(stop())
+                break
 
-    t1 = threading.Thread(target=printWhile)
-    t1.start()
+#t1 = threading.Thread(target=printWhile)
+
+class Request:
+    def __init__(self, requestSelf, text_data):
+        self.requestSelf = requestSelf
+        self.text_data = text_data
+
+t1 = None
+
+# I need to parallelize this code and properly kill the threads. 
+class TranslationConsumer(WebsocketConsumer):
+
+    
+    #t1 = threading.Thread(target=printWhile, args=("task",))
+    #t1 = threading.Thread(target=printWhile)
+    #global stop_threads
+    #stop_threads = False
+    #var = stop_threads
+    #t1 = threading.Thread(target = printWhile, args =(lambda : (stop_threads), )) 
+    #global t1
+    
 
     def connect(self):
+        print("Connecting Fresh!!")
+        global stop_threads
+        stop_threads = False
+        self.t1 = threading.Thread(target=printWhile)
+        self.t1.start()
+
         self.accept()
         
     
     def disconnect(self, close_code):
+        print("I AM DISCONNECTED")
+        global stop_threads
+        stop_threads = True
+        self.t1.join()
         pass
 
     def receive(self, text_data):
         print("Recieved!!!!!!")
+        print("Ready for disconnecting!")
         thisRequest = Request(self, text_data)
         global requestStack
         requestStack.append(thisRequest)
         print(requestStack)
+
 
         #processReceivedData(thisRequest.requestSelf, thisRequest.text_data)
         #processReceivedData(self, text_data)

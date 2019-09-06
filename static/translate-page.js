@@ -175,7 +175,7 @@ function key2char(str) {
       break;
   case 38:
       // up arrow
-      keychar = "Up ↑";
+      keychar = "Up ↑ (UP!!!)";
       break;
   case 39:
       // right arrow
@@ -392,6 +392,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
   for(var i = 0; i < result.length; i++) {
       var repres = sharedStart(result[i], partialret)
       if (repres !== "") {
+        //console.log("WHAT IS REPRES!?")
+        //console.log(repres)
         container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
         countcontainer += 1;
         finalresult.push(result[i])
@@ -401,7 +403,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
   result = finalresult
 
   partial.closest('.bmo').find('.dropdown').html(container);
-  console.log("The container is:", container)
+  console.log("The container is yo:", container)
+  console.log("Now, this is partial: ", partial)
   
   resetcolors('.res', $('.spanres').length)
   $('.res' + selecte).css("background-color","#eee")
@@ -448,7 +451,7 @@ $(document).ready(function(){
     $('#cardscoll').html('')
     for (i=0; i<inputs.length; i++) {
       $('#cardscoll').append(
-        `<div class="card bmo">
+        `<div class="card bmo" id="`+ i+`">
           <div class="card-content">
             <div class="row">
               <div class="col s5 m5">
@@ -464,7 +467,7 @@ $(document).ready(function(){
                     <div class="suggest transtext" contenteditable="false"></div>
                     <div class=" partial transtext" contenteditable="true"></div>
                   </div>
-                  <div class="dropdown">
+                  <div class="dropdown" id="`+ i+`">
                   </div>
                 </div>
                 <div class="perinstr">
