@@ -548,7 +548,11 @@ $(document).ready(function(){
       } else
       if (keyCode == 34) { 
         e.preventDefault();
-        $(this).closest('.bmo').next().find('.partial').focus()
+        var currentDiv = $(this).closest('.bmo').find('.partial')
+        var nextDiv = $(this).closest('.bmo').next().find('.partial');
+        var heightDiff = nextDiv.offset().top - currentDiv.offset().top
+        nextDiv.focus()
+        window.scrollBy(0,heightDiff);
       } else 
       if (keyCode == 33) { 
         e.preventDefault();
