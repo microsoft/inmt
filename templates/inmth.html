@@ -7,86 +7,14 @@ Translate
 {% endblock %}
 
 {% block desc %}
-Translate according the instructions
+Translate according the instructions -- yo!
 {% endblock %}
 
 {% block js %}
+    <script type="text/javascript" src="../static/translate-page-mt-version.js"></script>
+    <link rel="stylesheet" type="text/css"href="../static/translation-page-mt.css">
+
     <script type=text/javascript>
-      function strip(html)
-        {
-          var tmp = document.createElement("DIV");
-          tmp.innerHTML = html;
-          return tmp.textContent || tmp.innerText || "";
-        }
-
-      function resetcolors(elem, nums) {
-        for (i=0; i<nums; i++) {
-          $(elem + i).css({"background-color": "transparent"})
-        }
-      }
-
-      function sharedStart(feed, partial) {
-        lastspace = partial.lastIndexOf(" ")
-        part1text = partial.substring(0, lastspace)
-        part2text = partial.substring(lastspace+1)
-        var count = 0
-        if (part1text) {
-          newfeed = feed.replace(part1text + " ", '')
-          
-        } else {
-          newfeed = feed
-        }
-        for (i=0; i<part2text.length; i++) {
-          if(part2text[i] === newfeed[i]){
-            count = count + 1;
-          } else {
-            break;
-          }
-        }
-        newfeedpre = newfeed.substring(0, count)
-        newfeedsuf = newfeed.substring(count)
-        if (newfeedpre == "" && newfeedsuf == "") {
-          return ""
-        }
-        return '<b>' + newfeedpre + '</b>' + newfeedsuf
-      }
-
-      function placeCaretAtEnd(el) {
-          el.focus();
-          if (typeof window.getSelection != "undefined"
-                  && typeof document.createRange != "undefined") {
-              var range = document.createRange();
-              range.selectNodeContents(el);
-              range.collapse(false);
-              var sel = window.getSelection();
-              sel.removeAllRanges();
-              sel.addRange(range);
-          } else if (typeof document.body.createTextRange != "undefined") {
-              var textRange = document.body.createTextRange();
-              textRange.moveToElementText(el);
-              textRange.collapse(false);
-              textRange.select();
-          }
-      }
-
-      function endsWithSpace(str) {
-        var endSpace = /\s$/;
-        if (endSpace.test(str)) {
-          return true
-        } else {
-          return false
-        }
-      }
-
-      function inputSpan(str) {
-        var strlist = str.split(" ");
-        var container = ""
-        for (k=0; k<strlist.length; k++) {
-          container += '<span class="hin_inp_part hin_inp_part' + k + '">' + strlist[k] + '</span> '
-        }
-        return container
-      }
-
 
       $(document).ready(function(){
         var searchRequest = null;
@@ -180,12 +108,10 @@ Translate according the instructions
                           finalresult = []
                           for(var i = 0; i < result.length; i++) {
                               var repres = sharedStart(result[i], partialret)
-                              // console.log(repres)
                               if (repres !== "") {
                                 container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
                                 countcontainer += 1;
                                 finalresult.push(result[i])
-                                // console.log(countcontainer, finalresult)
                               }
                           }
 
@@ -224,27 +150,16 @@ Translate according the instructions
                           outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
                         })
                         $(this).data("end", parseInt($(this).data("end")) + 1)
-                        // var keystrokes = []
-                        // $(".partial").each(function() {
-                        //   keystrokes.push($(this).data())
-                        // })
-                        // console.log(keystrokes)
                         $.ajax({
                             type: 'POST',
                             url: '/pushoutput',
                             data: {'csrfmiddlewaretoken': '{{ csrf_token }}', 'ops': JSON.stringify(outputs), 'keytimeseries': JSON.stringify(globkeystrokes)},
                             traditional: true,
                             success: function(result) {
-                                // console.log(result.result);
                                 window.location.href='/preview';
                             }
                         }); 
 
-                        // $.getJSON('/pushoutput', {
-                        //   ops: outputs,
-                        // }, function(data) {
-                        //       console.log(data.result)
-                        //     })
                     })
 
                     $(document).on('keydown', function(e) {
@@ -325,11 +240,7 @@ Translate according the instructions
                         })
                         console.log(JSON.stringify({'ops': outputs}))
                         $(this).data("end", parseInt($(this).data("end")) + 1)
-                        // var keystrokes = []
-                        // $(".partial").each(function() {
-                        //   keystrokes.push($(this).data())
-                        // })
-                        // console.log(keystrokes)
+
                         $.ajax({
                             type: 'POST',
                             url: '/pushoutput',
@@ -341,11 +252,6 @@ Translate according the instructions
                             }
                         }); 
 
-                        // $.getJSON('/pushoutput', {
-                        //   ops: outputs,
-                        // }, function(data) {
-                        //       console.log(data.result)
-                        //     })
                       } else
                       if (e.ctrlKey || (e.ctrlKey && keyCode == 65)) {
                       } else {
@@ -365,18 +271,11 @@ Translate according the instructions
                       
                     })
 
-                    // $('.transtext').one('focus', function() {
-                    //     $(this).html('');
-                    // });
-
                     $('.partial').focusin(function() {
 
                       timer1 = new Date();
                       $(this).closest('.bmo').removeClass('bmo--blur');
                       $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
-                      // $(this).closest('.bmo').css('filter', '');
-                      // $('.partial').closest('.bmo').not($(this).closest('.bmo')).css('filter', 'blur(3px)');
-                      // $(this).closest('.bmo').css('filter', '');
                       
                       $(this).closest('.bmo').find('.suggest').css('visibility', 'visible');
                       placeCaretAtEnd($(this).get(0))
@@ -392,28 +291,9 @@ Translate according the instructions
 
                     $(".partial").keyup(function(e){
                       var keyCode = e.keyCode || e.which;
-                      // console.log(!(e.ctrlKey && keyCode == 65))
                       if (keyCode != 40 && keyCode != 38 && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != 35 ) {
 
                         $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
-
-                        // var dropdown = $(this).parent().parent().children('.dropdown');
-                        // var firsttext =  $(this).text()
-                        // var textlist = firsttext.split(" ")
-                        // var part2text = textlist.pop()
-                        // var part1text = textlist.join(" ")
-
-                        // $(this).html(part1text + '<div id="dummy"></div>' + part2text)
-                        // if (firsttext) {
-                        //   dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
-                        // } else {
-                        //   dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
-                        // }
-                        // $(this).html(firsttext)
-                        // placeCaretAtEnd($(this).get(0)) 
-                      
-                        // clearTimeout(debounceTimeout);
-                        // debounceTimeout = setTimeout(searchEvents($(this)), 400);
                       }
                     });
 
@@ -431,14 +311,7 @@ Translate according the instructions
                     })
 
                   });
-                });
-
-        // var inputs = ['आज थका देने वाला दिन था','चलिए आज हम एक फिल्म के लिए चलते हैं','यह मेरा मूड फ्रेश कर देगा','मैं कल अपने काम पर ध्यान केंद्रित कर सकता हूं'];
-        // var inputs = ['मुझे कल एक ट्रेन पकड़नी है']
-
-        
-        // .css('filter', '');
- 
+                }); 
         
     </script>
 {% endblock %}
@@ -475,162 +348,5 @@ Translate according the instructions
       <a class="submittrans waves-effect waves-light btn blue-grey"><i class="material-icons right">send</i>submit</a>
     </div>
   </div>
-  <style>
-    body {
-        background: url(data:image/png;base64,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) fixed; 
-        background-color: #404040;
-      }
 
-      .bmo {
-        transition: all 0.12s ease-out;
-      }
-
-      .bmo--blur {
-          filter: blur(3px);
-          background-color: #ddd !important;
-      }
-
-     .ttt {
-       padding:15px;
-     } 
-    .pad-top {
-        height: 4vh;
-      }
-      .card-title {
-        color: #404040;
-        height: 8vh;
-      }
-      #result {
-        color: #404040;
-        text-align: left;
-      }
-      .card {
-        /* min-height: 15vh; */
-        background-color: #fff;
-        border-radius: 7px;
-      }
-      .bottom {
-        position: fixed;
-        bottom:0;
-        right:10;
-      }
-      #drop {
-        /* display: none; */
-        color: #404040;
-        position: absolute;
-        background-color: #ddd;
-        text-align: left;
-        padding: 10px;
-      }
-      .transtext {
-        padding: 5px;
-        min-height: 100px;
-      }
-
-      .hin_inp {
-        padding: 10px;
-        /* word-wrap: break-word; */
-        width: 100%;
-      }
-
-      .hin_inp_part {
-        padding: 2px;
-        border-radius: 4px;
-      }
-
-      .partial {
-        /* border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee; */
-        background-color: rgba(209, 209, 209, 0.274);
-      }
-      #result {
-        padding: 20px;
-      }
-
-      .partcontainer {
-        position: relative;
-        width: 100%;
-        /* overflow-y: auto; */
-      }
-
-      .dropcontainer {
-        position: relative;
-        
-      }
-
-      .suggest,.partial {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 10px;
-        white-space: pre-wrap;
-			  overflow-x:hidden;
-			  overflow-y:auto;
-      }
-
-      .partial {
-        z-index: 10;
-      }
-      .suggest {
-        color: #999
-      }
-      .res0 {
-        display: none !important;
-      }
-      .dropdown {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: #eee;
-        border: 1px solid rgba(0, 0, 255, 0.25);
-        /* border-color: #ddd; */
-        /* padding: 5px; */
-        /* padding-top: 1px; */
-        /* padding-left: 1px; */
-        /* padding-right: 5px; */
-        /* padding-bottom: 5px; */
-        z-index: 20;
-        /* border:1px solid rgb(97, 97, 197); */
-        visibility: hidden;
-      }
-      #dummy {
-        display: inline-block;
-      }
-      .spanres {
-        padding-right: 7px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        padding-left: 1px;
-        border: 1px solid rgba(0, 0, 255, 0.25);
-        display: block;
-        
-      }
-
-      .perinstr {
-        font-size: 12px;
-        bottom: 10;
-        right: 10;
-        position: absolute;
-      }
-
-      .switch {
-        padding: 15px;
-      }
-
-      .preloader-background {
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.9);
-        
-        position: fixed;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;	
-      }
-   </style>
    {% endblock %}

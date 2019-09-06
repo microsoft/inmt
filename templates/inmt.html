@@ -11,361 +11,11 @@ Please translate according the instructions
 {% endblock %}
 
 {% block js %}
+    <script type="text/javascript" src="../static/translate-page-mt-version.js"></script>
+    <link rel="stylesheet" type="text/css"href="../static/translation-page-mt.css">
+
     <script type=text/javascript>
-      function strip(html)
-        {
-          var tmp = document.createElement("DIV");
-          tmp.innerHTML = html;
-          return tmp.textContent || tmp.innerText || "";
-        }
-
-      function resetcolors(elem, nums) {
-        for (i=0; i<nums; i++) {
-          $(elem + i).css({"background-color": "transparent"})
-        }
-      }
-
-      function sharedStart(feed, partial) {
-        lastspace = partial.lastIndexOf(" ")
-        part1text = partial.substring(0, lastspace)
-        part2text = partial.substring(lastspace+1)
-        var count = 0
-        if (part1text) {
-          newfeed = feed.replace(part1text + " ", '')
-          
-        } else {
-          newfeed = feed
-        }
-        for (i=0; i<part2text.length; i++) {
-          if(part2text[i] === newfeed[i]){
-            count = count + 1;
-          } else {
-            break;
-          }
-        }
-        newfeedpre = newfeed.substring(0, count)
-        newfeedsuf = newfeed.substring(count)
-        if (newfeedpre == "" && newfeedsuf == "") {
-          return ""
-        }
-        return '<b>' + newfeedpre + '</b>' + newfeedsuf
-      }
-
-      function placeCaretAtEnd(el) {
-          el.focus();
-          if (typeof window.getSelection != "undefined"
-                  && typeof document.createRange != "undefined") {
-              var range = document.createRange();
-              range.selectNodeContents(el);
-              range.collapse(false);
-              var sel = window.getSelection();
-              sel.removeAllRanges();
-              sel.addRange(range);
-          } else if (typeof document.body.createTextRange != "undefined") {
-              var textRange = document.body.createTextRange();
-              textRange.moveToElementText(el);
-              textRange.collapse(false);
-              textRange.select();
-          }
-      }
-
-      function endsWithSpace(str) {
-        var endSpace = /\s$/;
-        if (endSpace.test(str)) {
-          return true
-        } else {
-          return false
-        }
-      }
-
-      function inputSpan(str) {
-        var strlist = str.split(" ");
-        var container = ""
-        for (k=0; k<strlist.length; k++) {
-          container += '<span class="hin_inp_part hin_inp_part' + k + '">' + strlist[k] + '</span> '
-        }
-        return container
-      }
-
-      function myFunction(str) {
-          // Get the snackbar DIV
-          var x = document.getElementById("snackbar");
-
-          // Add the "show" class to DIV
-          x.className = "show";
-          x.innerHTML = str;
-          // After 3 seconds, remove the show class from DIV
-          setTimeout(function(){ x.className = x.className.replace("show", ""); }, 300);
-        } 
-
-      function key2char(str) {
-        var keychar = String.fromCharCode(str);
-        switch (str) {
-            
-        case 1:
-            // left mouse click
-            keychar = "Mouse: left button";
-            break;
-        case 2:
-            // middle mouse click
-            keychar = "Mouse: middle button";
-            break;
-        case 3:
-            // right mouse click
-            keychar = "Mouse: right button";
-            break;
-                
-        case 8:
-            //  backspace
-            keychar = "Backspace";
-            break;
-        case 9:
-            //  tab
-            keychar = "Tab";
-            break;
-        case 13:
-            //  enter
-            keychar = "Enter";
-            break;
-        case 16:
-            //  shift
-            keychar = "Shift";
-            break;
-        case 17:
-            //  ctrl
-            keychar = "Ctrl";
-            break;
-        case 18:
-            //  alt
-            keychar = "Alt";
-            break;
-        case 19:
-            //  pause/break
-            keychar = "Pause/Break";
-            break;
-        case 20:
-            //  caps lock
-            keychar = "Caps Lock";
-            break;
-        case 27:
-            //  escape
-            keychar = "Escape";
-            break;
-        case 33:
-            // page up, to avoid displaying alternate character and confusing people             
-            keychar = "Page Up";
-            break;
-        case 34:
-            // page down
-            keychar = "Page Down";
-            break;
-        case 35:
-            // end
-            keychar = "End";
-            break;
-        case 36:
-            // home
-            keychar = "Home";
-            break;
-        case 37:
-            // left arrow
-            keychar = "Left Arrow";
-            break;
-        case 38:
-            // up arrow
-            keychar = "Up Arrow";
-            break;
-        case 39:
-            // right arrow
-            keychar = "Right Arrow";
-            break;
-        case 40:
-            // down arrow
-            keychar = "Down Arrow";
-            break;
-        case 45:
-            // insert
-            keychar = "Insert";
-            break;
-        case 46:
-            // delete
-            keychar = "Delete";
-            break;
-        case 91:
-            // left window
-            keychar = "Window Left";
-            break;
-        case 92:
-            // right window
-            keychar = "Window Right";
-            break;
-        case 93:
-            // select key
-            keychar = "Context Menu (select key)";
-            break;
-        case 96:
-            // NumPad 0
-            keychar = "NumPad 0";
-            break;
-        case 97:
-            // NumPad 1
-            keychar = "NumPad 1";
-            break;
-        case 98:
-            // NumPad 2
-            keychar = "NumPad 2";
-            break;
-        case 99:
-            // NumPad 3
-            keychar = "NumPad 3";
-            break;
-        case 100:
-            // NumPad 4
-            keychar = "NumPad 4";
-            break;
-        case 101:
-            // NumPad 5
-            keychar = "NumPad 5";
-            break;
-        case 102:
-            // NumPad 6
-            keychar = "NumPad 6";
-            break;
-        case 103:
-            // NumPad 7
-            keychar = "NumPad 7";
-            break;
-        case 104:
-            // NumPad 8
-            keychar = "NumPad 8";
-            break;
-        case 105:
-            // NumPad 9
-            keychar = "NumPad 9";
-            break;
-        case 106:
-            // multiply
-            keychar = "NumPad * (multiply)";
-            break;
-        case 107:
-            // add
-            keychar = "NumPad + (add)";
-            break;
-        case 109:
-            // subtract
-            keychar = "NumPad - (subtract)";
-            break;
-        case 110:
-            // decimal point
-            keychar = "NumPad . (decimal point)";
-            break;
-        case 111:
-            // divide
-            keychar = "NumPad / (divide)";
-            break;
-        case 112:
-            // F1
-            keychar = "F1";
-            break;
-        case 113:
-            // F2
-            keychar = "F2";
-            break;
-        case 114:
-            // F3
-            keychar = "F3";
-            break;
-        case 115:
-            // F4
-            keychar = "F4";
-            break;
-        case 116:
-            // F5
-            keychar = "F5";
-            break;
-        case 117:
-            // F6
-            keychar = "F6";
-            break;
-        case 118:
-            // F7
-            keychar = "F7";
-            break;
-        case 119:
-            // F8
-            keychar = "F8";
-            break;
-        case 120:
-            // F9
-            keychar = "F9";
-            break;
-        case 121:
-            // F10
-            keychar = "F10";
-            break;
-        case 122:
-            // F11
-            keychar = "F11";
-            break;
-        case 123:
-            // F12
-            keychar = "F12";
-            break;
-        case 144:
-            // num lock
-            keychar = "Num Lock";
-            break;
-        case 145:
-            // scroll lock
-            keychar = "Scroll Lock";
-            break;
-        case 186:
-            // semi-colon
-            keychar = ";";
-            break;
-        case 187:
-            // equal-sign
-            keychar = "=";
-            break;
-        case 188:
-            // comma
-            keychar = ",";
-            break;
-        case 189:
-            // dash
-            keychar = "-";
-            break;
-        case 190:
-            // period
-            keychar = ".";
-            break;
-        case 191:
-            // forward slash
-            keychar = "/";
-            break;
-        case 192:
-            // grave accent
-            keychar = "`";
-            break;
-        case 219:
-            // open bracket
-            keychar = "[";
-            break;
-        case 220:
-            // back slash
-            keychar = "\\";
-            break;
-        case 221:
-            // close bracket
-            keychar = "]";
-            break;
-        case 222:
-            // single quote
-            keychar = "'";
-            break;
-        }
-        return keychar
-      }
+      
 
       $(document).ready(function(){
         var searchRequest = null;
@@ -414,11 +64,6 @@ Please translate according the instructions
         console.log("NAVIGATE_TO_NEXT_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT));
         console.log("NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT));
         console.log("SUBMIT_TRANSLATION: " + key2char(SUBMIT_TRANSLATION));
-
-
-
-
-
 
         $.getJSON('/getinput', {
                    }, function(data) {
@@ -539,11 +184,7 @@ Please translate according the instructions
                           outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
                         })
                         $(this).data("end", parseInt($(this).data("end")) + 1)
-                        // var keystrokes = []
-                        // $(".partial").each(function() {
-                        //   keystrokes.push($(this).data())
-                        // })
-                        // console.log(keystrokes)
+
                         $.ajax({
                             type: 'POST',
                             url: '/pushoutput',
@@ -555,11 +196,6 @@ Please translate according the instructions
                             }
                         }); 
 
-                        // $.getJSON('/pushoutput', {
-                        //   ops: outputs,
-                        // }, function(data) {
-                        //       console.log(data.result)
-                        //     })
                     })
 
                     $(document).on('keydown', function(e) {
@@ -621,8 +257,6 @@ Please translate according the instructions
                       } else
                       if (keyCode == NAVIGATE_TO_NEXT_CORPUS_FRAGMENT) { 
                         e.preventDefault();
-                        // searchEvents($(this));
-                        //$(this).closest('.bmo').next().find('.partial').focus()
                         var currentDiv = $(this).closest('.bmo').find('.partial')
                         var nextDiv = $(this).closest('.bmo').next().find('.partial');
                         var heightDiff = nextDiv.offset().top - currentDiv.offset().top
@@ -633,24 +267,18 @@ Please translate according the instructions
                       } else 
                       if (keyCode == NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT) { 
                         e.preventDefault();
-                        // searchEvents($(this));
                         $(this).closest('.bmo').prev().find('.partial').focus()
                         $(this).data("pgup", parseInt($(this).data("pgup")) + 1)
                       } else
                       if (keyCode == SUBMIT_TRANSLATION) { 
                         e.preventDefault();
                         $('.preloader-background').css('display', 'flex')
-                        // searchEvents($(this));
                         $(".partial").each(function() {
                           outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
                         })
                         console.log(JSON.stringify({'ops': outputs}))
                         $(this).data("end", parseInt($(this).data("end")) + 1)
-                        // var keystrokes = []
-                        // $(".partial").each(function() {
-                        //   keystrokes.push($(this).data())
-                        // })
-                        // console.log(keystrokes)
+
                         $.ajax({
                             type: 'POST',
                             url: '/pushoutput',
@@ -662,11 +290,6 @@ Please translate according the instructions
                             }
                         }); 
 
-                        // $.getJSON('/pushoutput', {
-                        //   ops: outputs,
-                        // }, function(data) {
-                        //       console.log(data.result)
-                        //     })
                       } else
                       if (e.ctrlKey || (e.ctrlKey && keyCode == 65)) {
                       } else {
@@ -686,18 +309,12 @@ Please translate according the instructions
                       
                     })
 
-                    // $('.transtext').one('focus', function() {
-                    //     $(this).html('');
-                    // });
-
                     $('.partial').focusin(function() {
 
                       timer1 = new Date();
                       $(this).closest('.bmo').removeClass('bmo--blur');
                       $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
-                      // $(this).closest('.bmo').css('filter', '');
-                      // $('.partial').closest('.bmo').not($(this).closest('.bmo')).css('filter', 'blur(3px)');
-                      // $(this).closest('.bmo').css('filter', '');
+
                       searchEvents($(this));
                       var dropdown = $(this).parent().parent().children('.dropdown');
                       dropdown.css('visibility', 'visible')
@@ -728,7 +345,6 @@ Please translate according the instructions
 
                     $(".partial").keyup(function(e){
                       var keyCode = e.keyCode || e.which;
-                      // console.log(!(e.ctrlKey && keyCode == 65))
                       if (keyCode != SELECT_NEXT_TRANSLATION_SUGGESTION && keyCode != SELECT_PREVIOUS_TRANSLATION_SUGGESTION && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != SUBMIT_TRANSLATION ) {
 
                         $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
@@ -768,13 +384,6 @@ Please translate according the instructions
 
                   });
                 });
-
-        // var inputs = ['आज थका देने वाला दिन था','चलिए आज हम एक फिल्म के लिए चलते हैं','यह मेरा मूड फ्रेश कर देगा','मैं कल अपने काम पर ध्यान केंद्रित कर सकता हूं'];
-        // var inputs = ['मुझे कल एक ट्रेन पकड़नी है']
-
-        
-        // .css('filter', '');
- 
         
     </script>
 {% endblock %}
@@ -811,162 +420,5 @@ Please translate according the instructions
       <a class="submittrans waves-effect waves-light btn blue-grey"><i class="material-icons right">send</i>submit</a>
     </div>
   </div>
-  <style>
-    body {
-        /*background: url(data:image/png;base64,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) fixed; */
-        background-color: #404040;
-      }
 
-      .bmo {
-        transition: all 0.12s ease-out;
-      }
-
-      .bmo--blur {
-          filter: blur(3px);
-          background-color: #ddd !important;
-      }
-
-     .ttt {
-       padding:15px;
-     } 
-    .pad-top {
-        height: 4vh;
-      }
-      .card-title {
-        color: #404040;
-        height: 8vh;
-      }
-      #result {
-        color: #404040;
-        text-align: left;
-      }
-      .card {
-        /* min-height: 15vh; */
-        background-color: #fff;
-        border-radius: 7px;
-      }
-      .bottom {
-        position: fixed;
-        bottom:0;
-        right:10;
-      }
-      #drop {
-        /* display: none; */
-        color: #404040;
-        position: absolute;
-        background-color: #ddd;
-        text-align: left;
-        padding: 10px;
-      }
-      .transtext {
-        padding: 5px;
-        min-height: 100px;
-      }
-
-      .hin_inp {
-        padding: 10px;
-        /* word-wrap: break-word; */
-        width: 100%;
-      }
-
-      .hin_inp_part {
-        padding: 2px;
-        border-radius: 4px;
-      }
-
-      .partial {
-        /* border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee; */
-        background-color: rgba(209, 209, 209, 0.274);
-      }
-      #result {
-        padding: 20px;
-      }
-
-      .partcontainer {
-        position: relative;
-        width: 100%;
-        /* overflow-y: auto; */
-      }
-
-      .dropcontainer {
-        position: relative;
-        
-      }
-
-      .suggest,.partial {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 10px;
-        white-space: pre-wrap;
-			  overflow-x:hidden;
-			  overflow-y:auto;
-      }
-
-      .partial {
-        z-index: 10;
-      }
-      .suggest {
-        color: #999
-      }
-      .res0 {
-        display: none !important;
-      }
-      .dropdown {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: #eee;
-        border: 1px solid rgba(0, 0, 255, 0.25);
-        /* border-color: #ddd; */
-        /* padding: 5px; */
-        /* padding-top: 1px; */
-        /* padding-left: 1px; */
-        /* padding-right: 5px; */
-        /* padding-bottom: 5px; */
-        z-index: 20;
-        /* border:1px solid rgb(97, 97, 197); */
-        visibility: hidden;
-      }
-      #dummy {
-        display: inline-block;
-      }
-      .spanres {
-        padding-right: 7px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        padding-left: 1px;
-        border: 1px solid rgba(0, 0, 255, 0.25);
-        display: block;
-        
-      }
-
-      .perinstr {
-        font-size: 12px;
-        bottom: 10;
-        right: 10;
-        position: absolute;
-      }
-
-      .switch {
-        padding: 15px;
-      }
-
-      .preloader-background {
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.9);
-        
-        position: fixed;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;	
-      }
-   </style>
    {% endblock %}
