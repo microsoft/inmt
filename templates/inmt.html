@@ -15,9 +15,11 @@ Please translate according the instructions
     <link rel="stylesheet" type="text/css"href="../static/translation-page-mt.css">
 
     <script type=text/javascript>
-      
 
-      $(document).ready(function(){
+
+ 
+ 
+ $(document).ready(function(){
         var searchRequest = null;
         var debounceTimeout = null;
         var searchInput = $("#partial");
@@ -65,6 +67,12 @@ Please translate according the instructions
         console.log("NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT));
         console.log("SUBMIT_TRANSLATION: " + key2char(SUBMIT_TRANSLATION));
 
+
+        //Get the control scheme mode
+        var translation_assistance = {{ assistanceOn|yesno:"true,false" }}
+        console.log("Translation Assistance:", translation_assistance)
+
+      
         $.getJSON('/getinput', {
                    }, function(data) {
                     // console.log(data.result);
@@ -315,21 +323,25 @@ Please translate according the instructions
                       $(this).closest('.bmo').removeClass('bmo--blur');
                       $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
 
-                      searchEvents($(this));
-                      var dropdown = $(this).parent().parent().children('.dropdown');
-                      dropdown.css('visibility', 'visible')
-                      var firsttext =  $(this).text()
-                      var textlist = firsttext.split(" ")
-                      var part2text = textlist.pop()
-                      var part1text = textlist.join(" ") + " "
+                      if (translation_assistance){
+                        searchEvents($(this));
+                        var dropdown = $(this).parent().parent().children('.dropdown');
+                        dropdown.css('visibility', 'visible')
+                        var firsttext =  $(this).text()
+                        var textlist = firsttext.split(" ")
+                        var part2text = textlist.pop()
+                        var part1text = textlist.join(" ") + " "
 
-                      $(this).html(part1text + '<div id="dummy"></div>' + part2text)
-                      if (firsttext) {
-                        dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+7);
-                      } else {
-                        dropdown.css('left', $('#dummy')[0].offsetLeft-5).css('top', $('#dummy')[0].offsetTop+7);
+                        $(this).html(part1text + '<div id="dummy"></div>' + part2text)
+                        if (firsttext) {
+                          dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+7);
+                        } else {
+                          dropdown.css('left', $('#dummy')[0].offsetLeft-5).css('top', $('#dummy')[0].offsetTop+7);
+                        }
+                        $(this).html(firsttext)
                       }
-                      $(this).html(firsttext)
+
+                      
                       $(this).closest('.bmo').find('.suggest').css('visibility', 'visible');
                       placeCaretAtEnd($(this).get(0))
                     });
@@ -338,8 +350,10 @@ Please translate according the instructions
                       timer2 = new Date();
                       $(this).data("time", timer2 - timer1 + parseInt($(this).data("time")))
                       console.log($(this).data("time"))
-                      var dropdown = $(this).closest('.bmo').find('.dropdown');
-                      dropdown.css('visibility', 'hidden')
+                      if (translation_assistance){
+                        var dropdown = $(this).closest('.bmo').find('.dropdown');
+                        dropdown.css('visibility', 'hidden')
+                      }
                       $(this).closest('.bmo').find('.suggest').css('visibility', 'hidden')
                     })
 
@@ -348,30 +362,34 @@ Please translate according the instructions
                       if (keyCode != SELECT_NEXT_TRANSLATION_SUGGESTION && keyCode != SELECT_PREVIOUS_TRANSLATION_SUGGESTION && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != SUBMIT_TRANSLATION ) {
 
                         $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
+                        if (translation_assistance){
 
-                        var dropdown = $(this).parent().parent().children('.dropdown');
-                        var firsttext =  $(this).text()
-                        var textlist = firsttext.split(" ")
-                        var part2text = textlist.pop()
-                        var part1text = textlist.join(" ")
+                          var dropdown = $(this).parent().parent().children('.dropdown');
+                          var firsttext =  $(this).text()
+                          var textlist = firsttext.split(" ")
+                          var part2text = textlist.pop()
+                          var part1text = textlist.join(" ")
 
-                        $(this).html(part1text + '<div id="dummy"></div>' + part2text)
-                        if (firsttext) {
-                          dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
-                        } else {
-                          dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                          $(this).html(part1text + '<div id="dummy"></div>' + part2text)
+                          if (firsttext) {
+                            dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
+                          } else {
+                            dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                          }
+                          $(this).html(firsttext)
+                          placeCaretAtEnd($(this).get(0)) 
+                        
+                          clearTimeout(debounceTimeout);
+                          debounceTimeout = setTimeout(searchEvents($(this)), 50);
                         }
-                        $(this).html(firsttext)
-                        placeCaretAtEnd($(this).get(0)) 
-                      
-                        clearTimeout(debounceTimeout);
-                        debounceTimeout = setTimeout(searchEvents($(this)), 50);
                       }
                     });
 
                     $(".hin_inp").focusout(function(){
                       // $('#hin_inp').html(strip($('#hin_inp').html()))
-                      searchEvents($(this));
+                      if (translation_assistance){
+                        searchEvents($(this));
+                      }
                     })
 
                     $("#highlight").change(function(){
@@ -383,8 +401,7 @@ Please translate according the instructions
                     })
 
                   });
-                });
-        
+                });      
     </script>
 {% endblock %}
 {% block content %}

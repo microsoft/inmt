@@ -199,9 +199,9 @@ def new(request):
         selectedControlScheme = "default"
 
     if translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision:
-        return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme})
+        return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'assistanceOn':True})
     else:
-        return render(request, 'inmth.html', {'selectedControlScheme': selectedControlScheme})
+        return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'assistanceOn':False})
 
 
 @login_required
