@@ -16,6 +16,7 @@ Translate according the instructions -- yo!
 
     <script type=text/javascript>
 
+      /*
       $(document).ready(function(){
         var searchRequest = null;
         var debounceTimeout = null;
@@ -33,6 +34,32 @@ Translate according the instructions -- yo!
         var timer1 = 0;
         var timer2 = 0;
 
+        //Keyboard Navigation		
+        var default_key_commands = [9, 13, 40, 38, 34, 33, 35]		
+        var selectsingle =  {{ selectedControlScheme.select_single_word_from_suggestion }}		
+        var selectentire = {{ selectedControlScheme.select_entire_suggestion }}		
+        var navnext = {{ selectedControlScheme.navigate_to_next_corpus_fragment }}		
+        var navprev = {{ selectedControlScheme.navigate_to_previous_corpus_fragment }}		
+        var submit = {{ selectedControlScheme.submit_translation }}		
+        var selectnextsug = {{ selectedControlScheme.select_next_translation_suggestion }}		
+        var selectprevsug = {{ selectedControlScheme.select_previous_translation_suggestion }}		
+        var controlname = "{{ selectedControlScheme }}"		
+        var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = selectsingle ? selectsingle: default_key_commands[0];		
+        var SELECT_ENTIRE_SUGGESTION = selectentire? selectentire: default_key_commands[1];		
+        var SELECT_NEXT_TRANSLATION_SUGGESTION = selectnextsug? selectnextsug: default_key_commands[2];		
+        var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = selectprevsug? selectprevsug: default_key_commands[3];		
+        var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = navnext? navnext: default_key_commands[4];		
+        var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = navprev? navprev: default_key_commands[5];		
+        var SUBMIT_TRANSLATION = submit? submit: default_key_commands[6];		
+        var CONTROL_SCHEME_NAME = controlname? controlname : "default";		
+        console.log("SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY: " + key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY));		
+        console.log("SELECT_ENTIRE_SUGGESTION: " + key2char(SELECT_ENTIRE_SUGGESTION));		
+        console.log("SELECT_NEXT_TRANSLATION_SUGGESTION: " + key2char(SELECT_NEXT_TRANSLATION_SUGGESTION));		
+        console.log("SELECT_PREVIOUS_TRANSLATION_SUGGESTION: " + key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION));		
+        console.log("NAVIGATE_TO_NEXT_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT));		
+        console.log("NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT));		
+        console.log("SUBMIT_TRANSLATION: " + key2char(SUBMIT_TRANSLATION));
+
         $.getJSON('/getinput', {
                    }, function(data) {
                     // console.log(data.result);
@@ -40,7 +67,6 @@ Translate according the instructions -- yo!
                     console.log(inputs)
                     $('#cardscoll').html('')
                     for (i=0; i<inputs.length; i++) {
-                      // console.log()
                       $('#cardscoll').append(
                                               `<div class="card bmo">
                                                 <div class="card-content">
@@ -64,7 +90,7 @@ Translate according the instructions -- yo!
                                                         </div>
                                                       </div>
                                                       <div class="perinstr">
-                                                          | &nbsp; &nbsp; Select &#8645; Tab &#8594; Enter &#8608; &nbsp; &nbsp; | &nbsp; &nbsp; Page Down &#8609; Page Up &#8607; &nbsp; &nbsp; |
+                                                          `+ CONTROL_SCHEME_NAME +`: &nbsp;` +key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION)+"&#x2191; "+key2char(SELECT_NEXT_TRANSLATION_SUGGESTION) +` &#x2193; ` +key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY) +`  &#8594; ` +key2char(SELECT_ENTIRE_SUGGESTION)+` &#8608; &nbsp; | &nbsp; ` +key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT)+` &#8609; ` +key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT)+` &#8607; &nbsp; | Submit: ` +key2char(SUBMIT_TRANSLATION)+`
                                                       </div>
                                                     </div>
                                                   </div>
@@ -311,7 +337,7 @@ Translate according the instructions -- yo!
                     })
 
                   });
-                }); 
+                }); */
         
     </script>
 {% endblock %}
