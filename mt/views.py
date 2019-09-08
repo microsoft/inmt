@@ -115,9 +115,55 @@ def isControlSchemeDefined(request):
 def tstart(request):
     request.session["translatedsetid"] = 0
     translatorlangs = request.user.translator.translatorlangs.values('langtolang')
-    all_corpus = corpus.objects.filter(corpuslangreqs__langtolang__in=translatorlangs).order_by('id')
-
+    translatorcorpus = request.user.translator.translatorcorpus.values('corpus')
+    print("WE ARE GETTING TRANSLATOR LANGS!!!!")
+    print(translatorlangs)
+    print(translatorcorpus)
+    print("END TRANSLATOR LANGS + Corpus")
+    #all_corpus = corpus.objects.filter(corpuslangreqs__langtolang__in=translatorlangs).order_by('id')
     corp = []
+    for corpusID in translatorcorpus:
+        print("corpusID: ", corpusID['corpus'])
+        onecorp = corpus.objects.get(id=corpusID['corpus'])
+        #print(obj)
+        #corp.append(obj) 
+
+        percorp = {}
+        percorp["name"] = onecorp.name
+        percorp["baselang"] = onecorp.baselang
+        percorp["id"] = onecorp.id
+        langtolangs = onecorp.corpuslangreqs.values_list('langtolang__src__name', 'langtolang__tgt__name', 'langtolang__id')
+        
+        translatorlangsid = [k['langtolang'] for k in list(translatorlangs)]
+        for langtolangdesc in langtolangs:
+            if langtolangdesc[2] in translatorlangsid:
+                percorp["langtolang"] = langtolangdesc[0] + " --> " + langtolangdesc[1]
+                percorp["langtolangid"] = langtolangdesc[2]
+                
+
+                ## Check for translated set
+                transsent = translatedSentence.objects.filter(translatedSet__in=translatedSet.objects.filter(corpus=onecorp, user=request.user, langtolang=langtolang.objects.get(pk=langtolangdesc[2])))
+                if transsent.count() == 0:
+                    condition = 0
+                else:
+                    vlist = list(transsent.values_list('tgt', flat=True))
+                    if '' in vlist:
+                        condition = 1
+                    else:
+                        condition = 2
+                percorp["condition"] = condition
+
+                corp.append(percorp)
+           
+    context = {
+        'corpus': corp,
+        }
+    print("FINAL CORPUS:")
+    print(corp)
+    return render(request, 'tstart.html', context)
+
+
+'''
     for i in range(len(all_corpus)):
         percorp = {}
         percorp["name"] = all_corpus[i].name
@@ -145,11 +191,7 @@ def tstart(request):
                 percorp["condition"] = condition
 
                 corp.append(percorp)
-    context = {
-        'corpus': corp,
-        }
-    return render(request, 'tstart.html', context)
-
+    '''
 
 def transdelete(request):
     corpid = request.GET.get('corpid')
