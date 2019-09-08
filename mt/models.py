@@ -126,6 +126,20 @@ class corpusLangReq(models.Model):
     def __str__(self):
         return self.corpus.name + " | " + self.langtolang.__str__()
 
+
+class translatorcorpus(models.Model):
+    translator = models.ForeignKey(translator, on_delete = models.CASCADE, related_name="translatorcorpus")
+    corpus = models.ForeignKey(corpus, on_delete = models.CASCADE, related_name="corpustranslators")
+
+    class Meta:
+        verbose_name = "Translator Corpus Possible"
+        verbose_name_plural = "6. Translator Corpus Possible"
+        unique_together = (("translator", "corpus"))
+
+    def __str__(self):
+        return self.translator.name + " | " + self.corpus.name
+
+
 class translatedSet(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     corpus = models.ForeignKey(corpus, on_delete = models.CASCADE)
