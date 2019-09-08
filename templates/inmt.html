@@ -70,6 +70,8 @@ var langspecs = [
   console.log("NAVIGATE_TO_NEXT_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT));
   console.log("NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT: " + key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT));
   console.log("SUBMIT_TRANSLATION: " + key2char(SUBMIT_TRANSLATION));
+  globkeystrokes.push([CONTROL_SCHEME_NAME, new Date() - docstarttime])
+
 
 
 function parseProcessedJsonResultsfunction(data, partial) {
@@ -178,7 +180,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
                                                       <div class="dropcontainer">
                                                         <div class="partcontainer">
                                                           <div class="suggest transtext" contenteditable="false"></div>
-                                                          <div class=" partial transtext" contenteditable="true"
+                                                          <div class=" partial transtext" id="card` + i + `" contenteditable="true"
                                                           data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
                                                           >`+inputs[i][1]+`</div>
                                                         </div>
@@ -382,6 +384,9 @@ function parseProcessedJsonResultsfunction(data, partial) {
                       
                       $(this).closest('.bmo').find('.suggest').css('visibility', 'visible');
                       placeCaretAtEnd($(this).get(0))
+                      //Note the card switch in the globalkeystroke data
+                      cardID = $(this).get(0).id
+                      globkeystrokes.push([cardID, new Date() - docstarttime])
                     });
 
                     $(".partial").on('focusout',function() {

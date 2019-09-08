@@ -307,6 +307,7 @@ function key2char(str) {
       }
 
       function placeCaretAtEnd(el) {
+        //console.log("Inside PlaceCaretAtEnd, we have el: ", el)
         el.focus();
         if (typeof window.getSelection != "undefined"
                 && typeof document.createRange != "undefined") {
@@ -318,6 +319,7 @@ function key2char(str) {
             sel.addRange(range);
         } else if (typeof document.body.createTextRange != "undefined") {
             var textRange = document.body.createTextRange();
+
             textRange.moveToElementText(el);
             textRange.collapse(false);
             textRange.select();
