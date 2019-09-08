@@ -488,7 +488,7 @@ $(document).ready(function(){
 
       var hin_inp = partial.closest('.bmo').find('.hin_inp')
       globalPartial = partial;
-
+      console.log("Sending Langspec!!!", langspec)
       //Make a communication request using the socket 
       connectSocket.send(JSON.stringify({
         'partial_translation': partial.clone().children().remove().end().text(),

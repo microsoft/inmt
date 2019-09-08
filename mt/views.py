@@ -234,7 +234,7 @@ def getinput(request):
     corpusinps = []
     for i in translatedsents:
         corpusinps.append([i.src, i.tgt])
-    return JsonResponse({'result': corpusinps})
+    return JsonResponse({'result': corpusinps, 'langtolangid': request.session["langtolangid"]})
 
 
 def quotapos(s, lang="en"):
