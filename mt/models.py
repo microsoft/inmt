@@ -63,12 +63,19 @@ class translatorlangs(models.Model):
     def __str__(self):
         return self.translator.name + " | " + self.langtolang.__str__()
 
+translation_types = [
+    ('IT', 'Interactive Translation'),
+    ('PE', 'Post Editing'),
+    ('BL', 'Baseline')
+]
+
 class corpus(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     name = models.CharField(max_length=120)
     corpus = models.TextField()
     baselang = models.ForeignKey(language, on_delete = models.CASCADE)
-    helpprovision = models.BooleanField()
+    helpprovision = models.CharField(max_length=2, choices=translation_types, default='IT')
+    # helpprovision = models.BooleanField()
 
     __original_corpus = None
 

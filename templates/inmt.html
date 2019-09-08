@@ -16,7 +16,7 @@ Please translate according the instructions
 
     <script type=text/javascript>
 
-
+var helpprovision
 var globalPartial
 var highlight = $("#highlight").is(':checked');
 var langspecs = [
@@ -42,6 +42,7 @@ var langspecs = [
 
   //Keyboard Navigation
   var default_key_commands = [9, 13, 40, 38, 34, 33, 35]
+
 
   var selectsingle =  {{ selectedControlScheme.select_single_word_from_suggestion }}
   var selectentire = {{ selectedControlScheme.select_entire_suggestion }}
@@ -87,50 +88,54 @@ function parseProcessedJsonResultsfunction(data, partial) {
       selecte = 0;
     }
 
-    if (result[selecte].includes(partial.text())) {
-        partial.closest('.bmo').find('.suggest').text(result[selecte])
-        partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
-    }
-    
-    var container = $('<div />');
+    if (helpprovision == 'IT') {
+      if (result[selecte].includes(partial.text())) {
+          partial.closest('.bmo').find('.suggest').text(result[selecte])
+          partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
+      }
+      
+      var container = $('<div />');
 
-    var countcontainer = 0
-    finalresult = []
-    for(var i = 0; i < result.length; i++) {
-        var repres = sharedStart(result[i], partialret)
-        // console.log(repres)
-        if (repres !== "") {
-          container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
-          countcontainer += 1;
-          finalresult.push(result[i])
-          // console.log(countcontainer, finalresult)
-        }
-    }
+      var countcontainer = 0
+      finalresult = []
+      for(var i = 0; i < result.length; i++) {
+          var repres = sharedStart(result[i], partialret)
+          // console.log(repres)
+          if (repres !== "") {
+            container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+            countcontainer += 1;
+            finalresult.push(result[i])
+            // console.log(countcontainer, finalresult)
+          }
+      }
 
-    result = finalresult
+      result = finalresult
 
-    partial.closest('.bmo').find('.dropdown').html(container);
-    
-    resetcolors('.res', $('.spanres').length)
-    $('.res' + selecte).css("background-color","#eee")
-    if (countcontainer>1) {
-      partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
-    }
+      partial.closest('.bmo').find('.dropdown').html(container);
+      
+      resetcolors('.res', $('.spanres').length)
+      $('.res' + selecte).css("background-color","#eee")
+      if (countcontainer>1) {
+        partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
+      }
 
-    // All to do with the source sentence
-    
-    if (highlight == true) {
-      var attn = data.attn
-      $("span[class^='hin_inp_part']").css("background-color", "transparent");
-      for (m=0; m<attn.length; m++) {
-        
-        if (attn[m] != 0) {
-          partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
-        }
-        else {
-          partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
+      // All to do with the source sentence
+      
+      if (highlight == true) {
+        var attn = data.attn
+        $("span[class^='hin_inp_part']").css("background-color", "transparent");
+        for (m=0; m<attn.length; m++) {
+          
+          if (attn[m] != 0) {
+            partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
+          }
+          else {
+            partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
+          }
         }
       }
+    } else if (helpprovision == 'PE') {
+      partial.text(result[selecte])
     }
   }
  
@@ -140,8 +145,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
 
 
         //Get the control scheme mode
-        var translation_assistance = {{ assistanceOn|yesno:"true,false" }}
-        console.log("Translation Assistance:", translation_assistance)
+        helpprovision = "{{ helpprovision|safe }}"
+        console.log("Translation Assistance:", helpprovision)
         
         var connectSocket = new WebSocket(
           'ws://' + window.location.host + '/ws/simple/translation-socket'
@@ -356,13 +361,19 @@ function parseProcessedJsonResultsfunction(data, partial) {
                       
                     })
 
+                    $('.partial').one('focus', function() {
+                      if (helpprovision == 'PE') {
+                        searchEvents($(this));
+                      }
+                    })
+
                     $('.partial').focusin(function() {
 
                       timer1 = new Date();
                       $(this).closest('.bmo').removeClass('bmo--blur');
                       $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
 
-                      if (translation_assistance){
+                      if (helpprovision == 'IT'){
                         searchEvents($(this));
                         var dropdown = $(this).parent().parent().children('.dropdown');
                         dropdown.css('visibility', 'visible')
@@ -392,7 +403,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
                       timer2 = new Date();
                       $(this).data("time", timer2 - timer1 + parseInt($(this).data("time")))
                       console.log($(this).data("time"))
-                      if (translation_assistance){
+                      if (helpprovision == 'IT'){
                         var dropdown = $(this).closest('.bmo').find('.dropdown');
                         dropdown.css('visibility', 'hidden')
                       }
@@ -404,7 +415,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
                       if (keyCode != SELECT_NEXT_TRANSLATION_SUGGESTION && keyCode != SELECT_PREVIOUS_TRANSLATION_SUGGESTION && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != SUBMIT_TRANSLATION ) {
 
                         $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
-                        if (translation_assistance){
+                        if (helpprovision == 'IT'){
 
                           var dropdown = $(this).parent().parent().children('.dropdown');
                           var firsttext =  $(this).text()
@@ -429,7 +440,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
 
                     $(".hin_inp").focusout(function(){
                       // $('#hin_inp').html(strip($('#hin_inp').html()))
-                      if (translation_assistance){
+                      if (helpprovision == 'IT'){
                         searchEvents($(this));
                       }
                     })
