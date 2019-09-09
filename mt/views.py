@@ -112,6 +112,75 @@ def isControlSchemeDefined(request):
     return JsonResponse({'result': session })
 
 @login_required
+def add_control_scheme(request):
+    print("New Request Yaaay!!!!")
+    controlScheme = request.POST['cs']
+    controlSchemeObject = json.loads(controlScheme)
+    #We cannot assume default values, as orhers could be in use
+    default_values = [1]
+    if "select_entire_suggestion" in controlSchemeObject:
+         entire = controlSchemeObject["select_entire_suggestion"]
+    else:
+        entire = default_values[0]
+    if "select_single_word_from_suggestion" in controlSchemeObject:
+        single = controlSchemeObject["select_single_word_from_suggestion"]
+    else:
+        single = default_values[0]
+    if "navigate_to_next_corpus_fragment" in controlSchemeObject:
+        nav_next = controlSchemeObject["navigate_to_next_corpus_fragment"]
+    else:
+        nav_next = default_values[0]
+    if "navigate_to_previous_corpus_fragment" in controlSchemeObject:
+        nav_prev = controlSchemeObject["navigate_to_previous_corpus_fragment"]
+    else:
+        nav_prev = default_values[0]
+    if "submit_translation" in controlSchemeObject:
+        submit = controlSchemeObject["submit_translation"]
+    else:
+        submit = default_values[0]
+    if "select_next_translation_suggestion" in controlSchemeObject:
+        sel_next = controlSchemeObject["select_next_translation_suggestion"]
+    else:
+        sel_next = default_values[0]
+    if "select_previous_translation_suggestion" in controlSchemeObject:
+        sel_prev = controlSchemeObject["select_previous_translation_suggestion"]
+    else:
+        sel_prev = default_values[0]
+    if "custom_layout_name" in controlSchemeObject:
+        name = controlSchemeObject["custom_layout_name"]
+    else:
+        name = default_values[0]
+
+    newScheme = customKeyboardCommands(select_entire_suggestion=entire,
+    select_single_word_from_suggestion=single,
+    navigate_to_next_corpus_fragment=nav_next,
+    navigate_to_previous_corpus_fragment=nav_prev,
+    submit_translation=submit,
+    select_next_translation_suggestion=sel_next,
+    select_previous_translation_suggestion=sel_prev,
+    custom_layout_name=name)
+    print(newScheme)
+    newScheme.save()
+
+    #Now Create the translatorKeyboardLayouts link
+    newLink = translatorKeyboardLayouts(translator= request.user.translator, customKeyboardCommands=newScheme)
+    newLink.save()
+
+    return JsonResponse({'result': "Processed!!" })
+
+
+
+
+
+
+
+
+
+
+
+
+
+@login_required
 def tstart(request):
     request.session["translatedsetid"] = 0
     translatorlangs = request.user.translator.translatorlangs.values('langtolang')
@@ -163,36 +232,6 @@ def tstart(request):
     return render(request, 'tstart.html', context)
 
 
-'''
-    for i in range(len(all_corpus)):
-        percorp = {}
-        percorp["name"] = all_corpus[i].name
-        percorp["baselang"] = all_corpus[i].baselang
-        percorp["id"] = all_corpus[i].id
-        langtolangs = all_corpus[i].corpuslangreqs.values_list('langtolang__src__name', 'langtolang__tgt__name', 'langtolang__id')
-        
-        translatorlangsid = [k['langtolang'] for k in list(translatorlangs)]
-        for langtolangdesc in langtolangs:
-            if langtolangdesc[2] in translatorlangsid:
-                percorp["langtolang"] = langtolangdesc[0] + " --> " + langtolangdesc[1]
-                percorp["langtolangid"] = langtolangdesc[2]
-                
-
-                ## Check for translated set
-                transsent = translatedSentence.objects.filter(translatedSet__in=translatedSet.objects.filter(corpus=all_corpus[i], user=request.user, langtolang=langtolang.objects.get(pk=langtolangdesc[2])))
-                if transsent.count() == 0:
-                    condition = 0
-                else:
-                    vlist = list(transsent.values_list('tgt', flat=True))
-                    if '' in vlist:
-                        condition = 1
-                    else:
-                        condition = 2
-                percorp["condition"] = condition
-
-                corp.append(percorp)
-    '''
-
 def transdelete(request):
     corpid = request.GET.get('corpid')
     langtolangid = request.GET.get('langtolangid')
@@ -205,15 +244,6 @@ def dashboard(request):
     request.session["translatedsetid"] = 0
     return render(request, 'dashboard.html')
 
-
-# def login(request):
-#     pass
-
-# def logout(request):
-#     pass
-
-# def logint(request):
-#     pass
 
 @login_required
 def new(request):

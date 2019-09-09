@@ -10,6 +10,7 @@ urlpatterns = [
     path('corpusinput', views.corpusinput, name='corpusinput'),
     path('getinput', views.getinput, name='getinput'),
     path('translate_new', views.translate_new, name='translate_new'),
+    path('add_control_scheme', views.add_control_scheme, name='add_control_scheme'),
     #path('translate_single_sentence', views.translate_single_sentence, name='translate_single_sentence'),
     path('pushoutput', views.pushoutput, name='pushoutput'),
     path('getoutput', views.getoutput, name='getoutput'),
