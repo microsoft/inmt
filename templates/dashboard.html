@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<!--Stepper Components - Credit to Igor Marcossi https://kinark.github.io/Materialize-stepper/-->
+<link rel="stylesheet" href="https://unpkg.com/materialize-stepper@3.1.0/dist/css/mstepper.min.css">
+<script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.min.js"></script>
+
+
 <script type="text/javascript" src="../static/key2charname.js"></script>
 
 <script>
@@ -57,6 +62,18 @@
       instance.open();
     }
 
+    function openInstructionsModal(){
+      var loginModal = document.querySelector('#modal_instructions');
+      var loginModal_options = {};
+      var loginModal_instance = M.Modal.init( loginModal, loginModal_options);
+
+      console.log(loginModal_instance);
+      loginModal_instance.open();
+
+      var instance = M.Modal.getInstance(loginModal);
+      instance.open();
+    }
+
 
 /*
     $.getJSON('/iscontrolschemedefined', {
@@ -76,26 +93,82 @@
           return data;
         });
     }
+    var controlSchemeArray = {}
 
     function fillTextArea(address, value){
       console.log(address)
       document.getElementById(address).value = key2char(value);
+      controlSchemeArray[address] = value
+      console.log(controlSchemeArray)
     }
     var highlightedID = ""
 
     function setHighlightedID(newValue){
+      disableClickable()
       highlightedID = newValue
     }
 
+    $("input").on('keydown', function(e){
+      var keyCode = e.keyCode || e.which;
+      //e.preventDefault();
+      console.log("We are also adding a span!!!")
+      //fillTextArea(highlightedID, keyCode)
+    })
+    var clickable = true;
+
+    function disableClickable(){
+      console.log("enabling!")
+      clickable = false;
+    }
+
+    function enableClickable(){
+      console.log("disabling")
+      clickable = true; 
+    }
+
+    function submitForm(){
+      title = document.getElementById('control_scheme_title').value
+      controlSchemeArray['custom_layout_name'] = title;
+      console.log(controlSchemeArray)
+
+
+      //send Post Request
+      $.ajax({
+          type: 'POST',
+          url: '/add_control_scheme',
+          data: { 'csrfmiddlewaretoken': '{{ csrf_token }}', 'cs': JSON.stringify(controlSchemeArray), 'controls': controlSchemeArray},
+          traditional: true,
+          success: function(result) {
+              // console.log(result.result);
+              location.reload(true)
+          }
+      }); 
+
+
+
+      //Close Modal
+      var loginModal = document.querySelector('#modal_create_control_scheme');
+      var loginModal_options = {};
+      var loginModal_instance = M.Modal.init( loginModal, loginModal_options);
+
+      console.log(loginModal_instance);
+      loginModal_instance.close();
+
+      var instance = M.Modal.getInstance(loginModal);
+      instance.close();
+    }
+
+
+
     $("div").on('keydown', function(e){
       var keyCode = e.keyCode || e.which;
-      e.preventDefault();
-      console.log("We pressed Keycode: ", keyCode)
-      fillTextArea(highlightedID, keyCode)
+      if (!clickable){
+        e.preventDefault();
+        console.log("We pressed Keycode: ", keyCode)
+        fillTextArea(highlightedID, keyCode)
+      }
     })
-
-
-
+    
 
   
 </script>
@@ -140,7 +213,7 @@
 
 <div class="row">
   <div class="col s4">
-    <div class="card teal lighten-4">
+    <div class="card teal lighten-4" onclick="openInstructionsModal()">
         <div class="card-content centered">
 
           <i class="material-icons Large">import_contacts</i>
@@ -192,6 +265,8 @@
   </div>
 
 
+
+<!--Modal Create Keyboard Command Sequence-->
 <div id="modal_create_control_scheme" class="modal">
   <div class="modal-content" onclick="console.log('UNHIGHLIGHTED')">
     <div class = "row">
@@ -200,10 +275,18 @@
 
         <p></p>
       
-        <div class = "row">
-            <div class = "input-field col s12 keylistener">
+        <div class = "row" onclick="enableClickable()">
+            <div class = "input-field col s12 keylistener divvy">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address1')" id="address1" class = "materialize-textarea keylistener"></textarea>
+              <textarea  id="control_scheme_title" class = " materialize-textarea keylistener"></textarea>
+              <label for = "address">Name The Control Scheme</label>
+            </div>
+        </div>
+
+        <div class = "row" onclick="disableClickable()">
+            <div class = "input-field col s12 keylistener divvy">
+              <i class = "material-icons prefix">mode_edit</i>
+              <textarea onclick="setHighlightedID('select_entire_suggestion')" id="select_entire_suggestion" class = "divvy materialize-textarea keylistener"></textarea>
               <label for = "address">Select Entire Suggestion (Default Key: Enter)</label>
             </div>
         </div>
@@ -211,7 +294,7 @@
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address2')" id = "address2" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('select_single_word_from_suggestion')" id = "select_single_word_from_suggestion" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Select Single Word from Suggestion (Default Key: Tab)</label>
             </div>
         </div>
@@ -219,7 +302,7 @@
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address3')" id = "address3" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('select_next_translation_suggestion')" id = "select_next_translation_suggestion" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Highlight Next Suggestion (Default Key: Down Arrow)</label>
             </div>
         </div>
@@ -227,7 +310,7 @@
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address4')" id = "address4" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('select_previous_translation_suggestion')" id = "select_previous_translation_suggestion" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Highlight Previous Suggestion (Default Key: Up Arrow)</label>
             </div>
         </div>
@@ -235,38 +318,80 @@
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address5')" id ="address5" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('navigate_to_next_corpus_fragment')" id ="navigate_to_next_corpus_fragment" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Navigate To Next Corpus Fragment (Default Key: Page Down)</label>
             </div>
         </div>
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address6')" id = "address6" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('navigate_to_previous_corpus_fragment')" id = "navigate_to_previous_corpus_fragment" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Navigate To Previous Corpus Fragment (Default Key: Page Up)</label>
             </div>
         </div>
         <div class = "row">
             <div class = "input-field col s12 keylistener">
               <i class = "material-icons prefix">mode_edit</i>
-              <textarea onclick="setHighlightedID('address7')" id = "address7" class = "materialize-textarea keylistener"></textarea>
+              <textarea onclick="setHighlightedID('submit_translation')" id = "submit_translation" class = "materialize-textarea keylistener"></textarea>
               <label for = "address">Submit Translation (Default Key: End)</label>
             </div>
         </div>    
-        <Span>
-          <i class = "material-icons prefix">mode_edit</i>
-          <textarea onclick="setHighlightedID('address7')" id = "address7" class = "materialize-textarea"></textarea>
-          <label for = "address">Control Scheme Name</label>
-        </Span>
-      </form>               
-    <button onclick="fillTextArea()">submit</button>
+                    
+    <btn class="waves-red waves-effect btn" onclick="submitForm()">submit</btn>
 
   </div>
 </div>
 </div>
 
+<div id="modal_instructions" class="modal">
+    <div class="modal-content centered">
+      
+      <div id="customStepper"></div>
+    
+  </div>
+</div>
+
+ 
+<script>
+  
+  $(document).ready(function(){
+      
+    console.log("We are getting started with the stepper!")
+    $("#customStepper").append(
+      `<ul class="stepper horizontal">
+          {% for config in request.user.translator.translatorconfigs.all %}
+          <li class="step active">
+              <div class="step-title waves-effect">{{ config.customKeyboardCommands }}</div>
+              <div class="step-content">
+                  <!-- Your step content goes here (like inputs or so) -->
+                  <h4>{{ config.customKeyboardCommands }} - Instructions</h4>
+                  <ol>
+                    <li>Select Entire Selection(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.select_entire_suggestion }}) + `</b></li>
+                    <li>Select Single Word From Selection(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.select_single_word_from_suggestion }}) + `</b></li>
+                    <li>Select Next Translation Suggestion(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.select_next_translation_suggestion }}) + `</b></li>
+                    <li>Select Previous Translation Suggestion(Key)    <b>-    ` + key2char({{ config.customKeyboardCommands.select_previous_translation_suggestion }}) + `</b></li>
+                    <li>Navigate to Next Corpus Fragment(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.navigate_to_next_corpus_fragment }}) + `</b></li>
+                    <li>Navigate to Previous Corpus Fragment(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.navigate_to_previous_corpus_fragment }}) + `</b></li>
+                    <li>Submit Translation(Key)    -    <b>` + key2char({{ config.customKeyboardCommands.submit_translation }}) + `</b></li>
+                  </ol>
+                </div>
+          </li>
+          <br/>
+          {% endfor %}
+      </ul>`
+    );
+
+    var stepper = document.querySelector('.stepper');
+    console.log("The stepper is: ", stepper)
+    var stepperInstace = new MStepper(stepper, {
+          // options
+          firstActive: 1 // this is the default
+      })
+  }
+  );
 
 
+</script>
 <!--Specify Keyboard Layout Form!!!!!-->
 
 {% endblock  %}
