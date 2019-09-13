@@ -11,8 +11,8 @@ Please translate according the instructions
 {% endblock %}
 
 {% block js %}
-    <script type="text/javascript" src="../static/translate-page-mt-version.js"></script>
-    <link rel="stylesheet" type="text/css"href="../static/translation-page-mt.css">
+    <script type="text/javascript" src="{% static 'translate-page-mt-version.js' %}"></script>
+    <link rel="stylesheet" type="text/css"href="{% static 'translation-page-mt.css' %}">
 
     <script type=text/javascript>
 
@@ -138,8 +138,10 @@ function parseProcessedJsonResultsfunction(data, partial) {
       partial.text(result[selecte])
     }
   }
- 
- $(document).ready(function(){
+
+var sockets_use = {{ sockets|yesno:"true,false" }};
+
+$(document).ready(function(){
 
 
 
@@ -147,22 +149,23 @@ function parseProcessedJsonResultsfunction(data, partial) {
         //Get the control scheme mode
         helpprovision = "{{ helpprovision|safe }}"
         console.log("Translation Assistance:", helpprovision)
-        
-        var connectSocket = new WebSocket(
-          'ws://' + window.location.host + '/ws/simple/translation-socket'
-        );
+        console.log("Sockets used:", sockets_use)
+        if (sockets_use == true) {
+          var connectSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/simple/translation-socket'
+          );
 
-        connectSocket.onmessage = function(e){
-          data = JSON.parse(e.data)
-          searchRequest = parseProcessedJsonResultsfunction(data, globalPartial)
-        }
+          connectSocket.onmessage = function(e){
+            data = JSON.parse(e.data)
+            searchRequest = parseProcessedJsonResultsfunction(data, globalPartial)
+          }
 
-        connectSocket.onclose = function(e){
-          console.error()
+          connectSocket.onclose = function(e){
+            console.error()
+          }
         }
       
-        $.getJSON('/getinput', {
-                   }, function(data) {
+        $.getJSON('/getinput', {}, function(data) {
                     // console.log(data.result);
                     inputs=data.result;
                     langtolangid = data.langtolangid;
@@ -209,21 +212,85 @@ function parseProcessedJsonResultsfunction(data, partial) {
 
                       var hin_inp = partial.closest('.bmo').find('.hin_inp')
                       globalPartial = partial;
-                      console.log("Sending once at least!!!")
-                      console.log(langtolangid)
-                      connectSocket.send(JSON.stringify({
-                        'partial_translation': partial.clone().children().remove().end().text(),
-                        'original': hin_inp.text(),
-                        'langspec': langspecs[langtolangid]
-                      }));
+                      if (sockets_use == true) {
+                        console.log("Sending once at least!!!")
+                        console.log(langtolangid)
+                        connectSocket.send(JSON.stringify({
+                          'partial_translation': partial.clone().children().remove().end().text(),
+                          'original': hin_inp.text(),
+                          'langspec': langspecs[langtolangid]
+                        }));
+                      } else {
 
                       //OLD, JANKY SEND REQUEST!!
-                      /*
-                      searchRequest =  $.getJSON('/translate_new', {
-                          a: strip(hin_inp.text()),
-                          b: partial.clone().children().remove().end().text()
-                        }, );
-                        */ 
+                      
+                        searchRequest =  $.getJSON('/translate_new', {
+                            a: strip(hin_inp.text()),
+                            b: partial.clone().children().remove().end().text()
+                          }, function(data) {
+                              console.log(data)
+                              result = data.result.split("\n")
+                              partialret = data.partial
+                              
+                              selecte = 0;
+                              
+                              // All to do with the user input
+                              if (selecte >= result.length) {
+                                selecte = 0;
+                              }
+
+                              if (helpprovision == 'IT') {
+                                if (result[selecte].includes(partial.text())) {
+                                    partial.closest('.bmo').find('.suggest').text(result[selecte])
+                                    partial.closest('.bmo').find('.suggest').scrollTop(partial.scrollTop());
+                                }
+                                
+                                var container = $('<div />');
+
+                                var countcontainer = 0
+                                finalresult = []
+                                for(var i = 0; i < result.length; i++) {
+                                    var repres = sharedStart(result[i], partialret)
+                                    // console.log(repres)
+                                    if (repres !== "") {
+                                      container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+                                      countcontainer += 1;
+                                      finalresult.push(result[i])
+                                      // console.log(countcontainer, finalresult)
+                                    }
+                                }
+
+                                result = finalresult
+
+                                partial.closest('.bmo').find('.dropdown').html(container);
+                                
+                                resetcolors('.res', $('.spanres').length)
+                                $('.res' + selecte).css("background-color","#eee")
+                                if (countcontainer>1) {
+                                  partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
+                                }
+
+                                // All to do with the source sentence
+                                
+                                if (highlight == true) {
+                                  var attn = data.attn
+                                  $("span[class^='hin_inp_part']").css("background-color", "transparent");
+                                  for (m=0; m<attn.length; m++) {
+                                    
+                                    if (attn[m] != 0) {
+                                      partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
+                                    }
+                                    else {
+                                      partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
+                                    }
+                                  }
+                                }
+                              } else if (helpprovision == 'PE') {
+                                partial.text(result[selecte])
+                              }
+                          });
+                      }
+                      
                     }
 
                     //PART OF CODE DEDICATED TO SUBMISSIONS
@@ -311,15 +378,35 @@ function parseProcessedJsonResultsfunction(data, partial) {
                         e.preventDefault();
                         var currentDiv = $(this).closest('.bmo').find('.partial')
                         var nextDiv = $(this).closest('.bmo').next().find('.partial');
-                        var heightDiff = nextDiv.offset().top - currentDiv.offset().top
+                        // var heightDiff = nextDiv.offset().top - currentDiv.offset().top
+                        var heightDiff = nextDiv.offset().top - $("#slide-out").offset().top
+                        var browh = window.innerHeight
+                        if (heightDiff >= 0.5*browh) {
+                          window.scrollBy({
+                            top: heightDiff- 0.5*browh,
+                            left: 0,
+                            behavior: 'smooth',
+                          })
+                        }
                         nextDiv.focus()
-                        window.scrollBy(0,heightDiff);
+                        // window.scrollBy(0,heightDiff);
                         //Place click data into the server
                         $(this).data("pgdn", parseInt($(this).data("pgdn")) + 1)
                       } else 
                       if (keyCode == NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT) { 
                         e.preventDefault();
-                        $(this).closest('.bmo').prev().find('.partial').focus()
+                        var currentDiv = $(this).closest('.bmo').find('.partial')
+                        var prevDiv = $(this).closest('.bmo').prev().find('.partial');
+                        var browh = window.innerHeight
+                        var heightDiff = browh - (prevDiv.offset().top - $("#slide-out").offset().top)
+                        if (heightDiff >= 0.5*browh) {
+                          window.scrollBy({
+                            top: 0.5*browh-heightDiff,
+                            left: 0,
+                            behavior: 'smooth'
+                          })
+                        }
+                        prevDiv.focus()
                         $(this).data("pgup", parseInt($(this).data("pgup")) + 1)
                       } else
                       if (keyCode == SUBMIT_TRANSLATION) { 
@@ -328,7 +415,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
                         $(".partial").each(function() {
                           outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
                         })
-                        console.log(JSON.stringify({'ops': outputs}))
+                        // console.log(JSON.stringify({'ops': outputs}))
                         $(this).data("end", parseInt($(this).data("end")) + 1)
 
                         $.ajax({
@@ -402,7 +489,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
                     $(".partial").on('focusout',function() {
                       timer2 = new Date();
                       $(this).data("time", timer2 - timer1 + parseInt($(this).data("time")))
-                      console.log($(this).data("time"))
+                      // console.log($(this).data("time"))
                       if (helpprovision == 'IT'){
                         var dropdown = $(this).closest('.bmo').find('.dropdown');
                         dropdown.css('visibility', 'hidden')

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,15 +24,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^@f24c3b-j&1z8l9^&8ut&bx7%2oz+hj%vt28g1k5dpre#t$5t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+    
 
 ALLOWED_HOSTS = ['*']
 
 
+try:
+    from .conf import *
+except:
+    DEBUG = True
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+    SOCKETS = False
+    PRODUCTION = False
+
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +57,9 @@ INSTALLED_APPS = [
     'mtpara',
     # 'gpt',
 ]
+
+if SOCKETS:
+    INSTALLED_APPS.insert(0, 'channels')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,28 +94,7 @@ WSGI_APPLICATION = 'InteractiveTranslation.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': "myproject",
-#         'USER': "myadmin@interactdatab",
-#         'PASSWORD': "ThisIs4P4ssw0rd!=1",
-#         'HOST': "interactdatab.postgres.database.azure.com",
-#         'PORT': "5432",
-#         'OPTIONS': {
-#             'sslmode': 'require',
-#         }
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
+    
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -145,16 +141,16 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/dashboard'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
-# DEFAULT_FILE_STORAGE = 'InteractiveTranslation.custom_azure.AzureMediaStorage'
-# STATICFILES_STORAGE = 'InteractiveTranslation.custom_azure.AzureStaticStorage'
-
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
 
-# AZURE_ACCOUNT_NAME = "interactcentral"
-# AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-# STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-# MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+if PRODUCTION:
+    DEFAULT_FILE_STORAGE = 'InteractiveTranslation.custom_azure.AzureMediaStorage'
+    STATICFILES_STORAGE = 'InteractiveTranslation.custom_azure.AzureStaticStorage'
+    AZURE_ACCOUNT_NAME = "interactcentral"
+    AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+    STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
 
 STATIC_URL = '/static/'
 
@@ -181,4 +177,14 @@ STATIC_URL = '/static/'
 #  }
 #  }
 
-ASGI_APPLICATION = 'InteractiveTranslation.routing.application'
+if SOCKETS:
+    ASGI_APPLICATION = 'InteractiveTranslation.routing.application'
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("redis-server-name", 6379)],
+#         },
+#     },
+# }

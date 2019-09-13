@@ -3,3 +3,4 @@ model/
 db.sqlite3
 opennmt/.git
 pred.txt
+conf.py
