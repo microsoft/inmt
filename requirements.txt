@@ -9,3 +9,4 @@ channels
 configargparse
 editdistance
 indic_transliteration
+jsonfield
