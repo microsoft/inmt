@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <!--Stepper Components - Credit to Igor Marcossi https://kinark.github.io/Materialize-stepper/-->
 <link rel="stylesheet" href="https://unpkg.com/materialize-stepper@3.1.0/dist/css/mstepper.min.css">
 <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.min.js"></script>
 
 
-<script type="text/javascript" src="../static/key2charname.js"></script>
+<script type="text/javascript" src="{% static 'key2charname.js' %}"></script>
 
 <script>
 

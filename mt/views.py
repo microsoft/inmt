@@ -37,8 +37,14 @@ import csv
 
 import requests
 
+from django.conf import settings
+
+# print(settings.SOCKETS)
+
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
+
+
 
 langspecs = {
     '2' : {
@@ -272,7 +278,7 @@ def new(request):
 
     helpprovision = translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision
 
-    return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'helpprovision': helpprovision})
+    return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'helpprovision': helpprovision, 'sockets': settings.SOCKETS})
     # if translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision:
     #     return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'assistanceOn':True})
     # else:
