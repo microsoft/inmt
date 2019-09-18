@@ -7,12 +7,32 @@
     <script type="text/javascript" src="{% static 'materialize.js' %}"></script>
 
     <script type="text/javascript">
-  
+      var sockets_use = false;
+      var system_type = 'IT';
+      
+      var csrf_token = '{{ csrf_token }}';
+
+      var socket_translate = '/ws/simple/translation-socket';
+      var http_translate = '/simple/translate_new';
+      var http_getinput = '/simple/getinput';
+      var http_pushoutput = '/simple/pushoutput';
+      var http_preview = '/simple/preview';
+
+
+      var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = 9;
+      var SELECT_ENTIRE_SUGGESTION = 13;
+      var SELECT_NEXT_TRANSLATION_SUGGESTION = 40;
+      var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = 38;
+      var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = 34;
+      var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = 33;
+      var SUBMIT_TRANSLATION = 35;
+      var CONTROL_SCHEME_NAME = "default";
     </script>
 
-    <script type="text/javascript" src="../static/translate-page.js"></script>
-      
-    </script>
+    <script type="text/javascript" src="{% static 'translation.js' %}"></script>
+    
+    <div id="topdock" style="position: fixed; top:0; right:0;">
+    </div>
     <div class="container">
         <div id="snackbar">Some text some message..</div>
       <div class="row">
@@ -46,7 +66,9 @@
       <div id="cardscoll">
     
       </div>
- 
+
+    </div>
+    <div id="bottomdock" style="position: fixed; bottom:0; right:0;">
     </div>
   </body>
   <style>
