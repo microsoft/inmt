@@ -1,0 +1,304 @@
+id,user,corpus,langtolang
+503,test_user_1101,थोड़ी सी मदद MT L4 | English,English -> Hindi
+502,test_user_1101,खरगोश के लम्बे कान BL L2 | English,English -> Hindi
+501,test_user_1101,कछुआ BL L4 | English,English -> Hindi
+500,test_user_1101,नानी की ऐनक PE L2 | English,English -> Hindi
+499,interact,Test Corpus Identity | Hindi,Hindi -> English
+498,test_user_1601,खरगोश के लम्बे कान MT L2 | English,English -> Hindi
+497,test_user_1601,कछुआ MT L4 | English,English -> Hindi
+496,test_user_1601,मेरे पलंग के नीचे PE L2 | English,English -> Hindi
+495,test_user_1601,थोड़ी सी मदद PE L4 | English,English -> Hindi
+494,test_user_1601,नानी की ऐनक BL L2 | English,English -> Hindi
+493,test_user_1601,मसाला चाय BL L4 | English,English -> Hindi
+492,test_user_801,नानी की ऐनक MT L2 | English,English -> Hindi
+491,test_user_801,थोड़ी सी मदद PE L4 | English,English -> Hindi
+490,test_user_801,कछुआ MT L4 | English,English -> Hindi
+489,test_user_801,खरगोश के लम्बे कान PE L2 | English,English -> Hindi
+488,test_user_801,मेरे पलंग के नीचे BL L2 | English,English -> Hindi
+487,interact,sand_test1 | English,English -> Hindi
+486,interact,Test_sand | Hindi,Hindi -> English
+485,test_user_801,कछुआ BL L4 | English,English -> Hindi
+484,test_user_801,First day at School | Hindi,Hindi -> English
+483,test_user_1001,कछुआ PE L4 | English,English -> Hindi
+482,test_user_1001,खरगोश के लम्बे कान BL L2 | English,English -> Hindi
+481,test_user_1001,थोड़ी सी मदद BL L4 | English,English -> Hindi
+480,test_user_1101,मसाला चाय PE L4 | English,English -> Hindi
+479,test_user_1101,मेरे पलंग के नीचे MT L2 | English,English -> Hindi
+477,test_user_1401,मसाला चाय MT L4 | English,English -> Hindi
+476,test_user_1401,खरगोश के लम्बे कान PE L2 | English,English -> Hindi
+475,test_user_1401,नानी की ऐनक MT L2 | English,English -> Hindi
+474,test_user_1401,कछुआ PE L4 | English,English -> Hindi
+473,test_user_1401,मेरे पलंग के नीचे BL L2 | English,English -> Hindi
+472,test_user_1401,थोड़ी सी मदद BL L4 | English,English -> Hindi
+471,interact,मसाला चाय MT L4 | English,English -> Hindi
+470,user_201,Jungle Brew MT L4 | Hindi,Hindi -> English
+469,test_user_301,Turtle Story PE L4 | Hindi,Hindi -> English
+468,user_201,At Least I'm Ok MT L3 | Hindi,Hindi -> English
+467,test_user_301,Monsoon | Hindi,Hindi -> English
+466,test_user_301,Whats That Smell PE L3 | Hindi,Hindi -> English
+465,test_user_301,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+464,test_user_301,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+463,test_user_301,Under My Bed PE L2 | Hindi,Hindi -> English
+462,test_user_301,Didi and Children | Hindi,Hindi -> English
+461,test_user_601,Jungle Brew MT L4 | Hindi,Hindi -> English
+460,test_user_601,At Least I'm Ok MT L3 | Hindi,Hindi -> English
+459,test_user_301,My Home PE L1 | Hindi,Hindi -> English
+458,test_user_301,A Helping Hand BL L4 | Hindi,Hindi -> English
+457,test_user_1302,A Helping Hand MT L4 | Hindi,Hindi -> English
+456,test_user_1302,How to be an Otter MT L3 | Hindi,Hindi -> English
+455,test_user_1302,All Aboard MT L2 | Hindi,Hindi -> English
+454,test_user_1302,My Best Friend MT L1 | Hindi,Hindi -> English
+453,test_user_1302,Jungle Brew PE L4 | Hindi,Hindi -> English
+452,test_user_1401,A Helping Hand MT L4 | Hindi,Hindi -> English
+451,test_user_401,Jungle Brew MT L4 | Hindi,Hindi -> English
+450,test_user_401,At Least I'm Ok MT L3 | Hindi,Hindi -> English
+449,test_user_801,Turtle Story MT L4 | Hindi,Hindi -> English
+448,test_user_1201,A Helping Hand MT L4 | Hindi,Hindi -> English
+447,test_user_1201,Under My Bed BL L2 | Hindi,Hindi -> English
+446,test_user_1201,My Home BL L1 | Hindi,Hindi -> English
+445,test_user_501,Jungle Brew MT L4 | Hindi,Hindi -> English
+444,test_user_1001,Turtle Story MT L4 | Hindi,Hindi -> English
+443,test_user_501,At Least I'm Ok MT L3 | Hindi,Hindi -> English
+442,test_user_1001,Whats That Smell MT L3 | Hindi,Hindi -> English
+441,test_user_1601,A Helping Hand MT L4 | Hindi,Hindi -> English
+440,test_user_1601,How to be an Otter MT L3 | Hindi,Hindi -> English
+439,test_user_1601,All Aboard MT L2 | Hindi,Hindi -> English
+438,test_user_901,Turtle Story MT L4 | Hindi,Hindi -> English
+436,test_user_1401,How to be an Otter MT L3 | Hindi,Hindi -> English
+435,test_user_701,Turtle Story MT L4 | Hindi,Hindi -> English
+434,test_user_1101,Turtle Story MT L4 | Hindi,Hindi -> English
+433,test_user_901,Whats That Smell MT L3 | Hindi,Hindi -> English
+432,test_user_701,Whats That Smell MT L3 | Hindi,Hindi -> English
+429,test_user_1401,All Aboard MT L2 | Hindi,Hindi -> English
+428,test_user_1401,My Best Friend MT L1 | Hindi,Hindi -> English
+427,test_user_801,Whats That Smell MT L3 | Hindi,Hindi -> English
+426,test_user_801,Under My Bed MT L2 | Hindi,Hindi -> English
+425,test_user_1101,Whats That Smell MT L3 | Hindi,Hindi -> English
+424,test_user_801,A Helping Hand PE L4 | Hindi,Hindi -> English
+423,test_user_401,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+422,interact,Turtle Story MT L4 | Hindi,Hindi -> English
+421,interact,Jungle Brew MT L4 | Hindi,Hindi -> English
+420,interact,A Helping Hand MT L4 | Hindi,Hindi -> English
+419,interact,Whats That Smell MT L3 | Hindi,Hindi -> English
+418,interact,At Least I'm Ok MT L3 | Hindi,Hindi -> English
+417,interact,How to be an Otter MT L3 | Hindi,Hindi -> English
+416,test_user_401,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+415,test_user_1601,My Best Friend MT L1 | Hindi,Hindi -> English
+414,test_user_1601,Jungle Brew PE L4 | Hindi,Hindi -> English
+413,test_user_1601,Monsoon | Hindi,Hindi -> English
+412,test_user_801,My Home MT L1 | Hindi,Hindi -> English
+409,test_user_401,Turtle Story PE L4 | Hindi,Hindi -> English
+408,test_user_501,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+407,test_user_1101,Under My Bed MT L2 | Hindi,Hindi -> English
+406,test_user_501,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+405,user_201,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+404,test_user_1101,My Home MT L1 | Hindi,Hindi -> English
+403,test_user_1001,Under My Bed MT L2 | Hindi,Hindi -> English
+402,test_user_1001,My Home MT L1 | Hindi,Hindi -> English
+401,test_user_1001,A Helping Hand PE L4 | Hindi,Hindi -> English
+400,user_201,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+399,user_201,Turtle Story PE L4 | Hindi,Hindi -> English
+398,test_user_601,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+397,test_user_601,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+396,test_user_701,Under My Bed MT L2 | Hindi,Hindi -> English
+395,test_user_701,My Home MT L1 | Hindi,Hindi -> English
+394,test_user_701,A Helping Hand PE L4 | Hindi,Hindi -> English
+393,test_user_701,Monsoon | Hindi,Hindi -> English
+392,test_user_1401,Jungle Brew PE L4 | Hindi,Hindi -> English
+391,test_user_701,How to be an Otter PE L3 | Hindi,Hindi -> English
+390,test_user_1101,A Helping Hand PE L4 | Hindi,Hindi -> English
+389,test_user_901,My Home MT L1 | Hindi,Hindi -> English
+388,test_user_901,Under My Bed MT L2 | Hindi,Hindi -> English
+387,interact,Monsoon | Hindi,Hindi -> English
+385,interact,Monsoon PE | Hindi,Hindi -> English
+384,test_user_601,Turtle Story PE L4 | Hindi,Hindi -> English
+383,test_user_501,Turtle Story PE L4 | Hindi,Hindi -> English
+382,test_user_501,Monsoon | Hindi,Hindi -> English
+381,test_user_901,A Helping Hand PE L4 | Hindi,Hindi -> English
+380,test_user_801,Monsoon | Hindi,Hindi -> English
+379,test_user_701,All Aboard PE L2 | Hindi,Hindi -> English
+378,test_user_301,How to be an Otter BL L3 | Hindi,Hindi -> English
+377,interact,A Helping Hand PE L4 | Hindi,Hindi -> English
+376,interact,Jungle Brew PE L4 | Hindi,Hindi -> English
+375,interact,Turtle Story PE L4 | Hindi,Hindi -> English
+374,interact,Under My Bed MT L2 | Hindi,Hindi -> English
+373,interact,The Rabbit's Long Ears MT L2 | Hindi,Hindi -> English
+372,interact,All Aboard MT L2 | Hindi,Hindi -> English
+371,interact,My Best Friend MT L1 | Hindi,Hindi -> English
+370,interact,The Moon and The Cap MT L1 | Hindi,Hindi -> English
+369,interact,My Home MT L1 | Hindi,Hindi -> English
+368,test_user_401,Monsoon | Hindi,Hindi -> English
+367,test_user_1401,Monsoon PE | Hindi,Hindi -> English
+366,test_user_401,Whats That Smell PE L3 | Hindi,Hindi -> English
+365,test_user_401,Under My Bed PE L2 | Hindi,Hindi -> English
+364,test_user_501,Whats That Smell PE L3 | Hindi,Hindi -> English
+363,test_user_1001,Didi and Children | Hindi,Hindi -> English
+362,test_user_801,How to be an Otter PE L3 | Hindi,Hindi -> English
+361,test_user_1001,Monsoon | Hindi,Hindi -> English
+360,test_user_1001,How to be an Otter PE L3 | Hindi,Hindi -> English
+359,test_user_1001,All Aboard PE L2 | Hindi,Hindi -> English
+358,test_user_501,Under My Bed PE L2 | Hindi,Hindi -> English
+357,test_user_801,All Aboard PE L2 | Hindi,Hindi -> English
+356,test_user_1101,Monsoon | Hindi,Hindi -> English
+355,user_201,Monsoon | Hindi,Hindi -> English
+354,user_201,Whats That Smell PE L3 | Hindi,Hindi -> English
+353,user_201,Under My Bed PE L2 | Hindi,Hindi -> English
+352,test_user_1401,At Least I'm Ok PE L3 | Hindi,Hindi -> English
+351,test_user_1401,The Rabbit's Long Ears PE L2 | Hindi,Hindi -> English
+350,test_user_1601,At Least I'm Ok PE L3 | Hindi,Hindi -> English
+349,test_user_1101,How to be an Otter PE L3 | Hindi,Hindi -> English
+348,test_user_601,Monsoon | Hindi,Hindi -> English
+347,test_user_601,Whats That Smell PE L3 | Hindi,Hindi -> English
+346,test_user_1601,The Rabbit's Long Ears PE L2 | Hindi,Hindi -> English
+345,test_user_601,Under My Bed PE L2 | Hindi,Hindi -> English
+344,test_user_1101,All Aboard PE L2 | Hindi,Hindi -> English
+343,test_user_601,Didi and Children | Hindi,Hindi -> English
+342,test_user_701,My Best Friend PE L1 | Hindi,Hindi -> English
+341,test_user_601,My Home PE L1 | Hindi,Hindi -> English
+340,test_user_601,A Helping Hand BL L4 | Hindi,Hindi -> English
+339,test_user_701,Jungle Brew BL L4 | Hindi,Hindi -> English
+338,test_user_1302,Monsoon | Hindi,Hindi -> English
+337,test_user_1302,At Least I'm Ok PE L3 | Hindi,Hindi -> English
+336,test_user_901,All Aboard PE L2 | Hindi,Hindi -> English
+335,test_user_901,How to be an Otter PE L3 | Hindi,Hindi -> English
+334,test_user_1302,The Rabbit's Long Ears PE L2 | Hindi,Hindi -> English
+330,test_user_901,Monsoon | Hindi,Hindi -> English
+329,test_user_601,How to be an Otter BL L3 | Hindi,Hindi -> English
+328,interact,Whats That Smell PE L3 | Hindi,Hindi -> English
+327,interact,At Least I'm Ok PE L3 | Hindi,Hindi -> English
+326,interact,How to be an Otter PE L3 | Hindi,Hindi -> English
+325,interact,The Rabbit's Long Ears PE L2 | Hindi,Hindi -> English
+324,interact,Under My Bed PE L2 | Hindi,Hindi -> English
+323,interact,All Aboard PE L2 | Hindi,Hindi -> English
+322,interact,नानी की ऐनक BL L2 | English,English -> Hindi
+321,interact,कछुआ BL L4 | English,English -> Hindi
+319,interact,थोड़ी सी मदद BL L4 | English,English -> Hindi
+318,interact,मसाला चाय BL L4 | English,English -> Hindi
+309,interact,हमें तो कोई दिक्कत नहीं है! BL L3 | English,English -> Hindi
+307,interact,ऊदबिलाव बनने के गुण BL L3 | English,English -> Hindi
+305,interact,यह कैसी गंध है? BL L3 | English,English -> Hindi
+303,interact,घर BL L1 | English,English -> Hindi
+302,interact,चाँद का तोहफ़ा BL L1 | English,English -> Hindi
+301,interact,मेरी सहेली BL L1 | English,English -> Hindi
+293,interact,खरगोश के लम्बे कान BL L2 | English,English -> Hindi
+291,interact,मेरे पलंग के नीचे BL L2 | English,English -> Hindi
+286,test_user_901,Didi and Children | Hindi,Hindi -> English
+285,test_user_901,My Best Friend PE L1 | Hindi,Hindi -> English
+281,test_user_1401,Didi and Children | Hindi,Hindi -> English
+280,test_user_401,Didi and Children | Hindi,Hindi -> English
+279,test_user_601,All Aboard BL L2 | Hindi,Hindi -> English
+278,test_user_401,My Home PE L1 | Hindi,Hindi -> English
+277,test_user_801,Didi and Children | Hindi,Hindi -> English
+276,test_user_601,My Best Friend BL L1 | Hindi,Hindi -> English
+275,test_user_801,My Best Friend PE L1 | Hindi,Hindi -> English
+274,test_user_901,At Least I'm Ok BL L3 | Hindi,Hindi -> English
+273,test_user_701,At Least I'm Ok BL L3 | Hindi,Hindi -> English
+272,test_user_1401,The Moon and The Cap PE L1 | Hindi,Hindi -> English
+270,test_user_1101,Didi and Children | Hindi,Hindi -> English
+268,test_user_1001,My Best Friend PE L1 | Hindi,Hindi -> English
+266,test_user_901,Jungle Brew BL L4 | Hindi,Hindi -> English
+265,test_user_1401,Turtle Story BL L4 | Hindi,Hindi -> English
+261,test_user_701,The Rabbit's Long Ears BL L2 | Hindi,Hindi -> English
+260,user_201,Didi and Children | Hindi,Hindi -> English
+259,test_user_701,Didi and Children | Hindi,Hindi -> English
+258,user_201,My Home PE L1 | Hindi,Hindi -> English
+257,test_user_701,The Moon and The Cap BL L1 | Hindi,Hindi -> English
+256,user_201,A Helping Hand BL L4 | Hindi,Hindi -> English
+255,test_user_1301,Didi and Children | Hindi,Hindi -> English
+249,test_user_1601,Didi and Children | Hindi,Hindi -> English
+248,test_user_501,Didi and Children | Hindi,Hindi -> English
+247,test_user_1601,The Moon and The Cap PE L1 | Hindi,Hindi -> English
+246,test_user_501,My Home PE L1 | Hindi,Hindi -> English
+245,test_user_501,A Helping Hand BL L4 | Hindi,Hindi -> English
+244,test_user_1101,My Best Friend PE L1 | Hindi,Hindi -> English
+243,test_user_1101,Jungle Brew BL L4 | Hindi,Hindi -> English
+242,test_user_1601,Turtle Story BL L4 | Hindi,Hindi -> English
+241,test_user_501,How to be an Otter BL L3 | Hindi,Hindi -> English
+240,test_user_801,Jungle Brew BL L4 | Hindi,Hindi -> English
+239,test_user_1601,Whats That Smell BL L3 | Hindi,Hindi -> English
+238,test_user_401,A Helping Hand BL L4 | Hindi,Hindi -> English
+237,test_user_1301,Turtle Story BL L4 | Hindi,Hindi -> English
+236,test_user_1301,Whats That Smell BL L3 | Hindi,Hindi -> English
+230,test_user_1301,Under My Bed BL L2 | Hindi,Hindi -> English
+229,test_user_1301,My Home BL L1 | Hindi,Hindi -> English
+210,test_user_1601,Under My Bed BL L2 | Hindi,Hindi -> English
+209,test_user_1601,My Home BL L1 | Hindi,Hindi -> English
+208,test_user_401,How to be an Otter BL L3 | Hindi,Hindi -> English
+206,test_user_401,All Aboard BL L2 | Hindi,Hindi -> English
+205,test_user_401,My Best Friend BL L1 | Hindi,Hindi -> English
+203,test_user_901,The Rabbit's Long Ears BL L2 | Hindi,Hindi -> English
+202,test_user_1001,At Least I'm Ok BL L3 | Hindi,Hindi -> English
+201,test_user_1001,The Rabbit's Long Ears BL L2 | Hindi,Hindi -> English
+200,test_user_1001,The Moon and The Cap BL L1 | Hindi,Hindi -> English
+199,test_user_1101,At Least I'm Ok BL L3 | Hindi,Hindi -> English
+198,test_user_1101,The Rabbit's Long Ears BL L2 | Hindi,Hindi -> English
+197,test_user_301,My Best Friend BL L1 | Hindi,Hindi -> English
+195,test_user_1101,The Moon and The Cap BL L1 | Hindi,Hindi -> English
+194,test_user_501,All Aboard BL L2 | Hindi,Hindi -> English
+193,test_user_501,My Best Friend BL L1 | Hindi,Hindi -> English
+192,test_user_901,The Moon and The Cap BL L1 | Hindi,Hindi -> English
+191,test_user_801,At Least I'm Ok BL L3 | Hindi,Hindi -> English
+190,test_user_801,The Rabbit's Long Ears BL L2 | Hindi,Hindi -> English
+189,test_user_801,The Moon and The Cap BL L1 | Hindi,Hindi -> English
+188,test_user_1401,Whats That Smell BL L3 | Hindi,Hindi -> English
+187,test_user_1401,Under My Bed BL L2 | Hindi,Hindi -> English
+186,user_201,How to be an Otter BL L3 | Hindi,Hindi -> English
+185,test_user_1401,My Home BL L1 | Hindi,Hindi -> English
+184,user_201,All Aboard BL L2 | Hindi,Hindi -> English
+183,user_201,My Best Friend BL L1 | Hindi,Hindi -> English
+182,test_user_301,All Aboard BL L2 | Hindi,Hindi -> English
+146,interact,Monsoon BL | Hindi,Hindi -> English
+144,chris_barnes_test,Tiring Day | Hindi,Hindi -> English
+143,interact,Tiring Day | Hindi,Hindi -> English
+142,local_study_3,The Library | Hindi,Hindi -> English
+141,local_study_3,Didi and Children | Hindi,Hindi -> English
+140,local_study_3,Office Day | Hindi,Hindi -> English
+139,local_study_3,First day at School | Hindi,Hindi -> English
+138,local_study_3,Tiring Day | Hindi,Hindi -> English
+133,local_study_2,The Library | Hindi,Hindi -> English
+132,local_study_2,Didi and Children | Hindi,Hindi -> English
+131,local_study_2,Office Day | Hindi,Hindi -> English
+130,local_study_2,First day at School | Hindi,Hindi -> English
+129,local_study_2,Tiring Day | Hindi,Hindi -> English
+127,interact,Mango | Hindi,Hindi -> English
+122,local_study_1,The Library | Hindi,Hindi -> English
+121,local_study_1,Mango | Hindi,Hindi -> English
+120,local_study_1,Didi and Children | Hindi,Hindi -> English
+119,local_study_1,Office Day | Hindi,Hindi -> English
+118,local_study_1,First day at School | Hindi,Hindi -> English
+117,local_study_1,Tiring Day | Hindi,Hindi -> English
+105,interact,Where is Gogo 2 | Hindi,Hindi -> English
+103,interact,Didi's Colorful Treasures | Hindi | Hindi,Hindi -> English
+102,local_study_1,Tara's Treetop Adventure | Hindi,Hindi -> English
+101,local_study_1,Where is Gogo 2 | Hindi,Hindi -> English
+100,local_study_1,Didi's Colorful Treasures | Hindi | Hindi,Hindi -> English
+97,local_study_1,Where is Gogo? | Hindi,Hindi -> English
+92,chris_barnes_test,First Day at School | English,English -> Hindi
+89,chris_barnes_test,Test Hindi | Random 5 pages -sample #1 | Hindi,Hindi -> English
+83,chris_barnes_test,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
+82,chris_barnes_test,मेरा घर | Hindi,Hindi -> English
+81,chris_barnes_test,Test Corpus Identity | Hindi,Hindi -> English
+78,interact,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
+77,sanket,First Day at School | English,English -> Hindi
+76,interact,First Day at School | English,English -> Hindi
+75,anshul,मेरा घर | Hindi,Hindi -> English
+74,anshul,मेरा घर (w) | Hindi,Hindi -> English
+73,anshul,First Day at School | English,English -> Hindi
+72,anshul,स्कूल का पहला दिन | Hindi,Hindi -> English
+71,anshul,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
+70,sanket,मेरा घर | Hindi,Hindi -> English
+69,sanket,मेरा घर (w) | Hindi,Hindi -> English
+67,sanket,स्कूल का पहला दिन | Hindi,Hindi -> English
+66,ashish,मेरा घर | Hindi,Hindi -> English
+65,ashish,मेरा घर (w) | Hindi,Hindi -> English
+64,ashish,First Day at School | English,English -> Hindi
+63,ashish,स्कूल का पहला दिन | Hindi,Hindi -> English
+62,ashish,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
+60,adithya,मेरा घर | Hindi,Hindi -> English
+59,adithya,मेरा घर (w) | Hindi,Hindi -> English
+58,adithya,First Day at School | English,English -> Hindi
+57,adithya,स्कूल का पहला दिन | Hindi,Hindi -> English
+56,adithya,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
+55,interact,मेरा घर | Hindi,Hindi -> English
+54,interact,मेरा घर (w) | Hindi,Hindi -> English
+45,sanket,स्कूल का पहला दिन (w) | Hindi,Hindi -> English
