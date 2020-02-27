@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Translate
+{% endblock %}
+
+{% block desc %}
+Please translate according the instructions
+{% endblock %}
+
+{% block js %}
+    <link rel="stylesheet" type="text/css"href="{% static 'translation-page-mt.css' %}">
+
+    <script type=text/javascript>
+
+
+  var selectsingle =  {{ selectedControlScheme.select_single_word_from_suggestion }}
+  var selectentire = {{ selectedControlScheme.select_entire_suggestion }}
+  var navnext = {{ selectedControlScheme.navigate_to_next_corpus_fragment }}
+  var navprev = {{ selectedControlScheme.navigate_to_previous_corpus_fragment }}
+  var submit = {{ selectedControlScheme.submit_translation }}
+  var selectnextsug = {{ selectedControlScheme.select_next_translation_suggestion }}
+  var selectprevsug = {{ selectedControlScheme.select_previous_translation_suggestion }}
+  var controlname = "{{ selectedControlScheme }}"
+
+  var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = selectsingle ? selectsingle: default_key_commands[0];
+  var SELECT_ENTIRE_SUGGESTION = selectentire? selectentire: default_key_commands[1];
+  var SELECT_NEXT_TRANSLATION_SUGGESTION = selectnextsug? selectnextsug: default_key_commands[2];
+  var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = selectprevsug? selectprevsug: default_key_commands[3];
+  var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = navnext? navnext: default_key_commands[4];
+  var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = navprev? navprev: default_key_commands[5];
+  var SUBMIT_TRANSLATION = submit? submit: default_key_commands[6];
+  var CONTROL_SCHEME_NAME = controlname? controlname : "default";
+
+var sockets_use = {{ sockets|yesno:"true,false" }};
+var system_type = "{{ helpprovision|safe }}"
+
+var csrf_token = '{{ csrf_token }}';
+
+var socket_translate = '/ws/simple/translation-socket';
+var http_translate = '/translate_new';
+var http_getinput = '/getinput';
+var http_pushoutput = '/pushoutput';
+var http_preview = '/preview';
+
+</script>
+    <script type="text/javascript" src="{% static 'translation.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div id="topdock" style="position: fixed; top:0; right:0;"></div>
+<div class="preloader-background">
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+        
+      </div>
+    </div>
+    <span>&nbsp;&nbsp;Thank you! Please wait for preview ...</span>
+  </div>
+    
+  <div class="row">
+    <div class="col s10">
+        <ul class="pagination">
+            <li class="waves-effect"><a href="/corpus"  class="white-text"><i class="material-icons">chevron_left</i></a></li>
+            <li class="waves-effect"><a href="/corpus" class="white-text">Corpus</a></li>
+            <li class="active blue-grey"><a href="/translate" class="white-text">Translate</a></li>
+            <li class="waves-effect"><a href="/preview" class="white-text">Submission Preview</a></li>
+            <li class="waves-effect"><a href="/preview" class="white-text"><i class="material-icons">chevron_right</i></a></li>
+          </ul>
+      <div id="cardscoll">
+      </div>
+      <a class="submittrans waves-effect waves-light btn blue-grey"><i class="material-icons right">send</i>submit</a>
+    </div>
+  </div>
+  <div id="bottomdock" style="position: fixed; bottom:0; right:0;"></div>
+{% endblock %}

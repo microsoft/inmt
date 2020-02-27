@@ -1,0 +1,10 @@
+
+// Variables;
+@import "variables";
+
+// Typography
+@import "typography";
+
+ul.side-nav.leftside-navigation li:not(.no-padding) a{
+	font-weight:400 !important;
+}

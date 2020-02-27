@@ -1,0 +1,262 @@
+/*----------------------------------------
+    Main Menu - SideNav
+------------------------------------------*/
+
+nav {
+	&.top-nav {
+		height: 122px;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;		
+		box-shadow: none;
+		a.page-title {
+			line-height: 122px;
+			font-size: 48px;
+		}
+	}
+	ul li.no-hover:hover {
+		background: none;
+	}
+}
+.side-nav {
+	width: $sidenav-expanded-width;
+	-webkit-transition: .3s ease all;
+    -o-transition: .3s ease all;
+    -moz-transition: .3s ease all;
+    transition: .3s ease all;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+	&.native-scroll{
+		overflow-y:scroll !important;
+	}
+	a {
+		line-height: 42px;
+		height: 42px;
+	}
+	li > a {
+		padding: 0 16px !important;
+		&:hover{
+			background-color:transparent;
+		}
+	}
+	&.leftside-navigation .collapsible-body li.active {
+		background-color: $sidenav-active-bg;
+	}
+	&.fixed.leftside-navigation .collapsible-body li.active {
+		background-color: $sidenav-active-bg;
+	}
+	.collapsible-body li a {
+		// margin: 0 1rem 0 3rem;
+	}
+	.collapsible-body > ul:not(.collapsible) > li.active,
+	&.fixed .collapsible-body > ul:not(.collapsible) > li.active {
+	  	i {
+	    	color: $white;
+	  	}
+	}
+}
+
+.nav-collapsed{
+	.brand-sidebar{
+		width: $sidenav-collapsed-width;
+		.navbar-toggler, .brand-logo span{
+			// display: none;
+			visibility: hidden;
+  			opacity: 0;
+  			transition: visibility 0s 2s, opacity 0.05s linear;
+		}
+	}
+	.side-nav {
+		width: $sidenav-collapsed-width;
+		.user-options, .nav-text, .collapsible-body span, span.badge, .collapsible-header:after,{
+			display: none;
+		}
+		.nav-text{
+			visibility: visible;
+    		opacity: 1;
+    		transition: opacity 0.2s linear;
+		}
+	}
+}
+
+.nav-expanded{
+	.side-nav {
+		.nav-text{
+			visibility: visible;
+    		opacity: 1;
+    		transition: opacity 0.2s linear;
+		}
+	}
+}
+
+//DOTHIS
+.brand-sidebar{
+	position: fixed;
+    left: 0;
+    width: $sidenav-expanded-width;
+    top: 0px;
+    z-index: 9;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 
+    			0 1px 5px 0 rgba(0, 0, 0, 0.12), 
+    			0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    // background-color: $primary-color;
+    -webkit-transition: .3s ease all;
+    -o-transition: .3s ease all;
+    -moz-transition: .3s ease all;
+    transition: .3s ease all;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+	.logo-wrapper{
+		font-size: 36px;
+		padding: 21px 10px;
+    white-space: nowrap;
+    line-height: 17px !important;
+		a.brand-logo{			
+			color: $white;
+			img{
+      			height:18px;
+    		}
+		}
+		a.navbar-toggler{
+			position: absolute;
+		    right: 20px;
+		    top: 17px;
+		    i{
+		    	font-size: 12px;
+		    	color: $white;
+		    }		    
+		}
+	}
+}
+ul.side-nav {
+	&.leftside-navigation {
+		top: 64px;
+		overflow: hidden;	
+		height: 100%;
+		hr {
+			display: block;
+			height: 1px;
+			border: 0;
+			border-top: 1px solid #e0e0e0;
+			margin: 1em 0;
+			padding: 0;
+		}
+		li:not(.no-padding) {
+			line-height: 44px;
+			&:hover {
+				background-color: $sidenav-active-bg;
+			}
+			&.active {
+				background-color: $sidenav-active-bg;
+			}
+			a {
+				font-family: $title;
+				font-size: 14px;
+				font-weight: 300;
+				white-space: nowrap; 
+			}
+			&.user-details {
+				background: $sidenav-img-bg no-repeat center center;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+				margin-bottom: 15px;
+				padding: 15px 0 0 15px;
+				#profile-dropdown{
+					a{
+					     padding: 8px 15px;
+					}
+				}
+			}
+		}
+		&:hover {
+		}
+		.profile-image {
+		}
+		.profile-btn {
+			margin: 0;
+			text-transform: capitalize;
+			padding: 0;			
+			text-shadow: 1px 1px 1px #444;
+			font-size: 15px;
+		}
+		ul.collapsible-accordion {
+			background-color: $white;
+		}
+	}
+	li {
+		padding: 0;
+	}
+	.collapsible-header {
+		margin: 0;
+		font-weight: 500;
+		/* Sidebar nav open close icons*/
+		&:after {
+				font-family: 'Material Icons';
+				content: "keyboard_arrow_right";				
+				color: #9e9e9e; 
+				font-size: 18px;
+				position: absolute;
+    			right: 16px;
+		}
+		&.active:after {
+				content: "keyboard_arrow_down";
+		}
+	}
+}
+#slide-out {
+	li a i {
+		line-height: inherit;
+		width: 2rem;
+		font-size: 1.4rem;
+		display: block;
+		float: left;
+		text-align: center;
+		margin-right: 1rem;
+	}
+	li .collapsible-body a i {
+		font-size: 1.2rem;
+	}
+	ul.side-nav li {
+		padding: 0 !important;
+	}
+}
+.caption {
+	font-size: 1.25rem;
+	font-weight: 300;
+	margin-bottom: 30px;
+}
+.caption-uppercase {
+	font-size: 1.25rem;
+	font-weight: 300;
+	margin-bottom: 30px;
+	text-transform: uppercase;
+}
+.sidebar-collapse {
+	position: absolute;
+	left: -170px;
+	top: -50px;
+}
+.user-task,
+.user-time {
+	margin: 0;
+	font-size: 13px;
+	color: $white;
+}
+.user-roal {
+	color: $white;
+	margin-top: -16px;
+	font-size: 13px;	
+	text-shadow: 1px 1px 1px #444;
+}
+.user-details .row {
+	margin: 0;
+}
+.bold > a {
+	font-weight: bold;
+}
+.rightside-navigation {
+	overflow: hidden;
+}

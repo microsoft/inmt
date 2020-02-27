@@ -1,0 +1,13 @@
+{
+    "models_root": "./available_models",
+    "models":[{
+        "model": "onmt-hien.pt",
+        "timeout": -1,
+        "on_timeout": "unload",
+        "model_root": "../model/",
+        "opt": {
+            "batch_size": 1,
+            "beam_size": 10
+        }
+    }]
+}

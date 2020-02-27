@@ -1,0 +1,19 @@
+/*----------------------------------------
+    Footer
+------------------------------------------*/
+.page-footer {
+	&.footer-fixed{
+		position: fixed;
+    bottom: 0;
+    width: 100%;
+	}
+	.container {
+		padding: 0 15px;
+	}	
+}
+#world-map-markers {
+	height: 300px;
+}
+#polar-chart-holder {
+	padding-top: 20px;
+}
