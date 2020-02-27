@@ -515,7 +515,37 @@ $(document).ready(function() {
                                     </div>
                                 </div>
                                 <div class="perinstr">
-                                    `+ CONTROL_SCHEME_NAME +`: &nbsp;` +key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION)+"&#x2191; "+key2char(SELECT_NEXT_TRANSLATION_SUGGESTION) +` &#x2193; ` +key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY) +`  &#8594; ` +key2char(SELECT_ENTIRE_SUGGESTION)+` &#8608; &nbsp; | &nbsp; ` +key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT)+` &#8609; ` +key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT)+` &#8607; &nbsp; | Submit: ` +key2char(SUBMIT_TRANSLATION)+`
+                                    Select : 
+                                    <div class="keyshape">
+                                        Up &#x2191
+                                    </div>
+                                    <div class="keyshape">
+                                        Down &#x2193
+                                    </div>
+
+                                    &nbsp;
+
+                                    1 Word : 
+                                    <div class="keyshape">
+                                        Tab &#x2192
+                                    </div>
+
+                                    &nbsp;
+
+                                    Full Phrase : 
+                                    <div class="keyshape">
+                                        Enter &#x21B5
+                                    </div>
+
+                                     &nbsp;
+
+                                    Sentence Switch : 
+                                    <div class="keyshape">
+                                        PgUp &#x219F
+                                    </div>
+                                    <div class="keyshape">
+                                        PgDn &#x21A1
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -523,6 +553,10 @@ $(document).ready(function() {
                 </div>`
             )
         }
+        // Select &#8645 &nbsp Tab &#8594 Enter &#8608 | PgUp &#8609 PgDn &#8609 |
+        // <div class="perinstr">
+        //                             `+ CONTROL_SCHEME_NAME +`: &nbsp;` +key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION)+"&#x2191; "+key2char(SELECT_NEXT_TRANSLATION_SUGGESTION) +` &#x2193; ` +key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY) +`  &#8594; ` +key2char(SELECT_ENTIRE_SUGGESTION)+` &#8608; &nbsp; | &nbsp; ` +key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT)+` &#8609; ` +key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT)+` &#8607; &nbsp; | Submit: ` +key2char(SUBMIT_TRANSLATION)+`
+        //                         </div>
 
         $('.bmo').not($('.bmo').first()).addClass('bmo--blur');
 
