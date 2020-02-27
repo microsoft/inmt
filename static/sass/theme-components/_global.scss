@@ -1,0 +1,294 @@
+/*----------------------------------------
+  General Layout Style
+------------------------------------------*/
+
+html, body{
+	height:100%
+}
+body {
+	background-color: $body-bg;
+	// Style overrides for light layout
+	&.layout-light{
+		ul.side-nav.leftside-navigation{
+			top:62px;
+		}
+		#header{
+			nav.navbar-color{
+				background:$white;
+				ul a{
+						color: $off-black;
+				}
+				.header-search-wrapper{
+					i{
+						color: $off-black;
+					}
+					input.header-search-input{
+						border: 1px solid #869298;
+						color: $off-black;
+						background: rgba(230, 230, 230, 0.3);
+						&:hover, &:active, &:focus{
+							border: 1px solid #adadad;
+							border-bottom: 1px solid #adadad !important;
+							background: rgba(230, 230, 230, 0.0);
+						}
+						&::placeholder {
+					  		color: $off-black;
+						}
+					}
+				}
+			}
+		}
+		#main{
+			h1 span.logo-text{
+				color: $off-black;
+			}
+			.brand-sidebar .logo-wrapper a.navbar-toggler i{
+				color: $off-black;	
+			}
+			.nav-expanded .brand-sidebar{
+				background:$white !important;
+			}
+		}
+		.page-footer{
+				border-top: 1px solid #d2d2d2 !important;
+				color: $off-black;
+				background:$white;
+			}		
+			.footer-copyright{
+				color: $off-black;
+				background:$white;
+			}
+	}
+	// Style overrides for dark layout
+	&.layout-dark{
+		ul.side-nav.leftside-navigation{
+			top:62px;
+		}
+		#header{
+			nav.navbar-color{
+				background:color("blue-grey", "darken-3");
+				ul a{
+						color: $white;
+				}
+				.header-search-wrapper{
+					i{
+						color: $white;
+					}
+					input.header-search-input{
+						border: 1px solid #828282;
+						color: $white;
+						background: rgba(230, 230, 230, 0.3);
+						&:hover, &:active, &:focus{
+							border: 1px solid #adadad;
+							border-bottom: 1px solid #adadad !important;
+							background: rgba(230, 230, 230, 0.0);
+						}
+						&::placeholder {
+					  		color: $white;
+						}
+					}
+				}				
+			}
+		}		
+		#main{
+			h1 span.logo-text{
+				color: $white;
+			}
+			.nav-expanded .brand-sidebar{
+				background:color("blue-grey", "darken-3") !important;
+			}
+			#left-sidebar-nav{
+				.side-nav{
+					background:color("blue-grey", "darken-3");
+					.collapsible-body, &.fixed .collapsible-body{
+						background:color("blue-grey", "darken-3");
+					}
+					.collapsible-body > ul:not(.collapsible) > li.active,
+					&.fixed .collapsible-body > ul:not(.collapsible) > li.active{
+						background:color("blue-grey", "darken-4") !important;
+					}
+					li {
+						> a, .more-text{
+							color: $white;
+								> i{
+									color: $white;
+								}
+						}
+					}
+				}
+				.brand-sidebar .logo-wrapper a.navbar-toggler i{
+					color: $white	
+				}
+			}
+		}
+		.page-footer{
+				border-top: 1px solid #d2d2d2 !important;
+				color: $white;
+				background:color("blue-grey", "darken-3");
+			}		
+			.footer-copyright{
+				color: $white;
+				background:color("blue-grey", "darken-3");
+			}
+	}
+	// Style overrides for semi dark layout
+	&.layout-semi-dark{
+		ul.side-nav.leftside-navigation{
+			top:62px;
+		}
+		#header{
+			nav.navbar-color{
+				background:$white;
+				ul a{
+						color: $off-black;
+				}
+				.header-search-wrapper{
+					i{
+						color: $off-black;
+					}
+					input.header-search-input{
+						border: 1px solid #d2d2d2;
+						color: $off-black;
+						background: rgba(230, 230, 230, 0.3);
+						&:hover, &:active, &:focus{
+							border: 1px solid #adadad;
+							border-bottom: 1px solid #adadad !important;
+							background: rgba(230, 230, 230, 0.0);
+						}
+						&::placeholder {
+					  		color: $off-black;
+						}
+					}
+				}
+			}
+		}
+		#main{
+			h1 span.logo-text{
+				color: $white;
+			}
+			.brand-sidebar{
+				background:color("blue-grey", "darken-3") !important;
+			}
+			#left-sidebar-nav{
+				.side-nav{
+					background:color("blue-grey", "darken-3");
+					.collapsible-body, &.fixed .collapsible-body{
+						background:color("blue-grey", "darken-3");
+					}
+					.collapsible-body > ul:not(.collapsible) > li.active,
+					&.fixed .collapsible-body > ul:not(.collapsible) > li.active{
+						background:color("blue-grey", "darken-4");
+					}
+					li {
+						> a, .more-text{
+							color: $white;
+								> i{
+									color: $white;
+								}
+						}
+					}
+				}
+				.brand-sidebar .logo-wrapper a.navbar-toggler i{
+					color: $white	
+				}
+			}
+		}
+		.page-footer{
+				border-top: 1px solid #d2d2d2 !important;
+				color: $off-black;
+				background:$white;
+			}		
+			.footer-copyright{
+				color: $off-black;
+				background:$white;
+			}
+	}
+}
+#main {
+	min-height: calc(100% - 100px);
+	padding-left: $sidenav-expanded-width;
+	&.main-full{
+		padding-left: $sidenav-collapsed-width;
+	}
+	-webkit-transition: .3s ease all;
+    -o-transition: .3s ease all;
+    -moz-transition: .3s ease all;
+    transition: .3s ease all;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+footer {
+	padding-left: $sidenav-expanded-width;
+	&.page-footer {
+		padding-top: 1px;
+	}
+}
+select {
+	background-color: transparent;
+	width: 100%;
+	padding: 5px;
+	border: none;	
+	border-radius: 2px;
+	height: 3rem;
+	border-bottom: 1px solid color("grey","lighten-1");
+}
+#sidenav-overlay {
+	background-color: transparent;
+}
+.container {
+	padding: 0 0.5rem;
+	margin: 0 auto;
+	max-width: 100% !important;
+	width: 98%;
+	.dropdown-settings i.right{
+		margin-left:0;
+	}
+}
+#left-sidebar-nav {
+	position: fixed;
+	width: 100px;
+	left: 180px;
+	z-index: 999;
+	height: auto;
+	span.badge.new {
+		line-height: 20px;
+		margin-top: 11px;
+	}
+}
+#content {
+	.header-search-wrapper {
+		width: 100%;
+		margin: 0 auto;
+		height: 40px;
+		display: inline-block;
+		position: relative;
+	}
+	.container .row {
+		margin-bottom: 0;
+	}
+}
+@media only screen and(min-width: 601px) {
+	.container {
+		width: 98%;
+	}
+}
+@media only screen and(min-width: 993px) {
+	.container {
+		width: 98%;
+	}
+}
+@media only screen and(max-width: 993px) {
+	#main {
+		padding-left: 0;
+	}
+	footer {
+		padding-left: 0;
+	}
+}
+.ps-scrollbar-x-rail {
+	z-index: 9999;
+}
+.ps-scrollbar-y-rail {
+	z-index: 9999;
+}

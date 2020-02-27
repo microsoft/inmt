@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Type in 20 Indian languages - Basic Pramukh Type Pad</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="Description" content="Basic Pramukh Type Pad to easily type in Assamese, Bengali, Bodo, Dogri, Gujarati, Hindi, Kannada, Konkani, Maithili, Malayalam, Manipuri, Marathi, Nepali, Oriya, Punjabi, Sanskrit, Santali, Sindhi, Tamiland Telugu" />
+		<meta name="keywords" content="Assamese, Bengali, Bodo, Dogri, Gujarati, Hindi, Kannada, Konkani, Maithili, Malayalam, Manipuri, Marathi, Nepali, Oriya, Punjabi, Sanskrit, Santali, Sindhi, Tamil, Telugu, Type pad, Unicode, transliteration " />
+		<meta name="copyright" content="Copyright © Vishal Monpara" />
+        <link rel="shortcut icon" href="img/pramukhime.ico" type="image/x-icon"/>
+		<script type="text/javascript" src="js/pramukhime.js"></script>
+        <script type='text/javascript' src='js/pramukhindic.js' ></script>
+
+        <script type="text/javascript" src="js/pramukhime-common.js"></script>
+        <link type="text/css" href="css/pramukhtypepad.css" rel="Stylesheet" />
+	</head>
+	<body>
+    <div class="page">
+        <div class="header">
+            <div class="divleft">
+                <span class="title">Basic Pramukh Type Pad</span><br />
+                <span class="tagline">Typing in Indian languages is so easy!!!</span>
+            </div>
+            <div class="headerright"><span>&nbsp;</span><br /><span>
+                <a href="http://www.vishalon.net/PramukhIME/Windows.aspx" target="_blank" 
+                    title="Download PramukhIME to directly type in MS Office" class="bigger">Download PramukhIME</a></span></div>
+            
+        </div>
+        <div>
+            <br />
+            <div class="divleft">
+                <ul id="pi_tips">
+                    <li class='smalltip'>Press F9 to switch between selected language and English.</li>
+<li class='smalltip'>Copy and paste the typed text into Microsoft Word to save it.</li>
+<li class='smalltip'>Download PramukhIME for Windows to directly type in MS Office in Windows XP/Vista/7/8.</li>
+
+                </ul>
+            </div>
+            <div class="headerright">
+            &nbsp;
+            </div>
+        </div>
+        <div class="clear"><br /></div>
+        
+        <table cellpadding="3" cellspacing="0" border="1" class="editor">
+            <tr class="editortoolbar">
+                <td><div class="iconflex"> <select id="drpLanguage"
+						onchange="javascript:changeLanguage(this.options[this.selectedIndex].value);" 
+						name="drpLanguage" title="Choose Language" class="big">
+						<option value=':'>--Pramukh Indic--</option>
+<option value='pramukhindic:assamese'>Assamese</option>
+<option value='pramukhindic:bengali'>Bengali</option>
+<option value='pramukhindic:bodo'>Bodo</option>
+<option value='pramukhindic:dogri'>Dogri</option>
+<option value='pramukhindic:gujarati'>Gujarati</option>
+<option value='pramukhindic:hindi'>Hindi</option>
+<option value='pramukhindic:kannada'>Kannada</option>
+<option value='pramukhindic:konkani'>Konkani</option>
+<option value='pramukhindic:maithili'>Maithili</option>
+<option value='pramukhindic:malayalam'>Malayalam</option>
+<option value='pramukhindic:manipuri'>Manipuri</option>
+<option value='pramukhindic:marathi'>Marathi</option>
+<option value='pramukhindic:nepali'>Nepali</option>
+<option value='pramukhindic:oriya'>Oriya</option>
+<option value='pramukhindic:punjabi'>Punjabi</option>
+<option value='pramukhindic:sanskrit'>Sanskrit</option>
+<option value='pramukhindic:santali'>Santali</option>
+<option value='pramukhindic:sindhi'>Sindhi</option>
+<option value='pramukhindic:tamil'>Tamil</option>
+<option value='pramukhindic:telugu'>Telugu</option>
+
+						<option value=":english" selected="selected">English (F9)</option>
+				</select></div>
+                <ul id="toolbar">
+                    <li><a href="javascript:;" onclick="showHelp(this);" id="cmdhelp" title="Typing help"></a></li>
+                </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><textarea id="typingarea" name="typingarea" rows="5" cols="64" class="bigger" spellcheck="false"></textarea></td>
+            </tr>
+        </table>
+        <div id="dialog">
+                <div id="dialogheader"></div>
+                <div id="pramukhimehelp">
+                    <div style="text-align:center;" id="pramukhimehelptypetitle"><input type="radio" name="helptype" value="quick" checked="checked" onclick="selectHelpType();"/> Quick Help <input type="radio" name="helptype" value="detailed" onclick="selectHelpType();"/> Detailed Help<br /></div>
+                    
+                    <div id="pramukhimehelpquick">
+                        Pramukh Type Pad is used for typing easily into Indian languages. It follows 'The way you speak, the way you type' rule. 
+                        Following image shows which character will be shown by pressing which corresponding English letter. 
+                        Example for various combination of letters are given only for one character but it is true for each alphabet.<br />
+                        <div style="text-align:center;">
+                            <img src="img/pramukhime-english.png" alt="character map" id="pramukhimecharmap" />
+                        </div>
+                    </div>
+                    <iframe src="" id="pramukhimehelpdetailed"></iframe>
+                </div>
+                <div id="dialogfooter"><input type="button" value="Cancel" onclick="closeDialog();" /></div>
+            </div>
+        <div id="blocker">
+            
+        </div>
+        <br />
+        <div class="bottom"> 
+        This utility is available as a 
+            <a href="http://www.vishalon.net/PramukhIME/WordPressPlugin.aspx" 
+                target="_blank" 
+                title="Download PramukhIME WordPress Plugin for Indian languages">Wordpress Plugin</a>, 
+            <a href="http://www.vishalon.net/PramukhIME/FireFoxExtension.aspx" 
+                target="_blank" 
+                title="Download PramukhIME Firefox Extension for Indian languages">Firefox Extension</a>, <a href="http://www.vishalon.net/PramukhIME/JavaScriptLibrary.aspx" target="_blank" title="Download PramukhIME Javascript Library for Indian languages">Javascript Library</a>, 
+            <a href="http://www.vishalon.net/PramukhIME/TinyMCEPlugin.aspx" target="_blank" 
+                title="Download PramukhIME TinyMCE Plugin for Indian languages">TinyMCE Plugin</a> and 
+            <a href="http://www.vishalon.net/PramukhIME/CKEditorPlugin.aspx" 
+                target="_blank" 
+                title="Download PramukhIME CKEditor Plugin for Indian languages">CKEditor Plugin</a> for enabling Indian languages typing on your Website.
+        Vishal Monpara has dedicated more than 2200 hours till June, 2012 to create these free utilities.
+        </div>
+        <div class="copyright"><br />Copyright &copy; <a href="http://www.vishalon.net" target="_blank" title="Vishal Monpara's Website">Vishal Monpara</a> | <a href="http://www.vishalon.net/ContactMe.aspx" target="_blank" title="Send feedback to Vishal Monpara">Send a Bug/Comment</a> | 
+        <a href="doc/pramukhime.htm" title="PramukhIME JavaScript Library Documentation" target="_blank">PramukhIME Documentation</a> | Version 3.0 | <span id="fblogo"><a href="https://www.facebook.com/pages/PramukhIME-Pramukh-Type-Pad/164572296943090" title="Like us on Facebook" target="_blank">&nbsp;</a></span> | <span id="gplogo"><a href="https://plus.google.com/111356465186782859926/" title="Add us to your circle on Google +" target="_blank">&nbsp;</a></span> | 
+        <span id="twtlogo"><a href="https://twitter.com/PramukhIME" title="Follow us on Twitter" target="_blank">&nbsp;</a></span></div>
+    </div>
+		<script language="javascript" type="text/javascript">
+		    pramukhIME.addLanguage(PramukhIndic);
+
+			pramukhIME.enable();
+			pramukhIME.onLanguageChange(scriptChangeCallback);
+            var lang = (getCookie('pramukhime_language',':english')).split(':');
+            console.log(lang)
+			pramukhIME.setLanguage(lang[1], lang[0]);
+			var ul = document.getElementById('pi_tips');
+
+			var elem, len = ul.childNodes.length, i;
+			for (i = 0; i < len; i++) {
+			    elem = ul.childNodes[i];
+			    if (elem.tagName && elem.tagName.toLowerCase() == 'li') {
+			        tips.push(elem.innerHTML);
+			    }
+			}
+			for (i = len - 1; i > 1; i--) {
+			    ul.removeChild(ul.childNodes[i]);
+			}
+			ul.childNodes[i].className = 'tip'; // replace small tip text with large
+
+			showNextTip(); // call for first time
+			setTimeout('turnOffTip()', 90000); // show tips for 1.5 minutes
+            document.getElementById('typingarea').focus();
+
+            // set width and height of dialog
+            var w = window, d = document, e = d.documentElement, g = d.getElementsByTagName('body')[0], x = w.innerWidth || e.clientWidth || g.clientWidth, y = w.innerHeight || e.clientHeight || g.clientHeight;
+            var elem = document.getElementById('dialog');
+            elem.style.top = ((y - 550) / 2) + 'px';
+            elem.style.left = ((x - 700) / 2) + 'px';
+            
+		</script>
+	</body>
+</html>

@@ -1,0 +1,64 @@
+
+/*----------------------------------------
+    Right Chat Slideout
+------------------------------------------*/
+#right-search .input-field {
+	margin-top: 0;
+}
+#chat-out {
+	&.side-nav{
+		width: $right-sidenav-width;
+	    height: calc(100% - 64px) !important;
+	    padding-bottom: 0px;
+	}
+	
+	top: $navbar-height;
+    overflow: hidden;
+
+	.fixed-line-height{
+		line-height: 24px;
+	}
+	// .switch label input[type=checkbox]:checked + .lever:after{
+	//     background-color: $black;
+	// }
+	// .switch label .lever:after{
+	// 	background-color: color("grey", "lighten-4");
+	// }
+
+	#chatapp{
+		li {
+	    	line-height: 35px !important;
+    	    min-height: 70px !important;
+		}
+		.side-nav li{
+			line-height: 20px !important;
+		}
+	}
+}
+.chat-close-collapse {
+	padding: 5px 15px 0 0;
+}
+.icon-bg-color{
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 8px;
+    font-size: 20px;
+}
+.border-bottom-1{
+	border-bottom: 1px solid color("grey", "lighten-4");
+}
+.activity::before{
+	position: absolute;
+    top: 0;
+    height: 100vh;
+    margin-top:130px;
+    bottom: 0;
+    left: 16%;
+    width: 1px;
+    margin-left: -1px;
+    content: "";
+    background-color: color("grey", "lighten-2");
+    z-index: -1;
+}

@@ -1,0 +1,330 @@
+<html>
+    <link type="text/css" rel="stylesheet" href="static/materialize.css"  media="screen,projection"/>
+   <body>
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="/static/tribute.css" /> -->
+    <!-- <script src="/static/tribute.js"></script> -->
+    <script src="/static/textarea-helper.js"></script>
+    <script type="text/javascript" src="static/materialize.js"></script>
+   <!-- <script src="https://underscorejs.org/underscore-min.js"></script> -->
+   <!-- <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script> -->
+   <!-- <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script> -->
+   <script type=text/javascript>
+      $(document).ready(function(){
+        $('.dropdown-trigger').dropdown();
+        var searchRequest = null;
+        var debounceTimeout = null;
+        var searchInput = $("#partial");
+        var result = '';
+        var selecte = 0;
+
+        var refresh = function(event) {
+          $.getJSON('/get',{}, function(data){
+            result = data.result
+            $('#hin_inp').val(result)
+            $('#partial').val('')
+            searchEvents()
+            // var myVar = setInterval(myTimer, 1000);
+            stopwatch.restart();
+          })
+        }
+
+       
+
+        class Stopwatch {
+              constructor(display, results) {
+                  this.running = false;
+                  this.display = display;
+                  this.results = results;
+                  this.laps = [];
+                  this.reset();
+                  this.print(this.times);
+              }
+              
+              reset() {
+                  this.times = [ 0, 0, 0 ];
+              }
+              
+              start() {
+                  if (!this.time) this.time = performance.now();
+                  if (!this.running) {
+                      this.running = true;
+                      requestAnimationFrame(this.step.bind(this));
+                  }
+              }
+              
+              lap() {
+                  let times = this.times;
+                  let li = document.createElement('li');
+                  li.innerText = this.format(times);
+                  this.results.appendChild(li);
+              }
+              
+              stop() {
+                  this.running = false;
+                  this.time = null;
+              }
+
+              restart() {
+                  if (!this.time) this.time = performance.now();
+                  if (!this.running) {
+                      this.running = true;
+                      requestAnimationFrame(this.step.bind(this));
+                  }
+                  this.reset();
+              }
+              
+              clear() {
+                  clearChildren(this.results);
+              }
+              
+              step(timestamp) {
+                  if (!this.running) return;
+                  this.calculate(timestamp);
+                  this.time = timestamp;
+                  this.print();
+                  requestAnimationFrame(this.step.bind(this));
+              }
+              
+              calculate(timestamp) {
+                  var diff = timestamp - this.time;
+                  // Hundredths of a second are 100 ms
+                  this.times[2] += diff / 10;
+                  // Seconds are 100 hundredths of a second
+                  if (this.times[2] >= 100) {
+                      this.times[1] += 1;
+                      this.times[2] -= 100;
+                  }
+                  // Minutes are 60 seconds
+                  if (this.times[1] >= 60) {
+                      this.times[0] += 1;
+                      this.times[1] -= 60;
+                  }
+              }
+              
+              print() {
+                  this.display.innerText = this.format(this.times);
+              }
+              
+              format(times) {
+                  return `\
+          ${pad0(times[0], 2)}:\
+          ${pad0(times[1], 2)}:\
+          ${pad0(Math.floor(times[2]), 2)}`;
+              }
+          }
+
+          function pad0(value, count) {
+              var result = value.toString();
+              for (; result.length < count; --count)
+                  result = '0' + result;
+              return result;
+          }
+
+          function clearChildren(node) {
+              while (node.lastChild)
+                  node.removeChild(node.lastChild);
+          }
+
+          let stopwatch = new Stopwatch(
+              document.querySelector('#timer'),
+              document.querySelector('#timer'));
+
+        refresh()
+
+        var searchEvents = function(event){
+          if (searchRequest)
+            searchRequest.abort()
+          searchRequest =  $.getJSON('/game', {
+              a: $('input[name=a]').val(),
+              b: $('textarea[name=b]').val()
+            }, function(data) {
+              // $("#result").text(data.result);
+              result = data.result.split("\n")
+              var container = $('<div />');
+              for(var i = 0; i < result.length; i++) {
+                  container.append('<span id="res'+i+'" class="spanres"> ' + result[i] + '</span><br>');
+              }
+              $('#result').html(container);
+              $('.spanres').css({"background-color": "none"})
+              $('#res' + selecte).css({"background-color": "#ddd"})
+              // var pos = $('#partial').textareaHelper('caretPos')
+              // console.log(pos)
+              // $("#drop").css({top: (pos.top +25), left: (pos.left-150)})
+              // $(".dropdown-trigger").dropdown('open');
+              $('#partial').focus()
+              // var sel = window.getSelection();
+              // var offset = sel.baseOffset;
+              // var node = sel.focusNode;
+              // console.log($("#partial").offset())
+              // node.innerHTML = '<span style="color:#ff0000">' + result + '</span>';
+              // console.log(node)
+            });
+        }
+
+        $("#partial").on('keydown', function(e){
+          var keyCode = e.keyCode || e.which; 
+          if (keyCode == 9) {
+            e.preventDefault();
+            var partial = $("#partial").val().split(" ").filter(function(v){return v!==''})
+            var step = partial.length
+            var res = result[selecte].split(" ")[step-1]
+            if (result[selecte].split(" ")[step-1] == partial[step-1]) {
+              res = result[selecte].split(" ")[step]
+            } else {
+              partial.pop()
+            }
+            partial.push(res)
+            $("#partial").val(partial.join(" ") + " ")
+          }
+          
+          if (keyCode == 45) {
+            e.preventDefault()
+            refresh()
+          }
+
+          if (keyCode == 13) { 
+            e.preventDefault();
+            $("#partial").val(result[selecte])
+          }
+
+          if (keyCode == 40) { 
+            e.preventDefault();
+            if (selecte < result.length)
+              selecte = selecte + 1;
+              $('.spanres').css({"background-color": "none"})
+              $('#res' + selecte).css({"background-color": "#ddd"})
+          }
+          if (keyCode == 38) { 
+            e.preventDefault();
+            if (selecte > 0)
+              selecte = selecte - 1;
+              $('.spanres').css({"background-color": "none"})
+              $('#res' + selecte).css({"background-color": "#ddd"})
+          }
+           
+        })
+
+        searchInput.keyup(function(e){
+          clearTimeout(debounceTimeout);
+          debounceTimeout = setTimeout(searchEvents, 400);
+        });
+
+        $("#hin_inp").focusout(function(){
+          searchEvents();
+        })
+
+        // var tribute = new Tribute({
+        //         menuContainer: document.getElementById('content'),
+        //         autocompleteMode: false,
+        //         values: [
+        //         {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
+        //         {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
+        //         ],
+        //     });
+
+        //     tribute.attach(document.getElementById('partial'));
+      });
+    </script>
+    <div class="container">
+      <div class="row">
+          <div class="pad-top"></div>
+      </div>
+      <div class="row"  style="text-align: center;">
+              <div class="col s12 m12">
+                <div class="card bmo">
+                  <div class="card-content">
+                    <span class="card-title">Machine Aided Human Translation</span>
+                    <div class="row">
+                      <div class="col s12 left-align">
+                        Instructions
+                        <ul>
+                          <li>Hindi input should be in Devanagari script</li>
+                          <li>Write partial suggestions in Helper input</li>
+                          <li>In helper input, press TAB to select the next word of the gray (selected) option</li>
+                          <li>In helper input, use up and down arrow to change your selection</li>
+                        </ul>
+                        <p id="timer">
+
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input  disabled type=text name=a id="hin_inp">
+                            <label for="hin_inp">Hindi Input</label>
+                        </div>
+                    <!-- </div>
+                    <div class="row"> -->
+                        <div class="input-field col s6">
+                            <!-- <input type=text name=b id="partial"> -->
+                            <!-- <a class='dropdown-trigger btn' style="display: none" href='#' data-target='dropdown1'>D</a>
+                    <ul id='dropdown1' class='dropdown-content'>
+                        <li><a href="#!">one</a></li>
+                        <li><a href="#!">two</a></li>
+                        <li class="divider" tabindex="-1"></li>
+                        <li><a href="#!">three</a></li>
+                        <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+                        <li><a href="#!"><i class="material-icons">cloud</i>five</a></li>
+                      </ul> -->
+                            <!-- <span id=drop style="white-space: pre-line"></span> -->
+                            <textarea contenteditable="true" id="partial" class="materialize-textarea" name=b></textarea>
+                            <label for="partial">Helper</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s6 offset-s6 left-align">
+                          <div id=result style="white-space: pre-line"></div>
+                        </div>
+                    </div>
+                        <!-- <textarea contenteditable="true" name=b id="partial"></textarea><br> --> 
+                      
+                    </div>
+                    <div class="row bottom">
+                      <div class="col s12">
+                        <img src="static/Microsoft_Research_logo.png" height=50px>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      </div>
+    </div>
+   </body>
+   <style>
+    body {
+        background: url(data:image/png;base64,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) fixed; 
+        background-color: #404040;
+      }
+    .pad-top {
+        height: 4vh;
+      }
+      .card-title {
+        color: #404040;
+        height: 8vh;
+      }
+      #result {
+        color: #404040;
+        text-align: left;
+      }
+      .bmo {
+        height: 85vh;
+      }
+      .bottom {
+        position: absolute;
+        bottom:0;
+        right:10;
+      }
+      #drop {
+        /* display: none; */
+        color: #404040;
+        position: absolute;
+        background-color: #ddd;
+        text-align: left;
+        padding: 10px;
+      }
+   </style>
+</html>
