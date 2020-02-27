@@ -1,0 +1,40 @@
+body, * {font-family:verdana, arial, helvetica, sans-serif; font-size:12px;}
+img {border:0px;}
+.page { width:100%; margin:0 auto;}
+#fblogo a,#gplogo a, #twtlogo a {height:20px; width:20px; padding-left:15px; text-decoration:none;}
+#fblogo {height:20px; width:20px; background:transparent url('../img/pramukhime-icon.png') 0px -402px no-repeat;}
+#gplogo {height:20px; width:20px; background:transparent url('../img/pramukhime-icon.png') 0px -422px no-repeat;}
+#twtlogo {height:20px; width:20px; background:transparent url('../img/pramukhime-icon.png') 0px -442px no-repeat;}
+.header {height:50px; border-bottom:2px solid #FF6600; background:transparent url('../img/pramukhime-icon.png') 0px -1342px no-repeat; padding-left:55px; }
+.divleft { float:left;}
+.headerright { text-align:right;}
+.title { font-size:20px; color:#FF6600; font-weight:bold; }
+.clear {clear:both;}
+.editor {width:100%; border:1px solid #bbb; border-collapse:collapse; }
+.editortoolbar {background:#EEEEEE; height:26px; width:100%;border:1px solid #bbb; padding:0px;}
+textarea { height:376px; padding:0px; border:0px; width:100%; overflow:auto;}
+.bottom {border-top:2px solid #FF6600; padding-top:4px;}
+.copyright {text-align:center;}
+.big {font-size:14px;}
+.bigger {font-size:16px;}
+#pi_tips {list-style-type:none; margin:0px; padding:0px;}
+ul li.tipsmall {background-position: 0 0px; padding-left:20px; margin:0px; font-size:xx-small;}
+ul li.tip {height:20px; margin:0px; padding-left:20px;background:transparent url('../img/pramukhime-icon.png') 0px -260px no-repeat;}
+
+/*following styles are for toolbar*/
+div.iconflex {float:left;}
+#toolbar {margin: 0px; padding: 0px; list-style-image: none; list-style-type: none; height: 20px; width: 100px; float:left;}
+#toolbar li{ margin: 0px; padding: 0px 0px 0px 2px; float: left; display: block; height: auto; width: auto; }
+#toolbar li a:link, #toolbar li a:visited, #toolbar li a:active {text-decoration: none; display: block;width: 20px;margin: 0px;height: 20px;text-align: center;padding: 0px;float: left; background-color: transparent; border:1px solid transparent;}
+#toolbar li a:hover {text-decoration: none;background-color: #CCCCCC; border:1px solid #A0A0A0; cursor:default; }
+#toolbar li a.disabled:hover {text-decoration: none;background-color: transparent; border:1px solid transparent; cursor:default; }
+/*following styles are for dialog*/
+#blocker {display:none; position:fixed; top:0px; left:0px; width:100%; height:100%; filter: alpha(opacity=60); opacity:0.6; background-color:White;z-index:99;}
+#dialog {position:fixed; display: none; border:1px solid #bbb; width:700px; height:552px; background-color:White; z-index:100;}
+#dialogheader {display:block; border-bottom:1px solid #bbb; width:100%; height:30px; font-size:18px; background:#EEEEEE;}
+#pramukhimehelp{width:100%; height:490px; display:none;}
+#pramukhimehelptypetitle {height:40px;}
+#pramukhimehelpquick, #pramukhimehelpdetailed {height:450px; display:none;overflow:auto;border:0px;}
+#pramukhimehelpquick { padding:2px;}
+#pramukhimehelpdetailed { width:100%;} 
+#dialogfooter {display:block;  border-top:1px solid #bbb; width:100%; height:30px; font-size:18px; text-align:right;background:#EEEEEE;}
