@@ -3,24 +3,15 @@ Interactive Machine Translation app uses Django and jQuery as its tech stack. Pl
 
 # Installation Instructions
 
+Make a new model folder using `mkdir model` where the models need to be placed. Models can be downloaded from [https://microsoft-my.sharepoint.com/:f:/p/t-sesan/Evsn3riZxktJuterr5A09lABTVjhaL_NoH430IMgkzws9Q?e=VXzX5T].
+
 ## Docker Installation
 Assuming you have docker setup in your system, simply run `docker-compose up -d`. This application requires atleast 4GB of memory in order to run. Allot your docker memory accordingly.
 
 ## Bare Installation
 1. Install dependencies using - `python -m pip install -r requirements.txt`. Be sure to check your python version. This tool is compatible with Python3.
-2. Make a new model folder using `mkdir model`. Download the models from [https://microsoft-my.sharepoint.com/:f:/p/t-sesan/Evsn3riZxktJuterr5A09lABTVjhaL_NoH430IMgkzws9Q?e=VXzX5T](here) and put it in model folder.
-3. Run the server - `python manage.py runserver`
-4. The server opens on port 8000 by default. Open `localhost:8000/simple` for the simple interface.
-
-
-## Keystroke Interface
-The keystroke interface is a portal for translations. There is database access required and hence there more processes involved in the setup.
-
-1. `python manage.py makemigrations` - Generates the relational mapping for sql table creation.
-2. `python manage.py migrate` - Creates sqlite db and puts tables
-3. `python manage.py superuser` - Make a admin user to access the admin interface and handle the keystroke interface. Admin portal can be accessed from `localhost:8000/admin`.
-
-More details about handling Keystroke Interface to follow soon.
+2. Run the migrations and start the server - `python manage.py makemigrations && python manage.py migrate && python manage.py runserver`
+3. The server opens on port 8000 by default. Open `localhost:8000/simple` for the simple interface.
 
 # Contributing
 
