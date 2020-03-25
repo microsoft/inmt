@@ -27,6 +27,8 @@ from indic_transliteration.sanscript import SchemeMap, SCHEMES, transliterate
 
 import requests
 
+import math
+
 langspecs = {
     'en-hi' : {
         'src' : 'en',
@@ -173,7 +175,7 @@ def translate_new(request):
 
     print(L2)
 
-    _, pred, covatn2d = translatorbest.translate(
+    something, pred, covatn2d, score_total, words_total = translatorbest.translate(
         src=[L1],
         tgt=None,
         src_dir='',
@@ -182,7 +184,7 @@ def translate_new(request):
         partial = toquotapos(L2)
         )
 
-    scores, predictions = translatorbigram.translate(
+    scores, predictions, score_total, words_total = translatorbigram.translate(
         src=[L1],
         tgt=None,
         src_dir='',
@@ -227,5 +229,8 @@ def translate_new(request):
         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + sentence
     
     print(sentence)
+    perplexity = float(math.exp(-score_total / words_total))
+    avg_score = float(score_total / words_total)
     # print(scores)
-    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
+    # print(something, pred)
+    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})

@@ -396,6 +396,15 @@ function parseProcessedJsonResultsfunction(data, partial) {
     // Result is received in form of a single string. Need to split here.
     result = data.result.split("\n")
     partialret = data.partial
+
+    ppl = data.ppl
+    avg = data.avg
+    console.log(avg, ppl)
+    partial.closest('.bmo').find('.avg').text(avg)
+    partial.closest('.bmo').find('.ppl').text(ppl)
+    // scores = data.scores
+
+    // console.log(scores)
     
 
     // The pointer for dropdown selection. Initially set at 0.
@@ -491,67 +500,100 @@ $(document).ready(function() {
         // langtolangid = data.langtolangid;
         console.log(inputs)
         $('#cardscoll').html('')
+        $('#corpusinput').html('')
         for (i=0; i<inputs.length; i++) {
+            if (langspec == 'hi-en') {
+                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ')
+            } else {
+                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
+            }
             $('#cardscoll').append(
-                `<div class="card bmo">
-                    <div class="card-content">
-                        <div class="row">
-                            <div class="col s5 m5">
-                                <div class="hin_inp transtext" contenteditable="false">`+inputSpan(inputs[i][0])+`</div>    
-                            </div>
-                            <div class="col s1 m1">
-                                <br>
-                                <img src="https://cdn.onlinewebfonts.com/svg/img_439255.png" style="height:15px">
-                            </div>
-                            <div class="col s6 m6">
+                `<div class="shadow p-3 my-3 bg-light rounded bmo" style="height:170px;">
+                                <div class="row">
+                                <div class="col-9">
+                                <div class="hin_inp pb-2" contenteditable="false">`+ inputSpan(inputs[i][0]) + `</div>
                                 <div class="dropcontainer">
                                     <div class="partcontainer">
                                         <div class="suggest transtext" contenteditable="false"></div>
                                             <div class=" partial transtext" id="card` + i + `" contenteditable="true"
                                             data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
-                                            >`+inputs[i][1]+`</div>
+                                            >`+ inputs[i][1] + `</div>
                                     </div>
                                     <div class="dropdown">
                                     </div>
                                 </div>
-                                <div class="perinstr">
-                                    Select : 
-                                    <div class="keyshape">
-                                        Up &#x2191
+                                </div>
+                                <div class="col-3 stats">
+                                    <div>
+                                        Perplexity: <span class="ppl">0</span>
                                     </div>
-                                    <div class="keyshape">
-                                        Down &#x2193
-                                    </div>
-
-                                    &nbsp;
-
-                                    1 Word : 
-                                    <div class="keyshape">
-                                        Tab &#x2192
-                                    </div>
-
-                                    &nbsp;
-
-                                    Full Phrase : 
-                                    <div class="keyshape">
-                                        Enter &#x21B5
-                                    </div>
-
-                                     &nbsp;
-
-                                    Sentence Switch : 
-                                    <div class="keyshape">
-                                        PgUp &#x219F
-                                    </div>
-                                    <div class="keyshape">
-                                        PgDn &#x21A1
+                                     <div>
+                                         Average: <span class = "avg">0</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                                </div>
                 </div>`
             )
+            // $('#cardscoll').append(
+            //     `<div class="card bmo">
+            //         <div class="card-content">
+            //             <div class="row">
+            //                 <div class="col s5 m5">
+            //                     <div class="hin_inp transtext" contenteditable="false">`+inputSpan(inputs[i][0])+`</div>    
+            //                 </div>
+            //                 <div class="col s1 m1">
+            //                     <br>
+            //                     <img src="https://cdn.onlinewebfonts.com/svg/img_439255.png" style="height:15px">
+            //                 </div>
+            //                 <div class="col s6 m6">
+            //                     <div class="dropcontainer">
+            //                         <div class="partcontainer">
+            //                             <div class="suggest transtext" contenteditable="false"></div>
+            //                                 <div class=" partial transtext" id="card` + i + `" contenteditable="true"
+            //                                 data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
+            //                                 >`+inputs[i][1]+`</div>
+            //                         </div>
+            //                         <div class="dropdown">
+            //                         </div>
+            //                     </div>
+            //                     <div class="perinstr">
+            //                         Select : 
+            //                         <div class="keyshape">
+            //                             Up &#x2191
+            //                         </div>
+            //                         <div class="keyshape">
+            //                             Down &#x2193
+            //                         </div>
+
+            //                         &nbsp;
+
+            //                         1 Word : 
+            //                         <div class="keyshape">
+            //                             Tab &#x2192
+            //                         </div>
+
+            //                         &nbsp;
+
+            //                         Full Phrase : 
+            //                         <div class="keyshape">
+            //                             Enter &#x21B5
+            //                         </div>
+
+            //                          &nbsp;
+
+            //                         Sentence Switch : 
+            //                         <div class="keyshape">
+            //                             PgUp &#x219F
+            //                         </div>
+            //                         <div class="keyshape">
+            //                             PgDn &#x21A1
+            //                         </div>
+            //                     </div>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     </div>`
+            // )
         }
         // Select &#8645 &nbsp Tab &#8594 Enter &#8608 | PgUp &#8609 PgDn &#8609 |
         // <div class="perinstr">
@@ -559,6 +601,11 @@ $(document).ready(function() {
         //                         </div>
 
         $('.bmo').not($('.bmo').first()).addClass('bmo--blur');
+
+        $('.corp_inp').on('click', function (event) {
+            var ind = $(this).index()
+            $('.partial').eq(ind).focus();
+        });
 
         var searchEvents = function(partial){
             if (searchRequest) searchRequest.abort()
@@ -905,6 +952,9 @@ $(document).ready(function() {
             $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
 
             if (system_type == 'IT'){
+                var ind = $(this).index(".partial")
+                $('.corp_inp').css("background-color", 'transparent');
+                $('.corp_inp').eq(ind).css("background-color", "yellow");
                 searchEvents($(this));
                 var dropdown = $(this).parent().parent().children('.dropdown');
                 dropdown.css('visibility', 'visible')
