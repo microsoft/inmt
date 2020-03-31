@@ -63,11 +63,28 @@
       </div>
       <div id="translate-interface" class="row">
         <div class="col-5">
+            <div class="card p-4 bg-light" id="corpus-side">
             <div id="corpusinput" class="shadow p-3 my-3 bg-light rounded">
+            </div>
             </div>
         </div>
         <div class="col-7">
-          <div id="cardscoll"></div>
+          <div class="card p-4 bg-light" id="interactive">
+            <ul class="nav nav-pills pb-2">
+              <li class="nav-item">
+                <a id="nav-translate" class="nav-link active" href="#">Translate</a>
+              </li>
+              <li class="nav-item">
+                <a id="nav-preview" class="nav-link" href="#">Preview</a>
+              </li>
+            </ul>
+
+            <div id="cardscoll"></div>
+            <div id="cardsprev" style="display:none">
+              <div id="corpusoutput" class="shadow p-3 my-3 bg-light rounded">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -84,10 +101,21 @@
       body {
       height: 100%;
       } */
-
+      #corpus-side {
+      height: 100%;
+      }
       #corpusinput {
         height: 100%;
       }
+
+      #cardsprev {
+      height: 80%;
+      }
+
+      #corpusoutput {
+      height: 100%;
+      }
+      
 
       .bmo {
         transition: all 0.12s ease-out;
@@ -100,6 +128,14 @@
 
       .corp_inp:hover {
         background-color: #ccc!important;;
+      }
+
+      .corp_out {
+        cursor: pointer;
+      }
+
+      .corp_out:hover {
+      background-color: #ccc!important;;
       }
 
       .bmo--blur {
@@ -160,12 +196,12 @@
       } */
       #cardscoll {
         font-family: 'Noto Sans', serif;
-        font-size: 17px;
+        /* font-size: 17px; */
       }
 
       #corpusinput {
       font-family: 'Noto Sans', serif;
-      font-size: 20px;
+      /* font-size: 20px; */
       }
 
       .hin_inp_part {
@@ -218,7 +254,7 @@
         top: 0;
         left: 0;
         background-color: #eee;
-        border: 1px solid rgba(0, 0, 255, 0.25);
+        border: 1px solid rgba(0, 0, 0, 0.25);
 
         z-index: 20;
         visibility: hidden;
@@ -231,7 +267,7 @@
         padding-top: 1px;
         padding-bottom: 1px;
         padding-left: 1px;
-        border: 1px solid rgba(0, 0, 255, 0.25);
+        /* border: 1px solid rgba(0, 0, 255, 0.25); */
         display: block;
         cursor: pointer; 
       }

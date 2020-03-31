@@ -397,9 +397,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
     result = data.result.split("\n")
     partialret = data.partial
 
-    ppl = data.ppl
-    avg = data.avg
-    console.log(avg, ppl)
+    ppl = Math.round(data.ppl * 100) / 100
+    avg = Math.round(data.avg * 100) / 100
     partial.closest('.bmo').find('.avg').text(avg)
     partial.closest('.bmo').find('.ppl').text(ppl)
     // scores = data.scores
@@ -430,7 +429,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
         for(var i = 0; i < result.length; i++) {
             var repres = sharedStart(result[i], partialret)
             if (repres !== "") {
-                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres p-1"> ' + repres + '</span>');
                 countcontainer += 1;
                 finalresult.push(result[i])
             }
@@ -487,6 +486,7 @@ var langspecs = [
 
 $(document).ready(function() {
 
+    var transstate = 0; // Translation State or Preview State
     var topdock = $('#topdock')// For smooth scrolling
     var bottomdock = $('#bottomdock')// For smooth scrolling
 
@@ -501,6 +501,7 @@ $(document).ready(function() {
         console.log(inputs)
         $('#cardscoll').html('')
         $('#corpusinput').html('')
+        
         for (i=0; i<inputs.length; i++) {
             if (langspec == 'hi-en') {
                 $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ')
@@ -519,7 +520,7 @@ $(document).ready(function() {
                                             data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
                                             >`+ inputs[i][1] + `</div>
                                     </div>
-                                    <div class="dropdown">
+                                    <div class="shadow mb-5 bg-light rounded dropdown">
                                     </div>
                                 </div>
                                 </div>
@@ -534,6 +535,7 @@ $(document).ready(function() {
                                 </div>
                 </div>`
             )
+
             // $('#cardscoll').append(
             //     `<div class="card bmo">
             //         <div class="card-content">
@@ -600,11 +602,74 @@ $(document).ready(function() {
         //                             `+ CONTROL_SCHEME_NAME +`: &nbsp;` +key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION)+"&#x2191; "+key2char(SELECT_NEXT_TRANSLATION_SUGGESTION) +` &#x2193; ` +key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY) +`  &#8594; ` +key2char(SELECT_ENTIRE_SUGGESTION)+` &#8608; &nbsp; | &nbsp; ` +key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT)+` &#8609; ` +key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT)+` &#8607; &nbsp; | Submit: ` +key2char(SUBMIT_TRANSLATION)+`
         //                         </div>
 
+        if (langspec == 'hi-en') {
+            $('#corpusinput').css('font-size', '20px')
+            $('#corpusoutput').css('font-size', '20px')
+            $('.hin_inp').css('font-size', '18px')
+        } else {
+            $('#corpusinput').css('font-size', '20px')
+            $('#corpusoutput').css('font-size', '20px')
+            $('.partial').css('font-size', '18px')
+            $('.suggest').css('font-size', '18px')
+        }
+        
+        var maxheight = $('#interactive').height()
+        $('#nav-translate').on('click', function(e){
+            transstate = 0;
+            $('#nav-preview').removeClass('active')
+            $(this).addClass('active')
+            $('#cardsprev').css('display', 'none')
+            $('#cardscoll').css('display','block')
+            maxheight = $('#interactive').height()
+
+        })
+
+        // var previews = [];
+        $('#nav-preview').on('click', function (e) {
+            transstate = 1;
+            $('#nav-translate').removeClass('active')
+            $(this).addClass('active')
+            $('#cardscoll').css('display','none')
+            $('#cardsprev').css('display', 'block')
+            $('#interactive').height(maxheight)
+            $('.corp_inp').css("background-color", 'transparent');
+            $('#corpusoutput').html('')
+
+            var htmlpreview = ''
+            $(".partial").each(function () {
+                span = $(this).text().trim()
+                if (span != '') {
+                    if (langspec == 'hi-en') {
+                        if (span.charAt(span.length - 1) == '.') {
+                            span = span.substring(0, span.length - 1).trim()
+                        }
+                        $('#corpusoutput').append('<span class="corp_out">' + span + '</span>. ')
+                    } else {
+                        if (span.charAt(span.length - 1) == '।') {
+                            span = span.substring(0, span.length - 1).trim()
+                        }
+                        $('#corpusoutput').append('<span class="corp_out">' + span + '</span>। ')
+                    }
+                }
+            });
+
+            // $('#corpusoutput').html(htmlpreview)
+        })
+
         $('.bmo').not($('.bmo').first()).addClass('bmo--blur');
 
         $('.corp_inp').on('click', function (event) {
             var ind = $(this).index()
             $('.partial').eq(ind).focus();
+            $('.corp_out').css('background-color', 'transparent');
+            $('.corp_out').eq(ind).css('background-color', 'yellow');
+        });
+
+        $('.corp_out').on('click', function (event) {
+            console.log("Hello")
+            var ind = $(this).index()
+            $('.corp_inp').css('background-color', 'transparent');
+            $('.corp_inp').eq(ind).css('background-color', 'yellow');
         });
 
         var searchEvents = function(partial){
