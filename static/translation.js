@@ -390,6 +390,32 @@ function key2char(str) {
     return keychar
 }
 
+var percentColors = [
+    { pct: 0, color: { r: 0x00, g: 0xff, b: 0 } },
+    { pct: 3, color: { r: 0xff, g: 0xff, b: 0 } },
+    { pct: 6, color: { r: 0xff, g: 0x00, b: 0 } }];
+
+var getColorForPercentage = function (pct) {
+    for (var i = 1; i < percentColors.length - 1; i++) {
+        if (pct < percentColors[i].pct) {
+            break;
+        }
+    }
+    var lower = percentColors[i - 1];
+    var upper = percentColors[i];
+    var range = upper.pct - lower.pct;
+    var rangePct = (pct - lower.pct) / range;
+    var pctLower = 1 - rangePct;
+    var pctUpper = rangePct;
+    var color = {
+        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+    };
+    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+    // or output as hex if preferred
+};
+
 // As of now, this logic is for the results to be processed from sockets.
 function parseProcessedJsonResultsfunction(data, partial) {
     
@@ -401,6 +427,22 @@ function parseProcessedJsonResultsfunction(data, partial) {
     avg = Math.round(data.avg * 100) / 100
     partial.closest('.bmo').find('.avg').text(avg)
     partial.closest('.bmo').find('.ppl').text(ppl)
+    partial.closest('.bmo').find('.ppl').css('background-color', getColorForPercentage(ppl))
+
+    var parcount = 0;
+    var totcount = 0;
+    $(".partial").each(function () {
+        totcount += 1;
+        span = $(this).text().trim()
+        if (span != '') {
+           parcount += 1;
+        }
+    });
+
+    progress = (parcount/totcount)*100
+    $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+    $('.progress-bar').text(progress + '%')
+    console.log(parcount, totcount, progress)
     // scores = data.scores
 
     // console.log(scores)
@@ -526,7 +568,7 @@ $(document).ready(function() {
                                 </div>
                                 <div class="col-3 stats">
                                     <div>
-                                        Perplexity: <span class="ppl">0</span>
+                                        Perplex: <span class="ppl">0</span>
                                     </div>
                                      <div>
                                          Average: <span class = "avg">0</span>
@@ -1099,17 +1141,23 @@ $(document).ready(function() {
 
         $("#darkmode").change(function(){
             if ($(this).is(':checked') == true) {
-                $('.bmo--blur').css('background-color', '#2d3f50');
-                $('body').css('color', '#fff');
-                $('body').css('background-color', '#aaa');
-                $('.card').css('background-color', '#2a3d4e');
-                $('.dropdown').css('background-color', '#2d3f50');
+                // $('.bmo--blur').css('background-color', '#2d3f50');
+                // $('body').css('color', '#fff');
+                // $('body').css('background-color', '#aaa');
+                // $('.card').css('background-color', '#2a3d4e');
+                // $('.dropdown').css('background-color', '#2d3f50');
+                $("*").each(function() {
+                    $(this).attr('data-theme', 'dark');
+                });
             } else {
-                $('.bmo--blur').css('background-color', '#ddd');
-                $('body').css('color', '#404040');
-                $('body').css('background-color', '#404040');
-                $('.card').css('background-color', '#fff');
-                $('.dropdown').css('background-color', '#eee');
+                // $('.bmo--blur').css('background-color', '#ddd');
+                // $('body').css('color', '#404040');
+                // $('body').css('background-color', '#404040');
+                // $('.card').css('background-color', '#fff');
+                // $('.dropdown').css('background-color', '#eee');
+                $("*").each(function () {
+                    $(this).removeAttr('data-theme');
+                });
             }
         });
     });
