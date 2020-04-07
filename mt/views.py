@@ -16,7 +16,7 @@ import ast
 import sys
 import os
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, os.path.join(dir_path, 'opennmt'))
+sys.path.insert(0, os.path.join(dir_path, 'OpenNMT-py'))
 
 from itertools import repeat
 
@@ -57,7 +57,7 @@ langspecs = {
     '1' : {
         'src' : 'hi',
         'tgt' : 'en',
-        'model': 'onmt-hien.pt',
+        'model': 'full_iitb_bpe_hien.pt',
         'indic_code': None,
         'provide_help' : False,
     }
