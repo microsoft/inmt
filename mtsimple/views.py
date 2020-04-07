@@ -11,7 +11,7 @@ import ast
 import sys
 import os
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, os.path.join(dir_path, 'opennmt'))
+sys.path.insert(0, os.path.join(dir_path, 'OpenNMT-py'))
 
 from onmt.utils.logging import init_logger
 from onmt.utils.misc import split_corpus
