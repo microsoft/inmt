@@ -9,7 +9,7 @@ from itertools import chain, cycle
 
 import torch
 import torchtext.data
-from torchtext.data import Field, RawField
+from torchtext.data import Field, RawField, LabelField
 from torchtext.vocab import Vocab
 from torchtext.data.utils import RandomShuffler
 
@@ -58,6 +58,47 @@ def make_tgt(data, vocab):
     return alignment
 
 
+class AlignField(LabelField):
+    """
+    Parse ['<src>-<tgt>', ...] into ['<src>','<tgt>', ...]
+    """
+
+    def __init__(self, **kwargs):
+        kwargs['use_vocab'] = False
+        kwargs['preprocessing'] = parse_align_idx
+        super(AlignField, self).__init__(**kwargs)
+
+    def process(self, batch, device=None):
+        """ Turn a batch of align-idx to a sparse align idx Tensor"""
+        sparse_idx = []
+        for i, example in enumerate(batch):
+            for src, tgt in example:
+                # +1 for tgt side to keep coherent after "bos" padding,
+                # register ['N°_in_batch', 'tgt_id+1', 'src_id']
+                sparse_idx.append([i, tgt + 1, src])
+
+        align_idx = torch.tensor(sparse_idx, dtype=self.dtype, device=device)
+
+        return align_idx
+
+
+def parse_align_idx(align_pharaoh):
+    """
+    Parse Pharaoh alignment into [[<src>, <tgt>], ...]
+    """
+    align_list = align_pharaoh.strip().split(' ')
+    flatten_align_idx = []
+    for align in align_list:
+        try:
+            src_idx, tgt_idx = align.split('-')
+        except ValueError:
+            logger.warning("{} in `{}`".format(align, align_pharaoh))
+            logger.warning("Bad alignement line exists. Please check file!")
+            raise
+        flatten_align_idx.append([int(src_idx), int(tgt_idx)])
+    return flatten_align_idx
+
+
 def get_fields(
     src_data_type,
     n_src_feats,
@@ -66,6 +107,7 @@ def get_fields(
     bos='<s>',
     eos='</s>',
     dynamic_dict=False,
+    with_align=False,
     src_truncate=None,
     tgt_truncate=None
 ):
@@ -84,6 +126,7 @@ def get_fields(
             for tgt.
         dynamic_dict (bool): Whether or not to include source map and
             alignment fields.
+        with_align (bool): Whether or not to include word align.
         src_truncate: Cut off src sequences beyond this (passed to
             ``src_data_type``'s data reader - see there for more details).
         tgt_truncate: Cut off tgt sequences beyond this (passed to
@@ -122,6 +165,9 @@ def get_fields(
     indices = Field(use_vocab=False, dtype=torch.long, sequential=False)
     fields["indices"] = indices
 
+    corpus_ids = Field(use_vocab=True, sequential=False)
+    fields["corpus_id"] = corpus_ids
+
     if dynamic_dict:
         src_map = Field(
             use_vocab=False, dtype=torch.float,
@@ -136,7 +182,18 @@ def get_fields(
             postprocessing=make_tgt, sequential=False)
         fields["alignment"] = align
 
+    if with_align:
+        word_align = AlignField()
+        fields["align"] = word_align
+
     return fields
+
+
+def patch_fields(opt, fields):
+    dvocab = torch.load(opt.data + '.vocab.pt')
+    maybe_cid_field = dvocab.get('corpus_id', None)
+    if maybe_cid_field is not None:
+        fields.update({'corpus_id': maybe_cid_field})
 
 
 def load_old_vocab(vocab, data_type="text", dynamic_dict=False):
@@ -317,7 +374,9 @@ def _build_fv_from_multifield(multifield, counters, build_fv_args,
 def _build_fields_vocab(fields, counters, data_type, share_vocab,
                         vocab_size_multiple,
                         src_vocab_size, src_words_min_frequency,
-                        tgt_vocab_size, tgt_words_min_frequency):
+                        tgt_vocab_size, tgt_words_min_frequency,
+                        subword_prefix="▁",
+                        subword_prefix_is_joiner=False):
     build_fv_args = defaultdict(dict)
     build_fv_args["src"] = dict(
         max_size=src_vocab_size, min_freq=src_words_min_frequency)
@@ -329,6 +388,11 @@ def _build_fields_vocab(fields, counters, data_type, share_vocab,
         counters,
         build_fv_args,
         size_multiple=vocab_size_multiple if not share_vocab else 1)
+
+    if fields.get("corpus_id", False):
+        fields["corpus_id"].vocab = fields["corpus_id"].vocab_cls(
+            counters["corpus_id"])
+
     if data_type == 'text':
         src_multifield = fields["src"]
         _build_fv_from_multifield(
@@ -336,6 +400,7 @@ def _build_fields_vocab(fields, counters, data_type, share_vocab,
             counters,
             build_fv_args,
             size_multiple=vocab_size_multiple if not share_vocab else 1)
+
         if share_vocab:
             # `tgt_vocab_size` is ignored when sharing vocabularies
             logger.info(" * merging src and tgt vocab...")
@@ -347,7 +412,36 @@ def _build_fields_vocab(fields, counters, data_type, share_vocab,
                 vocab_size_multiple=vocab_size_multiple)
             logger.info(" * merged vocab size: %d." % len(src_field.vocab))
 
+        build_noise_field(
+            src_multifield.base_field,
+            subword_prefix=subword_prefix,
+            is_joiner=subword_prefix_is_joiner)
     return fields
+
+
+def build_noise_field(src_field, subword=True,
+                      subword_prefix="▁", is_joiner=False,
+                      sentence_breaks=[".", "?", "!"]):
+    """In place add noise related fields i.e.:
+         - word_start
+         - end_of_sentence
+    """
+    if subword:
+        def is_word_start(x): return (x.startswith(subword_prefix) ^ is_joiner)
+        sentence_breaks = [subword_prefix + t for t in sentence_breaks]
+    else:
+        def is_word_start(x): return True
+
+    vocab_size = len(src_field.vocab)
+    word_start_mask = torch.zeros([vocab_size]).bool()
+    end_of_sentence_mask = torch.zeros([vocab_size]).bool()
+    for i, t in enumerate(src_field.vocab.itos):
+        if is_word_start(t):
+            word_start_mask[i] = True
+        if t in sentence_breaks:
+            end_of_sentence_mask[i] = True
+    src_field.word_start_mask = word_start_mask
+    src_field.end_of_sentence_mask = end_of_sentence_mask
 
 
 def build_vocab(train_dataset_files, fields, data_type, share_vocab,
@@ -776,11 +870,14 @@ def build_dataset_iter(corpus_type, fields, opt, is_train=True, multi=False):
     to iterate over. We implement simple ordered iterator strategy here,
     but more sophisticated strategy like curriculum learning is ok too.
     """
+    dataset_glob = opt.data + '.' + corpus_type + '.[0-9]*.pt'
     dataset_paths = list(sorted(
-        glob.glob(opt.data + '.' + corpus_type + '.[0-9]*.pt')))
+        glob.glob(dataset_glob),
+        key=lambda p: int(p.split(".")[-2])))
+
     if not dataset_paths:
         if is_train:
-            raise ValueError('Training data %s not found' % opt.data)
+            raise ValueError('Training data %s not found' % dataset_glob)
         else:
             return None
     if multi:

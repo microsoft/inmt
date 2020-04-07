@@ -2,6 +2,8 @@
 from __future__ import print_function
 
 import configargparse
+import onmt
+
 from onmt.models.sru import CheckSRU
 
 
@@ -12,6 +14,149 @@ def config_opts(parser):
                is_write_out_config_file_arg=True,
                help='config file save path')
 
+def global_opts(parser):
+     group = parser.add_argument_group('Model')
+     group.add('--fp32', '-fp32', action='store_true',
+              help="Force the model to be in FP32 "
+                   "because FP16 is very slow on GTX1080(ti).")
+     group.add('--avg_raw_probs', '-avg_raw_probs', action='store_true',
+              help="If this is set, during ensembling scores from "
+                   "different models will be combined by averaging their "
+                   "raw probabilities and then taking the log. Otherwise, "
+                   "the log probabilities will be averaged directly. "
+                   "Necessary for models whose output layers can assign "
+                   "zero probability.")
+
+     group = parser.add_argument_group('Data')
+     group.add('--data_type', '-data_type', default="text",
+               help="Type of the source input. Options: [text|img].")
+
+     group.add('--shard_size', '-shard_size', type=int, default=10000,
+               help="Divide src and tgt (if applicable) into "
+                    "smaller multiple src and tgt files, then "
+                    "build shards, each shard will have "
+                    "opt.shard_size samples except last shard. "
+                    "shard_size=0 means no segmentation "
+                    "shard_size>0 means segment dataset into multiple shards, "
+                    "each shard has shard_size samples")
+     group.add('--output', '-output', default='pred.txt',
+               help="Path to output the predictions (each line will "
+                    "be the decoded sequence")
+     group.add('--report_align', '-report_align', action='store_true',
+               help="Report alignment for each translation.")
+     group.add('--report_time', '-report_time', action='store_true',
+               help="Report some translation time metrics")
+
+     group = parser.add_argument_group('Random Sampling')
+     group.add('--random_sampling_topk', '-random_sampling_topk',
+              default=1, type=int,
+              help="Set this to -1 to do random sampling from full "
+                   "distribution. Set this to value k>1 to do random "
+                   "sampling restricted to the k most likely next tokens. "
+                   "Set this to 1 to use argmax or for doing beam "
+                   "search.")
+     group.add('--random_sampling_temp', '-random_sampling_temp',
+              default=1., type=float,
+              help="If doing random sampling, divide the logits by "
+                   "this before computing softmax during decoding.")
+     group.add('--seed', '-seed', type=int, default=829,
+              help="Random seed")
+
+     group = parser.add_argument_group('Beam')
+     group.add('--beam_size', '-beam_size', type=int, default=5,
+               help='Beam size')
+     group.add('--min_length', '-min_length', type=int, default=0,
+               help='Minimum prediction length')
+     group.add('--max_length', '-max_length', type=int, default=100,
+               help='Maximum prediction length.')
+     group.add('--max_sent_length', '-max_sent_length', action=DeprecateAction,
+               help="Deprecated, use `-max_length` instead")
+
+     # Alpha and Beta values for Google Length + Coverage penalty
+     # Described here: https://arxiv.org/pdf/1609.08144.pdf, Section 7
+     group.add('--stepwise_penalty', '-stepwise_penalty', action='store_true',
+               help="Apply penalty at every decoding step. "
+                    "Helpful for summary penalty.")
+     group.add('--length_penalty', '-length_penalty', default='none',
+               choices=['none', 'wu', 'avg'],
+               help="Length Penalty to use.")
+     group.add('--ratio', '-ratio', type=float, default=-0.,
+               help="Ratio based beam stop condition")
+     group.add('--coverage_penalty', '-coverage_penalty', default='none',
+               choices=['none', 'wu', 'summary'],
+               help="Coverage Penalty to use.")
+     group.add('--alpha', '-alpha', type=float, default=0.,
+               help="Google NMT length penalty parameter "
+                    "(higher = longer generation)")
+     group.add('--beta', '-beta', type=float, default=-0.,
+               help="Coverage penalty parameter")
+     group.add('--block_ngram_repeat', '-block_ngram_repeat',
+               type=int, default=0,
+               help='Block repetition of ngrams during decoding.')
+     group.add('--ignore_when_blocking', '-ignore_when_blocking',
+               nargs='+', type=str, default=[],
+               help="Ignore these strings when blocking repeats. "
+                    "You want to block sentence delimiters.")
+     group.add('--replace_unk', '-replace_unk', action="store_true",
+               help="Replace the generated UNK tokens with the "
+                    "source token that had highest attention weight. If "
+                    "phrase_table is provided, it will look up the "
+                    "identified source token and give the corresponding "
+                    "target token. If it is not provided (or the identified "
+                    "source token does not exist in the table), then it "
+                    "will copy the source token.")
+     group.add('--phrase_table', '-phrase_table', type=str, default="",
+               help="If phrase_table is provided (with replace_unk), it will "
+                    "look up the identified source token and give the "
+                    "corresponding target token. If it is not provided "
+                    "(or the identified source token does not exist in "
+                    "the table), then it will copy the source token.")
+
+     group = parser.add_argument_group('Logging')
+     group.add('--verbose', '-verbose', action="store_true",
+               help='Print scores and predictions for each sentence')
+     group.add('--log_file', '-log_file', type=str, default="",
+               help="Output logs to a file under this path.")
+     group.add('--log_file_level', '-log_file_level', type=str,
+               action=StoreLoggingLevelAction,
+               choices=StoreLoggingLevelAction.CHOICES,
+               default="0")
+     group.add('--attn_debug', '-attn_debug', action="store_true",
+               help='Print best attn for each word')
+     group.add('--align_debug', '-align_debug', action="store_true",
+               help='Print best align for each word')
+     group.add('--dump_beam', '-dump_beam', type=str, default="",
+               help='File to dump beam information to.')
+     group.add('--n_best', '-n_best', type=int, default=1,
+               help="If verbose is set, will output the n_best "
+                    "decoded sentences")
+
+     group = parser.add_argument_group('Efficiency')
+     group.add('--batch_size', '-batch_size', type=int, default=30,
+               help='Batch size')
+     group.add('--batch_type', '-batch_type', default='sents',
+               choices=["sents", "tokens"],
+               help="Batch grouping for batch_size. Standard "
+                    "is sents. Tokens will do dynamic batching")
+     group.add('--gpu', '-gpu', type=int, default=-1,
+               help="Device to run on")
+
+     # Options most relevant to speech.
+     group = parser.add_argument_group('Speech')
+     group.add('--sample_rate', '-sample_rate', type=int, default=16000,
+               help="Sample rate.")
+     group.add('--window_size', '-window_size', type=float, default=.02,
+               help='Window size for spectrogram in seconds')
+     group.add('--window_stride', '-window_stride', type=float, default=.01,
+               help='Window stride for spectrogram in seconds')
+     group.add('--window', '-window', default='hamming',
+               help='Window type for spectrogram generation')
+
+     # Option most relevant to image input
+     group.add('--image_channel_size', '-image_channel_size',
+               type=int, default=3, choices=[3, 1],
+               help="Using grayscale image can training "
+                    "model faster and smaller")
 
 def model_opts(parser):
     """
@@ -69,10 +214,10 @@ def model_opts(parser):
               help='Data type of the model.')
 
     group.add('--encoder_type', '-encoder_type', type=str, default='rnn',
-              choices=['rnn', 'brnn', 'mean', 'transformer', 'cnn'],
+              choices=['rnn', 'brnn', 'ggnn', 'mean', 'transformer', 'cnn'],
               help="Type of encoder layer to use. Non-RNN layers "
                    "are experimental. Options are "
-                   "[rnn|brnn|mean|transformer|cnn].")
+                   "[rnn|brnn|ggnn|mean|transformer|cnn].")
     group.add('--decoder_type', '-decoder_type', type=str, default='rnn',
               choices=['rnn', 'transformer', 'cnn'],
               help="Type of decoder layer to use. Non-RNN layers "
@@ -128,6 +273,27 @@ def model_opts(parser):
               help="Type of context gate to use. "
                    "Do not select for no context gate.")
 
+    # The following options (bridge_extra_node to src_vocab) are used
+    # for training with --encoder_type ggnn (Gated Graph Neural Network).
+    group.add('--bridge_extra_node', '-bridge_extra_node',
+              type=bool, default=True,
+              help='Graph encoder bridges only extra node to decoder as input')
+    group.add('--bidir_edges', '-bidir_edges', type=bool, default=True,
+              help='Graph encoder autogenerates bidirectional edges')
+    group.add('--state_dim', '-state_dim', type=int, default=512,
+              help='Number of state dimensions in the graph encoder')
+    group.add('--n_edge_types', '-n_edge_types', type=int, default=2,
+              help='Number of edge types in the graph encoder')
+    group.add('--n_node', '-n_node', type=int, default=2,
+              help='Number of nodes in the graph encoder')
+    group.add('--n_steps', '-n_steps', type=int, default=2,
+              help='Number of steps to advance graph encoder')
+    # The ggnn uses src_vocab during training because the graph is built
+    # using edge information which requires parsing the input sequence.
+    group.add('--src_vocab', '-src_vocab', default="",
+              help="Path to an existing source vocabulary. Format: "
+                   "one word per line.")
+
     # Attention options
     group = parser.add_argument_group('Model- Attention')
     group.add('--global_attention', '-global_attention',
@@ -154,7 +320,22 @@ def model_opts(parser):
     group.add('--aan_useffn', '-aan_useffn', action="store_true",
               help='Turn on the FFN layer in the AAN decoder')
 
+    # Alignement options
+    group = parser.add_argument_group('Model - Alignement')
+    group.add('--lambda_align', '-lambda_align', type=float, default=0.0,
+              help="Lambda value for alignement loss of Garg et al (2019)"
+                   "For more detailed information, see: "
+                   "https://arxiv.org/abs/1909.02074")
+    group.add('--alignment_layer', '-alignment_layer', type=int, default=-3,
+              help='Layer number which has to be supervised.')
+    group.add('--alignment_heads', '-alignment_heads', type=int, default=0,
+              help='N. of cross attention heads per layer to supervised with')
+    group.add('--full_context_alignment', '-full_context_alignment',
+              action="store_true",
+              help='Whether alignment is conditioned on full target context.')
+
     # Generator and loss options.
+    group = parser.add_argument_group('Generator')
     group.add('--copy_attn', '-copy_attn', action="store_true",
               help='Train copy attention layer.')
     group.add('--copy_attn_type', '-copy_attn_type',
@@ -181,7 +362,7 @@ def model_opts(parser):
     group.add('--loss_scale', '-loss_scale', type=float, default=0,
               help="For FP16 training, the static loss scale to use. If not "
                    "set, the loss scale is dynamically computed.")
-    group.add('--apex_opt_level', '-apex_opt_level', type=str, default="O2",
+    group.add('--apex_opt_level', '-apex_opt_level', type=str, default="O1",
               choices=["O0", "O1", "O2", "O3"],
               help="For FP16 training, the opt_level to use."
                    "See https://nvidia.github.io/apex/amp.html#opt-levels.")
@@ -199,12 +380,17 @@ def preprocess_opts(parser):
               help="Path(s) to the training source data")
     group.add('--train_tgt', '-train_tgt', required=True, nargs='+',
               help="Path(s) to the training target data")
+    group.add('--train_align', '-train_align', nargs='+', default=[None],
+              help="Path(s) to the training src-tgt alignment")
     group.add('--train_ids', '-train_ids', nargs='+', default=[None],
               help="ids to name training shards, used for corpus weighting")
+
     group.add('--valid_src', '-valid_src',
               help="Path to the validation source data")
     group.add('--valid_tgt', '-valid_tgt',
               help="Path to the validation target data")
+    group.add('--valid_align', '-valid_align', default=None,
+              help="Path(s) to the validation src-tgt alignment")
 
     group.add('--src_dir', '-src_dir', default="",
               help="Source directory for image or audio files.")
@@ -223,6 +409,9 @@ def preprocess_opts(parser):
                    "shard_size=0 means no segmentation "
                    "shard_size>0 means segment dataset into multiple shards, "
                    "each shard has shard_size samples")
+
+    group.add('--num_threads', '-num_threads', type=int, default=1,
+              help="Number of shards to build in parallel.")
 
     group.add('--overwrite', '-overwrite', action="store_true",
               help="Overwrite existing shards if any.")
@@ -310,6 +499,15 @@ def preprocess_opts(parser):
               help="Using grayscale image can training "
                    "model faster and smaller")
 
+    # Options for experimental source noising (BART style)
+    group = parser.add_argument_group('Noise')
+    group.add('--subword_prefix', '-subword_prefix',
+              type=str, default="▁",
+              help="subword prefix to build wordstart mask")
+    group.add('--subword_prefix_is_joiner', '-subword_prefix_is_joiner',
+              action='store_true',
+              help="mask will need to be inverted if prefix is joiner")
+
 
 def train_opts(parser):
     """ Training and saving options """
@@ -324,6 +522,8 @@ def train_opts(parser):
     group.add('--data_weights', '-data_weights', type=int, nargs='+',
               default=[1], help="""Weights of different corpora,
               should follow the same order as in -data_ids.""")
+    group.add('--data_to_noise', '-data_to_noise', nargs='+', default=[],
+              help="IDs of datasets on which to apply noise.")
 
     group.add('--save_model', '-save_model', default='model',
               help="Model filename (the model will be saved as "
@@ -352,7 +552,7 @@ def train_opts(parser):
               help="IP of master for torch.distributed training.")
     group.add('--master_port', '-master_port', default=10000, type=int,
               help="Port of master for torch.distributed training.")
-    group.add('--queue_size', '-queue_size', default=400, type=int,
+    group.add('--queue_size', '-queue_size', default=40, type=int,
               help="Size of queue for each process in producer/consumer")
 
     group.add('--seed', '-seed', type=int, default=-1,
@@ -472,10 +672,9 @@ def train_opts(parser):
                    'Typically a value of 0.999 is recommended, as this is '
                    'the value suggested by the original paper describing '
                    'Adam, and is also the value adopted in other frameworks '
-                   'such as Tensorflow and Kerras, i.e. see: '
+                   'such as Tensorflow and Keras, i.e. see: '
                    'https://www.tensorflow.org/api_docs/python/tf/train/Adam'
-                   'Optimizer or '
-                   'https://keras.io/optimizers/ . '
+                   'Optimizer or https://keras.io/optimizers/ . '
                    'Whereas recently the paper "Attention is All You Need" '
                    'suggested a value of 0.98 for beta2, this parameter may '
                    'not work well for normal models / default '
@@ -498,6 +697,12 @@ def train_opts(parser):
               help="Step for moving average. "
                    "Default is every update, "
                    "if -average_decay is set.")
+    group.add("--src_noise", "-src_noise", type=str, nargs='+',
+              default=[],
+              choices=onmt.modules.source_noise.MultiNoise.NOISES.keys())
+    group.add("--src_noise_prob", "-src_noise_prob", type=float, nargs='+',
+              default=[],
+              help="Probabilities of src_noise functions")
 
     # learning rate
     group = parser.add_argument_group('Optimization- Rate')
@@ -536,10 +741,10 @@ def train_opts(parser):
               help="Send logs to this crayon server.")
     group.add('--exp', '-exp', type=str, default="",
               help="Name of the experiment for logging.")
-    # Use TensorboardX for visualization during training
+    # Use Tensorboard for visualization during training
     group.add('--tensorboard', '-tensorboard', action="store_true",
-              help="Use tensorboardX for visualization during training. "
-                   "Must have the library tensorboardX.")
+              help="Use tensorboard for visualization during training. "
+                   "Must have the library tensorboard >= 1.14.")
     group.add("--tensorboard_log_dir", "-tensorboard_log_dir",
               type=str, default="runs/onmt",
               help="Log directory for Tensorboard. "
@@ -600,12 +805,8 @@ def translate_opts(parser):
     group.add('--output', '-output', default='pred.txt',
               help="Path to output the predictions (each line will "
                    "be the decoded sequence")
-    group.add('--report_bleu', '-report_bleu', action='store_true',
-              help="Report bleu score after translation, "
-                   "call tools/multi-bleu.perl on command line")
-    group.add('--report_rouge', '-report_rouge', action='store_true',
-              help="Report rouge 1/2/3/L/SU4 score after translation "
-                   "call tools/test_rouge.py on command line")
+    group.add('--report_align', '-report_align', action='store_true',
+              help="Report alignment for each translation.")
     group.add('--report_time', '-report_time', action='store_true',
               help="Report some translation time metrics")
 
@@ -690,6 +891,8 @@ def translate_opts(parser):
               default="0")
     group.add('--attn_debug', '-attn_debug', action="store_true",
               help='Print best attn for each word')
+    group.add('--align_debug', '-align_debug', action="store_true",
+              help='Print best align for each word')
     group.add('--dump_beam', '-dump_beam', type=str, default="",
               help='File to dump beam information to.')
     group.add('--n_best', '-n_best', type=int, default=1,
@@ -699,6 +902,10 @@ def translate_opts(parser):
     group = parser.add_argument_group('Efficiency')
     group.add('--batch_size', '-batch_size', type=int, default=30,
               help='Batch size')
+    group.add('--batch_type', '-batch_type', default='sents',
+              choices=["sents", "tokens"],
+              help="Batch grouping for batch_size. Standard "
+                   "is sents. Tokens will do dynamic batching")
     group.add('--gpu', '-gpu', type=int, default=-1,
               help="Device to run on")
 

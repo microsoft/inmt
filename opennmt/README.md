@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/OpenNMT/OpenNMT-py.svg?branch=master)](https://travis-ci.org/OpenNMT/OpenNMT-py)
 [![Run on FH](https://img.shields.io/badge/Run%20on-FloydHub-blue.svg)](https://floydhub.com/run?template=https://github.com/OpenNMT/OpenNMT-py)
 
-This is a [Pytorch](https://github.com/pytorch/pytorch)
+This is a [PyTorch](https://github.com/pytorch/pytorch)
 port of [OpenNMT](https://github.com/OpenNMT/OpenNMT),
 an open-source (MIT) neural machine translation system. It is designed to be research friendly to try out new ideas in translation, summary, image-to-text, morphology, and many other domains. Some companies have proven the code to be production ready.
 
@@ -28,32 +28,43 @@ Table of Contents
 
 ## Requirements
 
-All dependencies can be installed via:
-
+Install `OpenNMT-py` from `pip`:
 ```bash
-pip install -r requirements.txt
+pip install OpenNMT-py
 ```
 
-NOTE: If you have MemoryError in the install try to use: 
-
+or from the sources:
 ```bash
-pip install -r requirements.txt --no-cache-dir
+git clone https://github.com/OpenNMT/OpenNMT-py.git
+cd OpenNMT-py
+python setup.py install
 ```
-Note that we currently only support PyTorch 1.1 (should work with 1.0)
+
+Note: If you have MemoryError in the install try to use `pip` with `--no-cache-dir`.
+
+*(Optional)* some advanced features (e.g. working audio, image or pretrained models) requires extra packages, you can install it with:
+```bash
+pip install -r requirements.opt.txt
+```
+
+Note:
+
+- some features require Python 3.5 and after (eg: Distributed multigpu, entmax)
+- we currently only support PyTorch 1.4
 
 ## Features
 
-- [data preprocessing](http://opennmt.net/OpenNMT-py/options/preprocess.html)
-- [Inference (translation) with batching and beam search](http://opennmt.net/OpenNMT-py/options/translate.html)
-- [Multiple source and target RNN (lstm/gru) types and attention (dotprod/mlp) types](http://opennmt.net/OpenNMT-py/options/train.html#model-encoder-decoder)
-- [TensorBoard](http://opennmt.net/OpenNMT-py/options/train.html#logging)
-- [Source word features](http://opennmt.net/OpenNMT-py/options/train.html#model-embeddings)
-- [Pretrained Embeddings](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-pretrained-embeddings-e-g-glove)
+- [Seq2Seq models (encoder-decoder) with multiple RNN cells (lstm/gru) and attention (dotprod/mlp) types](http://opennmt.net/OpenNMT-py/options/train.html#model-encoder-decoder)
+- [Transformer models](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-the-transformer-model)
 - [Copy and Coverage Attention](http://opennmt.net/OpenNMT-py/options/train.html#model-attention)
+- [Pretrained Embeddings](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-pretrained-embeddings-e-g-glove)
+- [Source word features](http://opennmt.net/OpenNMT-py/options/train.html#model-embeddings)
 - [Image-to-text processing](http://opennmt.net/OpenNMT-py/im2text.html)
 - [Speech-to-text processing](http://opennmt.net/OpenNMT-py/speech2text.html)
-- ["Attention is all you need"](http://opennmt.net/OpenNMT-py/FAQ.html#how-do-i-use-the-transformer-model)
-- [Multi-GPU](http://opennmt.net/OpenNMT-py/FAQ.html##do-you-support-multi-gpu)
+- [TensorBoard logging](http://opennmt.net/OpenNMT-py/options/train.html#logging)
+- [Multi-GPU training](http://opennmt.net/OpenNMT-py/FAQ.html##do-you-support-multi-gpu)
+- [Data preprocessing](http://opennmt.net/OpenNMT-py/options/preprocess.html)
+- [Inference (translation) with batching and beam search](http://opennmt.net/OpenNMT-py/options/translate.html)
 - Inference time loss functions.
 - [Conv2Conv convolution model]
 - SRU "RNNs faster than CNN" paper
@@ -67,7 +78,7 @@ Note that we currently only support PyTorch 1.1 (should work with 1.0)
 ### Step 1: Preprocess the data
 
 ```bash
-python preprocess.py -train_src data/src-train.txt -train_tgt data/tgt-train.txt -valid_src data/src-val.txt -valid_tgt data/tgt-val.txt -save_data data/demo
+onmt_preprocess -train_src data/src-train.txt -train_tgt data/tgt-train.txt -valid_src data/src-val.txt -valid_tgt data/tgt-val.txt -save_data data/demo
 ```
 
 We will be working with some example data in `data/` folder.
@@ -94,21 +105,21 @@ Internally the system never touches the words themselves, but uses these indices
 ### Step 2: Train the model
 
 ```bash
-python train.py -data data/demo -save_model demo-model
+onmt_train -data data/demo -save_model demo-model
 ```
 
 The main train command is quite simple. Minimally it takes a data file
 and a save file.  This will run the default model, which consists of a
 2-layer LSTM with 500 hidden units on both the encoder/decoder.
 If you want to train on GPU, you need to set, as an example:
-CUDA_VISIBLE_DEVICES=1,3
+`CUDA_VISIBLE_DEVICES=1,3`
 `-world_size 2 -gpu_ranks 0 1` to use (say) GPU 1 and 3 on this node only.
 To know more about distributed training on single or multi nodes, read the FAQ section.
 
 ### Step 3: Translate
 
 ```bash
-python translate.py -model demo-model_acc_XX.XX_ppl_XXX.XX_eX.pt -src data/src-test.txt -output pred.txt -replace_unk -verbose
+onmt_translate -model demo-model_acc_XX.XX_ppl_XXX.XX_eX.pt -src data/src-test.txt -output pred.txt -replace_unk -verbose
 ```
 
 Now you have a model which you can use to predict on new data. We do this by running beam search. This will output predictions into `pred.txt`.
@@ -151,7 +162,7 @@ Major contributors are:
 [Dylan Flaute](http://github.com/flauted (University of Dayton)
 and more !
 
-OpentNMT-py belongs to the OpenNMT project along with OpenNMT-Lua and OpenNMT-tf.
+OpenNMT-py belongs to the OpenNMT project along with OpenNMT-Lua and OpenNMT-tf.
 
 ## Citation
 

@@ -13,8 +13,13 @@ import importlib
 import torch
 import onmt.opts
 
+from itertools import islice
+from copy import deepcopy
+
 from onmt.utils.logging import init_logger
 from onmt.utils.misc import set_random_seed
+from onmt.utils.misc import check_model_config
+from onmt.utils.alignment import to_word_align
 from onmt.utils.parse import ArgumentParser
 from onmt.translate.translator import build_translator
 
@@ -69,6 +74,53 @@ class ServerModelError(Exception):
     pass
 
 
+class CTranslate2Translator(object):
+    """
+    This class wraps the ctranslate2.Translator object to
+    reproduce the onmt.translate.translator API.
+    """
+
+    def __init__(self, model_path, device, device_index,
+                 batch_size, beam_size, n_best, preload=False):
+        import ctranslate2
+        self.translator = ctranslate2.Translator(
+            model_path,
+            device=device,
+            device_index=device_index,
+            inter_threads=1,
+            intra_threads=1,
+            compute_type="default")
+        self.batch_size = batch_size
+        self.beam_size = beam_size
+        self.n_best = n_best
+        if preload:
+            # perform a first request to initialize everything
+            dummy_translation = self.translate(["a"])
+            print("Performed a dummy translation to initialize the model",
+                  dummy_translation)
+            time.sleep(1)
+            self.translator.unload_model(to_cpu=True)
+
+    def translate(self, texts_to_translate, batch_size=8):
+        batch = [item.split(" ") for item in texts_to_translate]
+        preds = self.translator.translate_batch(
+            batch,
+            max_batch_size=self.batch_size,
+            beam_size=self.beam_size,
+            num_hypotheses=self.n_best
+        )
+        scores = [[item["score"] for item in ex] for ex in preds]
+        predictions = [[" ".join(item["tokens"]) for item in ex]
+                       for ex in preds]
+        return scores, predictions
+
+    def to_cpu(self):
+        self.translator.unload_model(to_cpu=True)
+
+    def to_gpu(self):
+        self.translator.load_model()
+
+
 class TranslationServer(object):
     def __init__(self):
         self.models = {}
@@ -89,13 +141,15 @@ class TranslationServer(object):
                 else:
                     raise ValueError("""Incorrect config file: missing 'models'
                                         parameter for model #%d""" % i)
+            check_model_config(conf, self.models_root)
             kwargs = {'timeout': conf.get('timeout', None),
                       'load': conf.get('load', None),
                       'preprocess_opt': conf.get('preprocess', None),
                       'tokenizer_opt': conf.get('tokenizer', None),
                       'postprocess_opt': conf.get('postprocess', None),
                       'on_timeout': conf.get('on_timeout', None),
-                      'model_root': conf.get('model_root', self.models_root)
+                      'model_root': conf.get('model_root', self.models_root),
+                      'ct2_model': conf.get('ct2_model', None)
                       }
             kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
             model_id = conf.get("id", None)
@@ -202,11 +256,9 @@ class ServerModel(object):
 
     def __init__(self, opt, model_id, preprocess_opt=None, tokenizer_opt=None,
                  postprocess_opt=None, load=False, timeout=-1,
-                 on_timeout="to_cpu", model_root="./"):
+                 on_timeout="to_cpu", model_root="./", ct2_model=None):
         self.model_root = model_root
         self.opt = self.parse_opt(opt)
-        if self.opt.n_best > 1:
-            raise ValueError("Values of n_best > 1 are not supported")
 
         self.model_id = model_id
         self.preprocess_opt = preprocess_opt
@@ -214,6 +266,9 @@ class ServerModel(object):
         self.postprocess_opt = postprocess_opt
         self.timeout = timeout
         self.on_timeout = on_timeout
+
+        self.ct2_model = os.path.join(model_root, ct2_model) \
+            if ct2_model is not None else None
 
         self.unload_timer = None
         self.user_opt = opt
@@ -224,7 +279,8 @@ class ServerModel(object):
         else:
             log_file = None
         self.logger = init_logger(log_file=log_file,
-                                  log_file_level=self.opt.log_file_level)
+                                  log_file_level=self.opt.log_file_level,
+                                  rotate=True)
 
         self.loading_lock = threading.Event()
         self.loading_lock.set()
@@ -232,67 +288,6 @@ class ServerModel(object):
 
         set_random_seed(self.opt.seed, self.opt.cuda)
 
-        if load:
-            self.load()
-
-    def parse_opt(self, opt):
-        """Parse the option set passed by the user using `onmt.opts`
-
-       Args:
-           opt (dict): Options passed by the user
-
-       Returns:
-           opt (argparse.Namespace): full set of options for the Translator
-        """
-
-        prec_argv = sys.argv
-        sys.argv = sys.argv[:1]
-        parser = ArgumentParser()
-        onmt.opts.translate_opts(parser)
-
-        models = opt['models']
-        if not isinstance(models, (list, tuple)):
-            models = [models]
-        opt['models'] = [os.path.join(self.model_root, model)
-                         for model in models]
-        opt['src'] = "dummy_src"
-
-        for (k, v) in opt.items():
-            if k == 'models':
-                sys.argv += ['-model']
-                sys.argv += [str(model) for model in v]
-            elif type(v) == bool:
-                sys.argv += ['-%s' % k]
-            else:
-                sys.argv += ['-%s' % k, str(v)]
-
-        opt = parser.parse_args()
-        ArgumentParser.validate_translate_opts(opt)
-        opt.cuda = opt.gpu > -1
-
-        sys.argv = prec_argv
-        return opt
-
-    @property
-    def loaded(self):
-        return hasattr(self, 'translator')
-
-    def load(self):
-        self.loading_lock.clear()
-
-        timer = Timer()
-        self.logger.info("Loading model %d" % self.model_id)
-        timer.start()
-
-        try:
-            self.translator = build_translator(self.opt,
-                                               report_score=False,
-                                               out_file=codecs.open(
-                                                   os.devnull, "w", "utf-8"))
-        except RuntimeError as e:
-            raise ServerModelError("Runtime Error: %s" % str(e))
-
-        timer.tick("model_loading")
         if self.preprocess_opt is not None:
             self.logger.info("Loading preprocessor")
             self.preprocessor = []
@@ -347,6 +342,77 @@ class ServerModel(object):
                 function = get_function_by_path(function_path)
                 self.postprocessor.append(function)
 
+        if load:
+            self.load(preload=True)
+            self.stop_unload_timer()
+
+    def parse_opt(self, opt):
+        """Parse the option set passed by the user using `onmt.opts`
+
+       Args:
+           opt (dict): Options passed by the user
+
+       Returns:
+           opt (argparse.Namespace): full set of options for the Translator
+        """
+
+        prec_argv = sys.argv
+        sys.argv = sys.argv[:1]
+        parser = ArgumentParser()
+        onmt.opts.translate_opts(parser)
+
+        models = opt['models']
+        if not isinstance(models, (list, tuple)):
+            models = [models]
+        opt['models'] = [os.path.join(self.model_root, model)
+                         for model in models]
+        opt['src'] = "dummy_src"
+
+        for (k, v) in opt.items():
+            if k == 'models':
+                sys.argv += ['-model']
+                sys.argv += [str(model) for model in v]
+            elif type(v) == bool:
+                sys.argv += ['-%s' % k]
+            else:
+                sys.argv += ['-%s' % k, str(v)]
+
+        opt = parser.parse_args()
+        ArgumentParser.validate_translate_opts(opt)
+        opt.cuda = opt.gpu > -1
+
+        sys.argv = prec_argv
+        return opt
+
+    @property
+    def loaded(self):
+        return hasattr(self, 'translator')
+
+    def load(self, preload=False):
+        self.loading_lock.clear()
+
+        timer = Timer()
+        self.logger.info("Loading model %d" % self.model_id)
+        timer.start()
+
+        try:
+            if self.ct2_model is not None:
+                self.translator = CTranslate2Translator(
+                    self.ct2_model,
+                    device="cuda" if self.opt.cuda else "cpu",
+                    device_index=self.opt.gpu if self.opt.cuda else 0,
+                    batch_size=self.opt.batch_size,
+                    beam_size=self.opt.beam_size,
+                    n_best=self.opt.n_best,
+                    preload=preload)
+            else:
+                self.translator = build_translator(
+                    self.opt, report_score=False,
+                    out_file=codecs.open(os.devnull, "w", "utf-8"))
+        except RuntimeError as e:
+            raise ServerModelError("Runtime Error: %s" % str(e))
+
+        timer.tick("model_loading")
         self.load_time = timer.tick()
         self.reset_unload_timer()
         self.loading_lock.set()
@@ -390,26 +456,25 @@ class ServerModel(object):
         head_spaces = []
         tail_spaces = []
         sslength = []
+        all_preprocessed = []
         for i, inp in enumerate(inputs):
             src = inp['src']
-            if src.strip() == "":
-                head_spaces.append(src)
-                texts.append("")
-                tail_spaces.append("")
-            else:
-                whitespaces_before, whitespaces_after = "", ""
-                match_before = re.search(r'^\s+', src)
-                match_after = re.search(r'\s+$', src)
-                if match_before is not None:
-                    whitespaces_before = match_before.group(0)
-                if match_after is not None:
-                    whitespaces_after = match_after.group(0)
-                head_spaces.append(whitespaces_before)
-                preprocessed_src = self.maybe_preprocess(src.strip())
-                tok = self.maybe_tokenize(preprocessed_src)
+            whitespaces_before, whitespaces_after = "", ""
+            match_before = re.search(r'^\s+', src)
+            match_after = re.search(r'\s+$', src)
+            if match_before is not None:
+                whitespaces_before = match_before.group(0)
+            if match_after is not None:
+                whitespaces_after = match_after.group(0)
+            head_spaces.append(whitespaces_before)
+            # every segment becomes a dict for flexibility purposes
+            seg_dict = self.maybe_preprocess(src.strip())
+            all_preprocessed.append(seg_dict)
+            for seg in seg_dict["seg"]:
+                tok = self.maybe_tokenize(seg)
                 texts.append(tok)
-                sslength.append(len(tok.split()))
-                tail_spaces.append(whitespaces_after)
+            sslength.append(len(tok.split()))
+            tail_spaces.append(whitespaces_after)
 
         empty_indices = [i for i, x in enumerate(texts) if x == ""]
         texts_to_translate = [x for x in texts if x != ""]
@@ -441,28 +506,69 @@ class ServerModel(object):
         self.reset_unload_timer()
 
         # NOTE: translator returns lists of `n_best` list
-        #       we can ignore that (i.e. flatten lists) only because
-        #       we restrict `n_best=1`
         def flatten_list(_list): return sum(_list, [])
+        tiled_texts = [t for t in texts_to_translate
+                       for _ in range(self.opt.n_best)]
         results = flatten_list(predictions)
-        scores = [score_tensor.item()
+
+        def maybe_item(x): return x.item() if type(x) is torch.Tensor else x
+        scores = [maybe_item(score_tensor)
                   for score_tensor in flatten_list(scores)]
 
-        results = [self.maybe_detokenize(item)
-                   for item in results]
+        results = [self.maybe_detokenize_with_align(result, src)
+                   for result, src in zip(results, tiled_texts)]
 
-        results = [self.maybe_postprocess(item)
-                   for item in results]
+        aligns = [align for _, align in results]
+
         # build back results with empty texts
         for i in empty_indices:
-            results.insert(i, "")
-            scores.insert(i, 0)
+            j = i * self.opt.n_best
+            results = (results[:j] +
+                       [("", None)] * self.opt.n_best + results[j:])
+            aligns = aligns[:j] + [None] * self.opt.n_best + aligns[j:]
+            scores = scores[:j] + [0] * self.opt.n_best + scores[j:]
 
+        rebuilt_segs, scores, aligns = self.rebuild_seg_packages(
+            all_preprocessed, results, scores, aligns, self.opt.n_best)
+
+        results = [self.maybe_postprocess(seg) for seg in rebuilt_segs]
+
+        head_spaces = [h for h in head_spaces for i in range(self.opt.n_best)]
+        tail_spaces = [h for h in tail_spaces for i in range(self.opt.n_best)]
         results = ["".join(items)
                    for items in zip(head_spaces, results, tail_spaces)]
 
         self.logger.info("Translation Results: %d", len(results))
-        return results, scores, self.opt.n_best, timer.times
+
+        return results, scores, self.opt.n_best, timer.times, aligns
+
+    def rebuild_seg_packages(self, all_preprocessed, results,
+                             scores, aligns, n_best):
+        """
+        Rebuild proper segment packages based on initial n_seg.
+        """
+        offset = 0
+        rebuilt_segs = []
+        avg_scores = []
+        merged_aligns = []
+        for i, seg_dict in enumerate(all_preprocessed):
+            sub_results = results[n_best * offset:
+                                  (offset + seg_dict["n_seg"]) * n_best]
+            sub_scores = scores[n_best * offset:
+                                (offset + seg_dict["n_seg"]) * n_best]
+            sub_aligns = aligns[n_best * offset:
+                                (offset + seg_dict["n_seg"]) * n_best]
+            for j in range(n_best):
+                _seg_dict = deepcopy(seg_dict)
+                _sub_segs = list(list(zip(*sub_results))[0])
+                _seg_dict["seg"] = list(islice(_sub_segs, j, None, n_best))
+                rebuilt_segs.append(_seg_dict)
+                sub_sub_scores = list(islice(sub_scores, j, None, n_best))
+                avg_scores.append(sum(sub_sub_scores)/_seg_dict["n_seg"])
+                sub_sub_aligns = list(islice(sub_aligns, j, None, n_best))
+                merged_aligns.append(sub_sub_aligns)
+            offset += _seg_dict["n_seg"]
+        return rebuilt_segs, avg_scores, merged_aligns
 
     def do_timeout(self):
         """Timeout function that frees GPU memory.
@@ -485,6 +591,7 @@ class ServerModel(object):
         del self.translator
         if self.opt.cuda:
             torch.cuda.empty_cache()
+        self.stop_unload_timer()
         self.unload_timer = None
 
     def stop_unload_timer(self):
@@ -515,20 +622,30 @@ class ServerModel(object):
     @critical
     def to_cpu(self):
         """Move the model to CPU and clear CUDA cache."""
-        self.translator.model.cpu()
-        if self.opt.cuda:
-            torch.cuda.empty_cache()
+        if type(self.translator) == CTranslate2Translator:
+            self.translator.to_cpu()
+        else:
+            self.translator.model.cpu()
+            if self.opt.cuda:
+                torch.cuda.empty_cache()
 
     def to_gpu(self):
         """Move the model to GPU."""
-        torch.cuda.set_device(self.opt.gpu)
-        self.translator.model.cuda()
+        if type(self.translator) == CTranslate2Translator:
+            self.translator.to_gpu()
+        else:
+            torch.cuda.set_device(self.opt.gpu)
+            self.translator.model.cuda()
 
     def maybe_preprocess(self, sequence):
         """Preprocess the sequence (or not)
 
         """
-
+        if type(sequence) is str:
+            sequence = {
+                "seg": [sequence],
+                "n_seg": 1
+            }
         if self.preprocess_opt is not None:
             return self.preprocess(sequence)
         return sequence
@@ -545,7 +662,7 @@ class ServerModel(object):
         if self.preprocessor is None:
             raise ValueError("No preprocessor loaded")
         for function in self.preprocessor:
-            sequence = function(sequence)
+            sequence = function(sequence, self)
         return sequence
 
     def maybe_tokenize(self, sequence):
@@ -579,6 +696,42 @@ class ServerModel(object):
             tok = " ".join(tok)
         return tok
 
+    @property
+    def tokenizer_marker(self):
+        marker = None
+        tokenizer_type = self.tokenizer_opt.get('type', None)
+        if tokenizer_type == "pyonmttok":
+            params = self.tokenizer_opt.get('params', None)
+            if params is not None:
+                if params.get("joiner_annotate", None) is not None:
+                    marker = 'joiner'
+                elif params.get("spacer_annotate", None) is not None:
+                    marker = 'spacer'
+        elif tokenizer_type == "sentencepiece":
+            marker = 'spacer'
+        return marker
+
+    def maybe_detokenize_with_align(self, sequence, src):
+        """De-tokenize (or not) the sequence (with alignment).
+
+        Args:
+            sequence (str): The sequence to detokenize, possible with
+                alignment seperate by ` ||| `.
+
+        Returns:
+            sequence (str): The detokenized sequence.
+            align (str): The alignment correspand to detokenized src/tgt
+                sorted or None if no alignment in output.
+        """
+        align = None
+        if self.opt.report_align:
+            # output contain alignment
+            sequence, align = sequence.split(' ||| ')
+            if align != '':
+                align = self.maybe_convert_align(src, sequence, align)
+        sequence = self.maybe_detokenize(sequence)
+        return (sequence, align)
+
     def maybe_detokenize(self, sequence):
         """De-tokenize the sequence (or not)
 
@@ -605,14 +758,29 @@ class ServerModel(object):
 
         return detok
 
+    def maybe_convert_align(self, src, tgt, align):
+        """Convert alignment to match detokenized src/tgt (or not).
+
+        Args:
+            src (str): The tokenized source sequence.
+            tgt (str): The tokenized target sequence.
+            align (str): The alignment correspand to src/tgt pair.
+
+        Returns:
+            align (str): The alignment correspand to detokenized src/tgt.
+        """
+        if self.tokenizer_marker is not None and ''.join(tgt.split()) != '':
+            return to_word_align(src, tgt, align, mode=self.tokenizer_marker)
+        return align
+
     def maybe_postprocess(self, sequence):
         """Postprocess the sequence (or not)
 
         """
-
         if self.postprocess_opt is not None:
             return self.postprocess(sequence)
-        return sequence
+        else:
+            return sequence["seg"][0]
 
     def postprocess(self, sequence):
         """Preprocess a single sequence.
@@ -626,7 +794,7 @@ class ServerModel(object):
         if self.postprocessor is None:
             raise ValueError("No postprocessor loaded")
         for function in self.postprocessor:
-            sequence = function(sequence)
+            sequence = function(sequence, self)
         return sequence
 
 
