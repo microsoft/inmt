@@ -3,3 +3,6 @@ model/
 db.sqlite3
 pred.txt
 conf.py
+build
+dist
+*.egg-info
