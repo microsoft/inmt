@@ -1,16 +1,18 @@
 <html>
     <title>Interactive Neural Machine Translation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Gentium+Basic:400,700&display=swap" rel="stylesheet">
     <body>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <div class="container">
-      <h1 class="display-4 text-center py-5">Interactive Neural Machine Translation</h1>
+      <h1 class="display-4 text-center pt-5 pb-4">Interactive Neural Machine Translation</h1>
+      <h2 class="display-5 text-center pb-3 subtext">Assist Translators with on-the-fly Translation Suggestions</h1>
       <img src="static/inmt.png" class="img-fluid">
       <div class="row py-5">
         <div class="col">
-          <div class="shadow p-3 mb-5 bg-light rounded">
+          <div class="shadow p-3 mb-5 bg-light rounded carder">
             <div class="card-body text-center">
               <h5 class="card-title">Demo Video</h5>
               <img src="static/youtube.svg" class="img-fluid mx-auto d-block py-3" style="width: 40%;">
@@ -19,7 +21,7 @@
           </div>
         </div>
         <div class="col">
-          <div class="shadow p-3 mb-5 bg-light rounded">
+          <div class="shadow p-3 mb-5 bg-light rounded carder">
             <div class="card-body text-center">
               <h5 class="card-title">Live Demo</h5>
               <img src="static/demo.svg" class="img-fluid mx-auto d-block py-3" style="width: 40%;">
@@ -28,7 +30,7 @@
           </div>
         </div>
         <div class="col">
-          <div class="shadow p-3 mb-5 bg-light rounded">
+          <div class="shadow p-3 mb-5 bg-light rounded carder">
             <div class="card-body text-center">
               <h5 class="card-title">Demo Paper</h5>
               <img src="static/paper.svg" class="img-fluid mx-auto d-block py-3" style="width: 40%;">
@@ -37,7 +39,7 @@
           </div>
         </div>
         <div class="col">
-          <div class="shadow p-3 mb-5 bg-light rounded">
+          <div class="shadow p-3 mb-5 bg-light rounded carder">
             <div class="card-body text-center">
               <h5 class="card-title">Code on Github</h5>
               <img src="static/github.svg" class="img-fluid mx-auto d-block py-3" style="width: 40%;">
@@ -51,33 +53,33 @@
       <div class="row text-center pt-5">
         <div class="col">
           <h5>Sebastin Santy</h5>
-          <h6 class="text-muted">AI Center Fellow</h6>
+          <h6 class="desig">AI Center Fellow</h6>
         </div>
         <div class="col">
           <h5>Kalika Bali</h5>
-          <h6 class="text-muted">Principal Researcher</h6>
+          <h6 class="desig">Principal Researcher</h6>
         </div>
         <div class="col">
           <h5>Monojit Choudhury</h5>
-          <h6 class="text-muted">Principal Researcher</h6>
+          <h6 class="desig">Principal Researcher</h6>
         </div>
         <div class="col">
           <h5>Sandipan Dandapat</h5>
-          <h6 class="text-muted">Principal Applied Researcher</h6>
+          <h6 class="desig">Principal Applied Researcher</h6>
         </div>
       </div>
       <div class="row text-center py-4">
         <div class="col">
           <h5>Christain Barnes</h5>
-          <h6 class="text-muted">Research Intern</h6>
+          <h6 class="desig">Research Intern</h6>
         </div>
         <div class="col">
           <h5>Tanuja Ganu</h5>
-          <h6 class="text-muted">Principal RSDE Manager</h6>
+          <h6 class="desig">Principal RSDE Manager</h6>
         </div>
         <div class="col">
           <h5>Santosh Kale</h5>
-          <h6 class="text-muted">UI/UX Designer</h6>
+          <h6 class="desig">UI/UX Designer</h6>
         </div>
       </div>
       <div class="row text-center py-4">
@@ -89,4 +91,28 @@
       </div>
     </div>
   </body>
+  <style>
+    body {
+      /* font-size: 12.5pt; */
+      font-family: 'Gentium Basic', serif;
+      background-color: rgb(255, 255, 244);
+    }
+
+    a {
+      color: rgb(143, 0, 0)
+    }
+
+    a:hover {
+      color: rgb(143, 0, 0);
+      text-decoration: underline;
+    }
+
+    .desig, .subtext {
+      color: rgb(143, 0, 0)
+    }
+
+    .carder {
+      border: 2px solid rgb(143, 0, 0);
+    }
+  </style>
 </html>
