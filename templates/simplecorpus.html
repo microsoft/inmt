@@ -4,6 +4,7 @@
   <title>Interactive Neural Machine Translation</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Karma&family=Roboto&display=swap" rel="stylesheet">
    <body>
     <script
 			  src="https://code.jquery.com/jquery-3.4.1.js"
@@ -63,7 +64,7 @@
       <h1 class="display-4 text-center py-5">Interactive Neural Machine Translation</h1>
       <div class="row">
         <div class="col">
-          <div class="shadow-lg p-3 mb-5 bg-light rounded">
+          <div class="shadow-lg p-3 mb-5 bg-off rounded carder">
             <div class="card-body">
               <div class="row px-3">
                 <div class="col-3">
@@ -85,7 +86,8 @@
 
                   <div class="row pt-3 pb-2">
                     <div class="col text-center">
-                      <button type="button" id="sampleload" class="btn btn-info"><i class="fa fa-database"></i> &nbsp; Load Sample</button>
+                      <button type="button" id="sampleload" class="btn btn-primary"><i class="fa fa-database"></i> &nbsp;
+                        Load Sample</button>
                     </div>
                   </div>
                 </div>
@@ -98,7 +100,8 @@
               </div>
               <div class="row pt-4">
                 <div class="col text-center">
-                  <button type="button" id="translate" class="btn btn-primary btn-lg"><i class="fa fa-globe"></i>&nbsp;Translate</button>
+                  <button type="button" id="translate" class="btn btn-lg btn-primary"><i
+                      class="fa fa-globe"></i>&nbsp;Translate</button>
                 </div>
               </div>
             </div>
@@ -108,5 +111,46 @@
     </div>
   </body>
   <style>
+    body {
+      /* font-size: 12.5pt; */
+      font-family: 'Karma', serif;
+      background-color: rgb(240, 240, 240);
+    }
+
+    a {
+      color: rgb(143, 0, 0)
+    }
+
+    a:hover {
+      color: rgb(143, 0, 0);
+      text-decoration: underline;
+    }
+
+    /* .desig,
+    .subtext {
+      color: rgb(143, 0, 0)
+    } */
+
+    .bg-off {
+      background-color: rgb(252, 252, 248);
+    }
+
+    .carder {
+      border: 1px solid rgb(150, 150, 150);
+      background-color: rgb(255, 255, 252);
+      font-size: 20px;
+    }
+
+    /* .buttoncol {
+      background-color: transparent;
+      color:rgb(143, 0, 0);
+      border-color: rgb(143, 0, 0);
+    } */
+
+    /* .buttoncol:hover {
+      background-color: rgb(143, 0, 0);
+      color: white;
+      border-color: rgb(143, 0, 0);
+    } */
   </style>
 </html>

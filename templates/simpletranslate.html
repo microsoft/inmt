@@ -23,6 +23,9 @@
     <!-- <script src="{% static 'js/dark-mode-switch.min.js' %}"></script> -->
 
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Karma&family=Roboto&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> -->
     <!-- <script type="text/javascript" src="{% static 'materialize.js' %}"></script> -->
 
     <script type="text/javascript">
@@ -50,11 +53,12 @@
 
     <script type="text/javascript" src="{% static 'translation.js' %}"></script>
     
-    <div id="topdock" style="position: fixed; top:0; right:0;">
-    </div>
+    <!-- <div id="topdock" style="position: fixed; top:0; right:0;">
+    </div> -->
     <div class="container">
       <!-- <h1 class="display-4 text-center py-5">Interactive Neural Machine Translation</h1> -->
-      <div class="shadow p-3 my-5 bg-light rounded">
+    <div id="topbar">
+      <div class="shadow p-4 my-5 rounded carder">
         <div class="row">
         <div class="col">
         <h4 class="display-5"><i class="fa fa-cogs"></i>&nbsp; Settings</h4>
@@ -78,27 +82,40 @@
         
         </div>
       </div>
+    </div>
       <div id="translate-interface" class="row">
         <div class="col-5">
-            <div class="card p-4 bg-light" id="corpus-side">
-            <div id="corpusinput" class="shadow p-3 my-3 bg-light rounded">
+          <ul class="nav nav-pills pb-2">
+            <li class="nav-item">
+              <a id="nav-source" class="nav-link active" href="#">Source</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-7">
+          <ul class="nav nav-pills pb-2" id="previewswitch">
+            <li class="nav-item">
+              <a id="nav-translate" class="nav-link active" href="#">Translate</a>
+            </li>
+            <li class="nav-item">
+              <a id="nav-preview" class="nav-link" href="#">Preview</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+            <div class="" id="corpus-side">
+            <div id="corpusinput" class="shadow p-3 my-3 rounded carder">
             </div>
             </div>
         </div>
         <div class="col-7">
-          <div class="card p-4 bg-light" id="interactive">
-            <ul class="nav nav-pills pb-2">
-              <li class="nav-item">
-                <a id="nav-translate" class="nav-link active" href="#">Translate</a>
-              </li>
-              <li class="nav-item">
-                <a id="nav-preview" class="nav-link" href="#">Preview</a>
-              </li>
-            </ul>
+          <div id="interactive">
+            
 
             <div id="cardscoll"></div>
             <div id="cardsprev" style="display:none">
-              <div id="corpusoutput" class="shadow p-3 my-3 bg-light rounded">
+              <div id="corpusoutput" class="shadow p-3 my-3 rounded carder">
               </div>
             </div>
           </div>
@@ -118,11 +135,54 @@
       body {
       height: 100%;
       } */
+
+      body {
+        background-color: rgb(240, 240, 240);
+        /* font-family: 'Open Sans', sans-serif; */
+        /* font-family: 'Roboto', sans-serif; */
+        font-family: 'Karma', serif;
+        /* overflow:hidden; */
+        /* display: flex; */
+        /* flex-direction:column; */
+      }
+
+      /* #interactive {
+        overflow-y: scroll;
+        flex-grow:1;
+        display: block;
+        height: 10000px;
+      } */
+      
+      /* .container {} */
+
+      /* #cardscoll {
+         height: 10000px;
+      } */
+
+      /* #topbar {
+        position:sticky;
+        top: 48;
+      }
+
+      #translate-interface {
+        position:sticky;
+        top: 0;
+      } */
+
+      /* #translate-interface {
+        position:fixed;
+      } */
+
+      .carder {
+        border: 1px solid rgb(150, 150, 150);
+        background-color: rgb(255, 255, 252);
+      }
       #corpus-side {
       height: 100%;
       }
       #corpusinput {
-        height: 100%;
+        /* height: 100%; */
+        font-size: 20px;
       }
 
       #cardsprev {
@@ -130,12 +190,15 @@
       }
 
       #corpusoutput {
-      height: 100%;
+        height: 100%;
+        font-size: 20px;
       }
       
 
       .bmo {
         transition: all 0.12s ease-out;
+        background-color: rgb(255, 255, 252);
+        border: 1px solid rgb(150, 150, 150);
       }
 
       .corp_inp {
@@ -157,7 +220,8 @@
 
       .bmo--blur {
           filter: blur(3px);
-          background-color: #ddd;
+          /* background-color: #ddd; */
+          border: none;
       }
 
      .ttt {
@@ -212,18 +276,18 @@
         font-size: 17px;
       } */
       #cardscoll {
-        font-family: 'Noto Sans', serif;
-        /* font-size: 17px; */
+        /* font-family: 'Noto Sans', serif; */
+        font-size: 17px;
       }
 
       #corpusinput {
-      font-family: 'Noto Sans', serif;
+      /* font-family: 'Noto Sans', serif; */
       /* font-size: 20px; */
       }
 
       .hin_inp_part {
-        padding: 2px;
-        border-radius: 4px;
+        padding: 1px 4px;
+        border-radius: 20%;
       }
 
       .partial {
@@ -270,8 +334,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #eee;
-        border: 1px solid rgba(0, 0, 0, 0.25);
+        /* background-color: #eee; */
+        /* border: 1px solid rgb(150, 150, 150); */
 
         z-index: 20;
         visibility: hidden;
@@ -332,7 +396,8 @@
       }
 
       .ppl {
-        padding: 1px 3px;
+        padding: 1px 5px;
+        border-radius: 20%;
       }
 
       [data-theme="dark"] {
@@ -344,13 +409,13 @@
         background-color: #777 !important;
       }
 
-      [data-theme="dark"] .shadow.bg-light {
+      [data-theme="dark"] .shadow {
         background-color: #333 !important;
       }
 
-      [data-theme="dark"] .card.bg-light {
+      /* [data-theme="dark"] .card.bg-light {
         background-color: #555 !important;
-      }
+      } */
 
 
    </style>
