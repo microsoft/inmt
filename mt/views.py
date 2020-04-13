@@ -84,7 +84,8 @@ for k, v in langspecs.items():
 
 
 def index(request):
-    return render(request, 'index.html')
+    # return render(request, 'index.html')
+    return redirect('/simple')
 
 @login_required
 def export_keystroke_csv(request):

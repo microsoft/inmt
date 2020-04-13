@@ -1,36 +1,39 @@
 {% load static %}
 
 <html>
-    <link type="text/css" rel="stylesheet" href="{% static 'materialize.css' %}"  media="screen,projection"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Interactive Neural Machine Translation</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Karma&family=Roboto&display=swap" rel="stylesheet">
    <body>
-   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-   
-    <script type="text/javascript" src="{% static 'materialize.js' %}"></script>
+    <script
+			  src="https://code.jquery.com/jquery-3.4.1.js"
+			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
     <script type=text/javascript>
-        function resizeTextArea(textarea){
-            var hiddenDiv = $('.hiddendiv').first();
-            if (hiddenDiv.length) {
-                  hiddenDiv.css('width', textarea.width());
-                  textarea.css('height', hiddenDiv.height());
-            }
-        };
         $(document).ready(function () {
-          $('select').formSelect();
             $('#translate').click(function(){
-                $('.preloader-background').css('display', 'flex')
-                $.ajax({
-                    type: "POST",
-                    url: '/simple/corpusinput',
-                    data: {
-                      'translate': $("#corpusinput").val(),
-                      'langselect': $('#src').find(":selected").val() + "-" + $('#tgt').find(":selected").val(),
-                      'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    },
-                    success: function() {
-                      window.location.href='/simple/translate';
-                    }
-                });
+                var corpusinput = $("#corpusinput").val()
+                $(this).html(`
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp; Loading Interface
+                `)
+                if (corpusinput) {
+                  $.ajax({
+                      type: "POST",
+                      url: '/simple/corpusinput',
+                      data: {
+                        'translate': corpusinput,
+                        'langselect': $('#src').find(":selected").val() + "-" + $('#tgt').find(":selected").val(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                      },
+                      success: function() {
+                        window.location.href='/simple/translate';
+                      }
+                  });
+                }
             });
 
             $('#sampleload').click(function(){
@@ -48,6 +51,7 @@
                 if (lang == "bn-en") {
                   text = "মৌসুমি বৃষ্টি একটি অভিশাপ দ্বারা আশীর্বাদ করা একটি আশীর্বাদ। যখন পরিমাণগত পরিমাণে বৃষ্টির পরিমাণ কম হয়, তখন এটি একটি আশীর্বাদের জন্য আমাদের পরে গরম তাপের গ্রীষ্ম। ফসলের প্রাচুর্যের কারণে এটি কৃষকদের জন্য একটি আশীর্বাদ। শুষ্ক গ্রীষ্মের পরে নদী ভরাট।"
                 }
+                console.log(text)
                 $("#corpusinput").val(text);
                 $("#corpusinput").focus();
                 $("#corpusinput").trigger('autoresize');
@@ -56,153 +60,97 @@
         
     </script>
 
-<div class="preloader-background">
-    <div class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
-        
-      </div>
-    </div>
-    <span>&nbsp;&nbsp;Loading Translator. Please wait ...</span>
-  </div>
-
-
-
     <div class="container">
+      <h1 class="display-4 text-center py-5">Interactive Neural Machine Translation</h1>
       <div class="row">
-          <div class="pad-top"></div>
-      </div>
-      <div class="card">
-        <div class="card-title center ttt">
-          Interactive Neural Machine Translation
-        </div>
-      </div>
-      <div class="row">
-          <div class="pad-top"></div>
-      </div>
-      <div class="card">
-            <div class="card-content center">
-              <div class ="row">
-                <div class="input-field col s3 offset-s3">
-                    <select id="src">
-                      <!-- <option value="" disabled selected>Choose your option</option> -->
-                      <option value="en">English</option>
+        <div class="col">
+          <div class="shadow-lg p-3 mb-5 bg-off rounded carder">
+            <div class="card-body">
+              <div class="row px-3">
+                <div class="col-3">
+                  <div class="row py-2">
+                    <label for="sourcelang">Source Language</label>
+                    <select class="form-control"  id="src">
                       <option value="hi">Hindi</option>
-                      <option disabled value="bn">Bengali</option>
-                      <option disabled value="ml">Malayalam</option>
-                      <option disabled value="ta">Tamil</option>
-                      <option disabled value="te">Telugu</option>
-                      <option disabled value="kn">Kannada</option>
-                      <option disabled value="gu">Gujarati</option>
-                      <option disabled value="mr">Marathi</option>
-                      <option disabled value="ne">Nepali</option>
-                      <option disabled value="or">Oriya</option>
-                      <option disabled value="pa">Punjabi</option>
-                      <option disabled value="as">Assamese</option>
+                      <option value="en">English</option value="en">
                     </select>
-                    <label>Source</label>
                   </div>
-                  <div class="input-field col s3">
-                      <select id="tgt">
-                        <!-- <option value="" disabled selected>Choose your option</option> -->
-                        <option value="en">English</option>
-                      <option value="hi">Hindi</option>
-                      <option disabled value="bn">Bengali</option>
-                      <option disabled value="ml">Malayalam</option>
-                      <option disabled value="ta">Tamil</option>
-                      <option disabled value="te">Telugu</option>
-                      <option disabled value="kn">Kannada</option>
-                      <option disabled value="gu">Gujarati</option>
-                      <option disabled value="mr">Marathi</option>
-                      <option disabled value="ne">Nepali</option>
-                      <option disabled value="or">Oriya</option>
-                      <option disabled value="pa">Punjabi</option>
-                      <option disabled value="as">Assamese</option>
-                      </select>
-                      <label>Target</label>
+                  
+                  <div class="row py-2">
+                    <label for="targetlang">Target Language</label>
+                    <select class="form-control" id="tgt">
+                      <option value="en">English</option value="en">
+                      <option value="hi">Hindi</option value="en">
+                    </select>
+                  </div>
+
+                  <div class="row pt-3 pb-2">
+                    <div class="col text-center">
+                      <button type="button" id="sampleload" class="btn btn-primary"><i class="fa fa-database"></i> &nbsp;
+                        Load Sample</button>
                     </div>
-              </div>
-              <div class="row">
-                  <div class="col s6 offset-s3">
-                        <div class="row">
-                            <div class="input-field col s10">
-                            <textarea id="corpusinput" class="materialize-textarea"></textarea>
-                            <label for="corpusinput">Corpus Input</label>
-                            </div>
-                            <div class="input-field col s2">
-                              <a id="sampleload" class="waves-effect waves-light btn-small">Sample</a>
-                            </div>
-                        </div>
-                        <div class="row">
-                        <div class="row">
-                            <a id="translate" class="waves-effect waves-light btn-large"><i class="material-icons left">language</i>Translate</a>
-                        </div>
                   </div>
+                </div>
+                <div class="col-9">
+                  <div class="row pl-4">
+                    <label for="corpus">Corpus Input to be Translated</label>
+                    <textarea  id="corpusinput" class="form-control" rows="7"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-4">
+                <div class="col text-center">
+                  <button type="button" id="translate" class="btn btn-lg btn-primary"><i
+                      class="fa fa-globe"></i>&nbsp;Translate</button>
+                </div>
               </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
   </body>
   <style>
     body {
-        background: url(data:image/png;base64,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) fixed; 
-        background-color: #404040;
-      }
+      /* font-size: 12.5pt; */
+      font-family: 'Karma', serif;
+      background-color: rgb(240, 240, 240);
+    }
 
-      .bmo {
-        transition: all 0.12s ease-out;
-      }
+    a {
+      color: rgb(143, 0, 0)
+    }
 
-      .bmo--blur {
-          filter: blur(3px);
-          background-color: #ddd !important;
-      }
+    a:hover {
+      color: rgb(143, 0, 0);
+      text-decoration: underline;
+    }
 
-     .ttt {
-       padding:15px;
-     } 
-    .pad-top {
-        height: 4vh;
-      }
-      .card-title {
-        color: #404040;
-        height: 8vh;
-      }
-      #result {
-        color: #404040;
-        text-align: left;
-      }
-      .card {
-        /* min-height: 15vh; */
-        background-color: #fff;
-      }
-      .bottom {
-        position: absolute;
-        bottom:0;
-        right:10;
-      }
+    /* .desig,
+    .subtext {
+      color: rgb(143, 0, 0)
+    } */
 
-      .preloader-background {
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.9);
-        
-        position: fixed;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;	
-      }
-      
-   </style>
+    .bg-off {
+      background-color: rgb(252, 252, 248);
+    }
+
+    .carder {
+      border: 1px solid rgb(150, 150, 150);
+      background-color: rgb(255, 255, 252);
+      font-size: 20px;
+    }
+
+    /* .buttoncol {
+      background-color: transparent;
+      color:rgb(143, 0, 0);
+      border-color: rgb(143, 0, 0);
+    } */
+
+    /* .buttoncol:hover {
+      background-color: rgb(143, 0, 0);
+      color: white;
+      border-color: rgb(143, 0, 0);
+    } */
+  </style>
 </html>

@@ -481,9 +481,9 @@ class Translator(object):
                       codecs.open(self.dump_beam, 'w', 'utf-8'))
         
         if attn_debug:
-            return all_scores, all_predictions, attns
+            return all_scores, all_predictions, attns, pred_score_total, pred_words_total
         else:
-            return all_scores, all_predictions
+            return all_scores, all_predictions, pred_score_total, pred_words_total
 
     def _align_pad_prediction(self, predictions, bos, pad):
         """

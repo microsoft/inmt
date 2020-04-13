@@ -390,12 +390,96 @@ function key2char(str) {
     return keychar
 }
 
+var percentColors = [
+    { pct: 0, color: { r: 0x00, g: 0xff, b: 0 } },
+    { pct: 3, color: { r: 0xff, g: 0xff, b: 0 } },
+    { pct: 6, color: { r: 0xff, g: 0x00, b: 0 } }];
+
+var getColorForPercentage = function (pct) {
+    for (var i = 1; i < percentColors.length - 1; i++) {
+        if (pct < percentColors[i].pct) {
+            break;
+        }
+    }
+    var lower = percentColors[i - 1];
+    var upper = percentColors[i];
+    var range = upper.pct - lower.pct;
+    var rangePct = (pct - lower.pct) / range;
+    var pctLower = 1 - rangePct;
+    var pctUpper = rangePct;
+    var color = {
+        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+    };
+    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+    // or output as hex if preferred
+};
+function hslToRgb(h, s, l) {
+    var r, g, b;
+
+    if (s == 0) {
+        r = g = b = l; // achromatic
+    } else {
+        var hue2rgb = function hue2rgb(p, q, t) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        }
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function numberToColorHsl(i) {
+    // as the function expects a value between 0 and 1, and red = 0° and green = 120°
+    // we convert the input to the appropriate hue value
+    var hue = i * 1.2 / 360;
+    // we convert hsl to rgb (saturation 100%, lightness 50%)
+    var rgb = hslToRgb(hue, 1, .5);
+    // we format to css value and return
+    return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+}
+
 // As of now, this logic is for the results to be processed from sockets.
 function parseProcessedJsonResultsfunction(data, partial) {
     
     // Result is received in form of a single string. Need to split here.
     result = data.result.split("\n")
     partialret = data.partial
+
+    ppl = Math.round(data.ppl * 100) / 100
+    avg = Math.round(data.avg * 100) / 100
+    partial.closest('.bmo').find('.avg').text(avg)
+    partial.closest('.bmo').find('.ppl').text(ppl)
+    partial.closest('.bmo').find('.ppl').css('background-color', getColorForPercentage(ppl))
+
+    var parcount = 0;
+    var totcount = 0;
+    $(".partial").each(function () {
+        totcount += 1;
+        span = $(this).text().trim()
+        if (span != '') {
+           parcount += 1;
+        }
+    });
+
+    progress = (parcount/totcount)*100
+    $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+    $('.progress-bar').text(progress + '%')
+    console.log(parcount, totcount, progress)
+    // scores = data.scores
+
+    // console.log(scores)
     
 
     // The pointer for dropdown selection. Initially set at 0.
@@ -421,7 +505,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
         for(var i = 0; i < result.length; i++) {
             var repres = sharedStart(result[i], partialret)
             if (repres !== "") {
-                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres"> ' + repres + '</span>');
+                container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres p-1"> ' + repres + '</span>');
                 countcontainer += 1;
                 finalresult.push(result[i])
             }
@@ -443,7 +527,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
             $("span[class^='hin_inp_part']").css("background-color", "transparent");
             for (m=0; m<attn.length; m++) {
                 if (attn[m] != 0) {
-                    partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
+                    // partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
+                    partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5')
                 }
                 else {
                     partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
@@ -478,8 +563,14 @@ var langspecs = [
 
 $(document).ready(function() {
 
+    var transstate = 0; // Translation State or Preview State
     var topdock = $('#topdock')// For smooth scrolling
     var bottomdock = $('#bottomdock')// For smooth scrolling
+    
+
+    var topbar = $('#translate-interface').offset();
+    console.log(topbar)
+    // $('#topbar').css({'position': 'sticky', 'top': topbar})
 
     //Logging system variables
     console.log("Sockets used? ", sockets_use);
@@ -491,74 +582,185 @@ $(document).ready(function() {
         // langtolangid = data.langtolangid;
         console.log(inputs)
         $('#cardscoll').html('')
+        $('#corpusinput').html('')
+        
         for (i=0; i<inputs.length; i++) {
+            if (langspec == 'hi-en') {
+                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ')
+            } else {
+                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
+            }
             $('#cardscoll').append(
-                `<div class="card bmo">
-                    <div class="card-content">
-                        <div class="row">
-                            <div class="col s5 m5">
-                                <div class="hin_inp transtext" contenteditable="false">`+inputSpan(inputs[i][0])+`</div>    
-                            </div>
-                            <div class="col s1 m1">
-                                <br>
-                                <img src="https://cdn.onlinewebfonts.com/svg/img_439255.png" style="height:15px">
-                            </div>
-                            <div class="col s6 m6">
+                `<div class="shadow p-3 my-3 rounded bmo cardescoll">
+                                <div class="row">
+                                <div class="col-9">
+                                <div class="hin_inp pb-2" contenteditable="false">`+ inputSpan(inputs[i][0]) + `</div>
                                 <div class="dropcontainer">
                                     <div class="partcontainer">
                                         <div class="suggest transtext" contenteditable="false"></div>
                                             <div class=" partial transtext" id="card` + i + `" contenteditable="true"
                                             data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
-                                            >`+inputs[i][1]+`</div>
+                                            >`+ inputs[i][1] + `</div>
                                     </div>
-                                    <div class="dropdown">
-                                    </div>
-                                </div>
-                                <div class="perinstr">
-                                    Select : 
-                                    <div class="keyshape">
-                                        Up &#x2191
-                                    </div>
-                                    <div class="keyshape">
-                                        Down &#x2193
-                                    </div>
-
-                                    &nbsp;
-
-                                    1 Word : 
-                                    <div class="keyshape">
-                                        Tab &#x2192
-                                    </div>
-
-                                    &nbsp;
-
-                                    Full Phrase : 
-                                    <div class="keyshape">
-                                        Enter &#x21B5
-                                    </div>
-
-                                     &nbsp;
-
-                                    Sentence Switch : 
-                                    <div class="keyshape">
-                                        PgUp &#x219F
-                                    </div>
-                                    <div class="keyshape">
-                                        PgDn &#x21A1
+                                    <div class="shadow mb-5 carder rounded dropdown">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                                </div>
+                                <div class="col-3 stats">
+                                    <div>
+                                        Perplex: <span class="ppl">0</span>
+                                    </div>
+                                     <div>
+                                         Average: <span class = "avg">0</span>
+                                    </div>
+                                </div>
+                                </div>
                 </div>`
             )
+
+            $('.cardescoll').each(function(){
+                $(this).css('height', $(this).closest('.bmo').find('.hin_inp').height() + 140);
+                $(this).closest('.bmo').find('.stats').css('height', $(this).closest('.bmo').find('.hin_inp').height() + 100);
+            });
+           
+
+            // $('#cardscoll').append(
+            //     `<div class="card bmo">
+            //         <div class="card-content">
+            //             <div class="row">
+            //                 <div class="col s5 m5">
+            //                     <div class="hin_inp transtext" contenteditable="false">`+inputSpan(inputs[i][0])+`</div>    
+            //                 </div>
+            //                 <div class="col s1 m1">
+            //                     <br>
+            //                     <img src="https://cdn.onlinewebfonts.com/svg/img_439255.png" style="height:15px">
+            //                 </div>
+            //                 <div class="col s6 m6">
+            //                     <div class="dropcontainer">
+            //                         <div class="partcontainer">
+            //                             <div class="suggest transtext" contenteditable="false"></div>
+            //                                 <div class=" partial transtext" id="card` + i + `" contenteditable="true"
+            //                                 data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
+            //                                 >`+inputs[i][1]+`</div>
+            //                         </div>
+            //                         <div class="dropdown">
+            //                         </div>
+            //                     </div>
+            //                     <div class="perinstr">
+            //                         Select : 
+            //                         <div class="keyshape">
+            //                             Up &#x2191
+            //                         </div>
+            //                         <div class="keyshape">
+            //                             Down &#x2193
+            //                         </div>
+
+            //                         &nbsp;
+
+            //                         1 Word : 
+            //                         <div class="keyshape">
+            //                             Tab &#x2192
+            //                         </div>
+
+            //                         &nbsp;
+
+            //                         Full Phrase : 
+            //                         <div class="keyshape">
+            //                             Enter &#x21B5
+            //                         </div>
+
+            //                          &nbsp;
+
+            //                         Sentence Switch : 
+            //                         <div class="keyshape">
+            //                             PgUp &#x219F
+            //                         </div>
+            //                         <div class="keyshape">
+            //                             PgDn &#x21A1
+            //                         </div>
+            //                     </div>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     </div>`
+            // )
         }
         // Select &#8645 &nbsp Tab &#8594 Enter &#8608 | PgUp &#8609 PgDn &#8609 |
         // <div class="perinstr">
         //                             `+ CONTROL_SCHEME_NAME +`: &nbsp;` +key2char(SELECT_PREVIOUS_TRANSLATION_SUGGESTION)+"&#x2191; "+key2char(SELECT_NEXT_TRANSLATION_SUGGESTION) +` &#x2193; ` +key2char(SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY) +`  &#8594; ` +key2char(SELECT_ENTIRE_SUGGESTION)+` &#8608; &nbsp; | &nbsp; ` +key2char(NAVIGATE_TO_NEXT_CORPUS_FRAGMENT)+` &#8609; ` +key2char(NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT)+` &#8607; &nbsp; | Submit: ` +key2char(SUBMIT_TRANSLATION)+`
         //                         </div>
 
+        if (langspec == 'hi-en') {
+            // $('#corpusinput').css('font-size', '20px')
+            $('#corpusinput').css('font-family', "\'Karma\', serif")
+            // $('#corpusoutput').css('font-size', '20px')
+            $('#corpusoutput').css('font-family', "\'Karma\', serif")
+            // $('.hin_inp').css('font-size', '18px')
+        } else {
+            $('#corpusinput').css('font-size', '20px')
+            $('#corpusoutput').css('font-size', '20px')
+            $('.partial').css('font-size', '18px')
+            $('.suggest').css('font-size', '18px')
+        }
+        
+        var maxheight = $('#corpusinput').height()
+        $('#nav-translate').on('click', function(e){
+            transstate = 0;
+            $('#nav-preview').removeClass('active')
+            $(this).addClass('active')
+            $('#cardsprev').css('display', 'none')
+            $('#cardscoll').css('display','block')
+            maxheight = $('#corpusinput').height()
+
+        })
+
+        // var previews = [];
+        $('#nav-preview').on('click', function (e) {
+            transstate = 1;
+            $('#nav-translate').removeClass('active')
+            $(this).addClass('active')
+            $('#cardscoll').css('display','none')
+            $('#cardsprev').css('display', 'block')
+            $('#corpusoutput').height(maxheight)
+            $('.corp_inp').css("background-color", 'transparent');
+            $('#corpusoutput').html('')
+
+            var htmlpreview = ''
+            $(".partial").each(function () {
+                span = $(this).text().trim()
+                if (span != '') {
+                    if (langspec == 'hi-en') {
+                        if (span.charAt(span.length - 1) == '.') {
+                            span = span.substring(0, span.length - 1).trim()
+                        }
+                        $('#corpusoutput').append('<span class="corp_out">' + span + '</span>. ')
+                    } else {
+                        if (span.charAt(span.length - 1) == '।') {
+                            span = span.substring(0, span.length - 1).trim()
+                        }
+                        $('#corpusoutput').append('<span class="corp_out">' + span + '</span>। ')
+                    }
+                }
+            });
+
+            // $('#corpusoutput').html(htmlpreview)
+        })
+
         $('.bmo').not($('.bmo').first()).addClass('bmo--blur');
+
+        $('.corp_inp').on('click', function (event) {
+            var ind = $(this).index()
+            $('.partial').eq(ind).focus();
+            $('.corp_out').css('background-color', 'transparent');
+            $('.corp_out').eq(ind).css('background-color', 'yellow');
+        });
+
+        $('.corp_out').on('click', function (event) {
+            console.log("Hello")
+            var ind = $(this).index()
+            $('.corp_inp').css('background-color', 'transparent');
+            $('.corp_inp').eq(ind).css('background-color', 'yellow');
+        });
 
         var searchEvents = function(partial){
             if (searchRequest) searchRequest.abort()
@@ -902,9 +1104,13 @@ $(document).ready(function() {
         $('.partial').focusin(function() {
             timer1 = new Date();
             $(this).closest('.bmo').removeClass('bmo--blur');
+            $('.ppl').css("background-color", 'transparent');
             $('.partial').closest('.bmo').not($(this).closest('.bmo')).addClass('bmo--blur');
 
             if (system_type == 'IT'){
+                var ind = $(this).index(".partial")
+                $('.corp_inp').css("background-color", 'transparent');
+                $('.corp_inp').eq(ind).css("background-color", "yellow");
                 searchEvents($(this));
                 var dropdown = $(this).parent().parent().children('.dropdown');
                 dropdown.css('visibility', 'visible')
@@ -984,17 +1190,23 @@ $(document).ready(function() {
 
         $("#darkmode").change(function(){
             if ($(this).is(':checked') == true) {
-                $('.bmo--blur').css('background-color', '#2d3f50');
-                $('body').css('color', '#fff');
-                $('body').css('background-color', '#aaa');
-                $('.card').css('background-color', '#2a3d4e');
-                $('.dropdown').css('background-color', '#2d3f50');
+                // $('.bmo--blur').css('background-color', '#2d3f50');
+                // $('body').css('color', '#fff');
+                // $('body').css('background-color', '#aaa');
+                // $('.card').css('background-color', '#2a3d4e');
+                // $('.dropdown').css('background-color', '#2d3f50');
+                $("*").each(function() {
+                    $(this).attr('data-theme', 'dark');
+                });
             } else {
-                $('.bmo--blur').css('background-color', '#ddd');
-                $('body').css('color', '#404040');
-                $('body').css('background-color', '#404040');
-                $('.card').css('background-color', '#fff');
-                $('.dropdown').css('background-color', '#eee');
+                // $('.bmo--blur').css('background-color', '#ddd');
+                // $('body').css('color', '#404040');
+                // $('body').css('background-color', '#404040');
+                // $('.card').css('background-color', '#fff');
+                // $('.dropdown').css('background-color', '#eee');
+                $("*").each(function () {
+                    $(this).removeAttr('data-theme');
+                });
             }
         });
     });
