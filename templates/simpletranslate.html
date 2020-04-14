@@ -58,7 +58,7 @@
     <div class="container">
       <!-- <h1 class="display-4 text-center py-5">Interactive Neural Machine Translation</h1> -->
     <div id="topbar">
-      <div class="shadow p-4 my-5 rounded carder">
+      <div class="shadow pt-4 pb-2 px-4 mt-5 rounded carder">
         <div class="row">
         <div class="col">
         <h4 class="display-5"><i class="fa fa-cogs"></i>&nbsp; Settings</h4>
@@ -79,7 +79,39 @@
               aria-valuemax="100">0%</div>
           </div>
         </div>
-        
+        </div>
+      </div>
+      <div class="my-5 text-center">
+        <div class="row">
+        <div class="col">
+        <div class="px-5 perinstr">
+          Select :
+          <div class="keyshape">
+            Up &#x2191
+          </div>
+          <div class="keyshape">
+            Down &#x2193
+          </div>
+          &nbsp;
+          1 Word :
+          <div class="keyshape">
+            Tab &#x2192
+          </div>
+          &nbsp;
+          Full Phrase :
+          <div class="keyshape">
+            Enter &#x21B5
+          </div>
+          &nbsp;
+          Sentence Switch :
+          <div class="keyshape">
+            PgUp &#x219F
+          </div>
+          <div class="keyshape">
+            PgDn &#x21A1
+          </div>
+        </div>
+        </div>
         </div>
       </div>
     </div>
@@ -355,10 +387,14 @@
       }
 
       .perinstr {
+        border: 1px solid #444;
         font-size: 12px;
-        bottom: 10;
-        right: 10;
-        position: absolute;
+        padding: 10px;
+        display:table; margin:0 auto;
+        border-radius: 4px;
+        /* bottom: 10;
+        right: 10; */
+        /* position: absolute; */
       }
 
       .switch {
