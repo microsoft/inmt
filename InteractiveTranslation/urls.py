@@ -20,10 +20,16 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path('', include('mt.urls')),
+    path('', include('mt.urls')), #TODO: This redirects to simple/ can we do it directly?
     path('simple/', include('mtsimple.urls')),
     path('para/', include('mtpara.urls')),
     # path('gpt/', include('gpt.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+
+
+    # REST FRAMEWORK URLS
+    path('api/simple/', include('mtsimple.api.urls')),
+
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + staticfiles_urlpatterns()

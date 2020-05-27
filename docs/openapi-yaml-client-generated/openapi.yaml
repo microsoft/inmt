@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: SIMPLE TRANSLATION API
+  description: Api for translation suggestions and attention score
+  version: "1.0"
+servers:
+- url: https://virtserver.swaggerhub.com/I927/INMT-SIMPLE/1.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /api/simple/translate_new:
+    get:
+      tags:
+      - simple
+      summary: get suggestions, attension scores, preplex and average score for your
+        partial translation
+      operationId: translate_new
+      parameters:
+      - name: langspec
+        in: query
+        description: The type of translation
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sentence
+        in: query
+        description: The sentence that is to be translated
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: partial_trans
+        in: query
+        description: Partial translation done so far by the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: An array containing result (the suggestions), attentions, partial
+            translation by the user, perplexity and average score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad Request
+        "500":
+          description: Some internal server error
+components:
+  schemas:
+    inline_response_200:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: string
+        attn:
+          type: array
+          items:
+            multipleOf: 0.1
+            type: number
+        partial:
+          type: string
+        ppl:
+          multipleOf: 0.1
+          type: number
+        avg:
+          multipleOf: 0.1
+          type: number

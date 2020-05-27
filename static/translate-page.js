@@ -387,6 +387,8 @@ function parseProcessedJsonResultsfunction(data, partial) {
   
   var container = $('<div />');
 
+  // Code for adding suggestions//
+
   var countcontainer = 0
   finalresult = []
   for(var i = 0; i < result.length; i++) {
