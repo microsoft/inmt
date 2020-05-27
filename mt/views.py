@@ -43,6 +43,10 @@ from django.conf import settings
 
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
+        print("###########################DEBUG######################################")
+        print(opt) # This is the file that mentions model details
+        print(dir_path + "/opt_data")
+        print("#######################################################################")
 
 
 

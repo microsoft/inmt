@@ -23,7 +23,7 @@
                 if (corpusinput) {
                   $.ajax({
                       type: "POST",
-                      url: '/simple/corpusinput',
+                      url: '/simple/corpusinput', //corpusinput function in mtsimple/views.py
                       data: {
                         'translate': corpusinput,
                         'langselect': $('#src').find(":selected").val() + "-" + $('#tgt').find(":selected").val(),

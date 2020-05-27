@@ -1,4 +1,4 @@
-
+// This page serves as the script for simpletranslate.html
 /*
 *************************************************
 *************************************************
@@ -53,6 +53,7 @@ function sharedStart(feed, partial) {
     part1text = partial.substring(0, lastspace)
     part2text = partial.substring(lastspace+1)
     var count = 0
+    console.log("DEBUG part1text", part1text, )
     if (part1text) {
         newfeed = feed.replace(part1text + " ", '')
     } else {
@@ -504,6 +505,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
         finalresult = []
         for(var i = 0; i < result.length; i++) {
             var repres = sharedStart(result[i], partialret)
+            console.log(result[i] + '%%%%%%%%%%%%%%%%%%%%%%%%%%%')
             if (repres !== "") {
                 container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres p-1"> ' + repres + '</span>');
                 countcontainer += 1;
@@ -516,7 +518,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
         // Coloring the drop down box selections
         partial.closest('.bmo').find('.dropdown').html(container);
         resetcolors('.res', $('.spanres').length)
-        $('.res' + selecte).css("background-color","#eee")
+        $('.res' + selecte).css("background-color","#fff")
         if (countcontainer>1) {
             partial.closest('.bmo').find('.dropdown').css('visibility', 'visible');
         }
@@ -528,7 +530,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
             for (m=0; m<attn.length; m++) {
                 if (attn[m] != 0) {
                     // partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,' + attn[m] + ')')
-                    partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5')
+                    partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(255,0,0,0.5)')
                 }
                 else {
                     partial.closest('.bmo').find('.hin_inp_part' + m).css('background-color', 'rgba(0,255,0,0.5)')
@@ -580,25 +582,28 @@ $(document).ready(function() {
         inputs = data.result;
         langspec = data.langspec
         // langtolangid = data.langtolangid;
+
         console.log(inputs)
         $('#cardscoll').html('')
         $('#corpusinput').html('')
         
         for (i=0; i<inputs.length; i++) {
+            /*To set the source part of the page*/ 
             if (langspec == 'hi-en') {
-                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ')
+                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ') /* 1st index is the text with which the editable division is intitalised */
             } else {
                 $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
             }
+            /*--------------------------------*/ 
             $('#cardscoll').append(
                 `<div class="shadow p-3 my-3 rounded bmo cardescoll">
                                 <div class="row">
                                 <div class="col-9">
-                                <div class="hin_inp pb-2" contenteditable="false">`+ inputSpan(inputs[i][0]) + `</div>
+                                <div class="hin_inp pb-2" contenteditable="false">`+ inputSpan(inputs[i][0]) /*Wraps each word of sentence around span and returns*/ + `</div> 
                                 <div class="dropcontainer">
                                     <div class="partcontainer">
                                         <div class="suggest transtext" contenteditable="false"></div>
-                                            <div class=" partial transtext" id="card` + i + `" contenteditable="true"
+                                            <div class="partial transtext" id="card` + i + `" contenteditable="true"
                                             data-tab=0 data-enter=0 data-up=0 data-down=0 data-others=0 data-pgup=0 data-pgdn=0 data-end=0 data-right=0 data-left=0 data-bkspc=0 data-time=0
                                             >`+ inputs[i][1] + `</div>
                                     </div>
@@ -767,10 +772,16 @@ $(document).ready(function() {
 
             var hin_inp = partial.closest('.bmo').find('.hin_inp')
             globalPartial = partial;
+            console.log("#########################################3")
+            console.log("#########################################3")
+            console.log(partial.clone().children().remove().end().text())
+            console.log("#########################################4")
+            console.log("#########################################3")
+
             if (sockets_use == true) {
                 connectSocket.send(JSON.stringify({
-                    'partial_translation': partial.clone().children().remove().end().text(),
-                    'original': hin_inp.text(),
+                    'partial_translation': partial.clone().children().remove().end().text(), // The text translated by user so far
+                    'original': hin_inp.text(), // The full sentence to be translated
                     'langspec': langspec
                 }));
             } 
@@ -778,7 +789,7 @@ $(document).ready(function() {
 
             //OLD, JANKY HTTP REQUEST!!
                 searchRequest =  $.getJSON(http_translate, {
-                    a: hin_inp.text(),
+                    a: hin_inp.text(), // Maybe use some good names here?
                     b: partial.clone().children().remove().end().text()
                 }, function(data) {
                     // console.log(data)

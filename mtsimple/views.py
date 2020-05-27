@@ -29,6 +29,7 @@ import requests
 
 import math
 
+# defines the configuration of the translation type selected by the user
 langspecs = {
     'en-hi' : {
         'src' : 'en',
@@ -85,6 +86,7 @@ with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
 
 engines = {}
+# The model engines are initialised here after loading opt (maybe it just specifies of how the model looks like?)
 for key, value in langspecs.items():
     opt.models = [os.path.join(dir_path, 'model', value['model'])]
     opt.n_best = 1
@@ -92,19 +94,23 @@ for key, value in langspecs.items():
     opt.global_attention_function = 'sparsemax'
     ArgumentParser.validate_translate_opts(opt)
     engines[key] = {"translatorbest": build_translator(opt, report_score=True)}
+    #translatorbest builds the best complete translation of the sentence
 
     opt.n_best = 5
     opt.max_length = 2
     opt.global_attention_function = 'sparsemax'
     ArgumentParser.validate_translate_opts(opt)
     engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
+    #translatorbiagram builds 5 best translations of length two
 
 global corpusops
 corpusops = []
 
+# The view function for the first page url : simple/
 def corpus(request):
     return render(request, 'simplecorpus.html')
 
+#The view function called after setting languagespecs and getting the input in simple/ (called after corpusinput)
 def translate(request):
     return render(request, 'simpletranslate.html')
 
@@ -112,13 +118,19 @@ def end(request):
     return render(request, 'simpleend.html')
 
 def split_sentences(st):
-    #Split sentences based 
+    #Split sentences based on !?।|.
     sentences = re.split(r'[!?।|.](?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)', st)
     
     if sentences[-1]:
         return sentences
     else:
         return sentences[:-1]
+
+""" 
+The view function for getting the input for translation on the first page (simple/)
+
+Splits the sentence based on !?।| cleans it and saves the list in session["corpusinps"]
+"""
 
 def corpusinput(request):
     corpusraw = request.POST.get('translate')
@@ -128,7 +140,11 @@ def corpusinput(request):
     request.session["langspec"] = langselect
     print(request.session["langspec"])
     s = corpusraw.strip()
+
+    print(s, "DEBUG: raw corpus before split_sentences")
     spsent = [k.strip() for k in split_sentences(s)]
+    print(spsent, "DEBUG: raw corpus after split_sentences")
+
     corpusinps = list(filter(lambda elem: elem.strip(), spsent))
     request.session["corpusinps"] = [[k, ''] for k in corpusinps]
     print(request.session["corpusinps"])
@@ -159,11 +175,22 @@ def indic(request):
 def translate_new(request):
     translatorbest = engines[request.session["langspec"]]["translatorbest"]
     translatorbigram = engines[request.session["langspec"]]["translatorbigram"]
-    L1 = toquotapos(request.GET.get('a').strip())
-    L2 = request.GET.get('b', "")
+    print("Before processing")
+    print("##########################")
+    print("##########################")
+    print(request.GET.get('a').strip())
+    print("##########################")
+    print("##########################")
+    print("##########################")
+
+    L1 = toquotapos(request.GET.get('a').strip()) # request.GET.get('a') contains the whole sentence to be translated
+    print("############After Processing########")
+    print((L1))
+    L2 = request.GET.get('b', "") # request.GET.get('b') contains the partial sentence to be translated
     L2split = L2.split()
 
     if langspecs[request.session["langspec"]]['indic_code']:
+        # print(L2[-1])
         if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
             params = {}
             params['inString'] = L2split[-1]
@@ -173,7 +200,7 @@ def translate_new(request):
             L2 = ' '.join(L2split)
             # L2 = transliterate(L2, sanscript.ITRANS, langspec['indic_code'])
 
-    print(L2)
+    print(L2, u'\u0900-\u097F')
 
     something, pred, covatn2d, score_total, words_total = translatorbest.translate(
         src=[L1],
@@ -195,11 +222,13 @@ def translate_new(request):
         )
 
 
-    # print(covatn2d)
+    print(covatn2d, 'convatn2d')
     if L2 != '':
         transpattn = [*zip(*covatn2d)]
         attnind = [attn.index(max(attn)) for attn in transpattn]
+        print('attnind', attnind)
         attndist = [[ i for i, x in enumerate(attnind) if x==k] for k in range(len(L2.strip().split(" ")))]
+        print('attndist', attndist)
         sumattn = [1] * len(L1.split(" "))
         for i in attndist:
             for k in i:
@@ -223,6 +252,7 @@ def translate_new(request):
     sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
     # sentence = [x.replace(L2, "") for x in sentence]
     sentence = '\n'.join(sentence)
+    print("pred[0][0]", pred[0][0], pred[0][0][len(L2):])
     if langspecs[request.session["langspec"]]['provide_help'] and L2:
         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + L2 + '\n' + sentence
     else:
@@ -231,6 +261,6 @@ def translate_new(request):
     print(sentence)
     perplexity = float(math.exp(-score_total / words_total))
     avg_score = float(score_total / words_total)
-    # print(scores)
+    print("sentence", sentence)
     # print(something, pred)
     return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
