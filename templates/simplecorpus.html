@@ -51,11 +51,18 @@
                 if (lang == "bn-en") {
                   text = "মৌসুমি বৃষ্টি একটি অভিশাপ দ্বারা আশীর্বাদ করা একটি আশীর্বাদ। যখন পরিমাণগত পরিমাণে বৃষ্টির পরিমাণ কম হয়, তখন এটি একটি আশীর্বাদের জন্য আমাদের পরে গরম তাপের গ্রীষ্ম। ফসলের প্রাচুর্যের কারণে এটি কৃষকদের জন্য একটি আশীর্বাদ। শুষ্ক গ্রীষ্মের পরে নদী ভরাট।"
                 }
+                if (lang == "hi-gondi") {
+                  text = "आज मौसम सुहावना है। हमें शाम को बाहर जाना चाहिए।"
+                }
                 console.log(text)
                 $("#corpusinput").val(text);
                 $("#corpusinput").focus();
                 $("#corpusinput").trigger('autoresize');
             });
+
+            function limitTgtOptions() {
+              // TODO: Limit target language to only hindi
+            }
         });
         
     </script>
@@ -81,6 +88,7 @@
                     <select class="form-control" id="tgt">
                       <option value="en">English</option value="en">
                       <option value="hi">Hindi</option value="en">
+                      <option value="gondi" onselect="limitTgtOptions">Gondi</option value="en">
                     </select>
                   </div>
 

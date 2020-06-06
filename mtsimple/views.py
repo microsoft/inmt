@@ -45,6 +45,14 @@ langspecs = {
         'indic_code': None,
         'provide_help' : False,
     },
+
+    'hi-gondi' : {
+        'src' : 'hi',
+        'tgt' : 'gondi',
+        'model': 'hi-gondi.pt',
+        'indic_code': sanscript.DEVANAGARI,
+        'provide_help' : False,
+    },
     # '*-en' : {
     #     'src' : 'hi',
     #     'tgt' : 'en',
@@ -210,6 +218,8 @@ def translate_new(request):
         attn_debug=True,
         partial = toquotapos(L2)
         )
+    
+    print("$$$$$$$$$$$$$$$$$$$$$$$$")
 
     scores, predictions, score_total, words_total = translatorbigram.translate(
         src=[L1],

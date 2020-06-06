@@ -307,6 +307,7 @@ class Translator(object):
             * all_scores is a list of `batch_size` lists of `n_best` scores
             * all_predictions is a list of `batch_size` lists
                 of `n_best` predictions
+            * attns is a list of attention scores for translation having highest cumilative log likelihood
         """
         self.dymax_len = dymax_len
         self.partialf = None
@@ -322,6 +323,7 @@ class Translator(object):
         # Logic for partial and partialf 
         if partial and partial != '':
             partials = partial.split()
+            print(partials, '~~~~partials~~~')
             vocabdict = dict(self.fields)["tgt"].base_field.vocab
             # if vocabdict.stoi[partials[-1]] == 0:
             if partialfcheck:
@@ -335,6 +337,9 @@ class Translator(object):
                 # self.partialf = [20.0] + [i[0] for i in sorted(editarr, key=lambda x: x[1])]
                 
                 self.partial = [vocabdict.stoi[x] for x in partials[:-1]]
+                print("#########vocabdict.stoi########")
+                print(self.partial)
+                print("##################################")
                 
                 self.partialf = [v for k, v in vocabdict.stoi.items() if k.startswith(partials[-1]) and v]
             else:
@@ -384,7 +389,7 @@ class Translator(object):
         pred_score_total, pred_words_total = 0, 0
         gold_score_total, gold_words_total = 0, 0
 
-        all_scores = []
+        all_scores = [] # I guess this is the cumilative log likelihood score of each sentence
         all_predictions = []
 
         start_time = time.time()
@@ -396,6 +401,8 @@ class Translator(object):
             translations = xlation_builder.from_batch(batch_data)
 
             for trans in translations:
+                print("Loop")
+                print(trans, trans.pred_sents)
                 all_scores += [trans.pred_scores[:self.n_best]]
                 pred_score_total += trans.pred_scores[0]
                 pred_words_total += len(trans.pred_sents[0])
@@ -405,6 +412,12 @@ class Translator(object):
 
                 n_best_preds = [" ".join(pred)
                                 for pred in trans.pred_sents[:self.n_best]]
+                
+                print("############n_best_preds###############")
+                print(n_best_preds)
+                print("############n_best_preds###############")
+
+
                 if self.report_align:
                     align_pharaohs = [build_align_pharaoh(align) for align
                                       in trans.word_aligns[:self.n_best]]
@@ -433,7 +446,7 @@ class Translator(object):
                         srcs = trans.src_raw
                     else:
                         srcs = [str(item) for item in range(len(attns[0]))]
-                    output = report_matrix(srcs, preds, attns)
+                    output = report_matrix(srcs, preds, attns) # This prints attentions in output for the sentence having highest cumilative log likelihood score
                     
                     if self.logger:
                         self.logger.info(output)
