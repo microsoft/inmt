@@ -13,6 +13,8 @@ from onmt.utils.parse import ArgumentParser
 import mtsimple
 dir_path = os.path.dirname(os.path.dirname(mtsimple.__file__))
 
+#TODO: Find a Way to not repeat the below starter code from mtsimple/views.py
+
 langspecs = {
     'en-hi' : {
         'src' : 'en',
@@ -28,6 +30,14 @@ langspecs = {
         'indic_code': None,
         'provide_help' : False,
     },
+    'hi-gondi' : {
+        'src' : 'hi',
+        'tgt' : 'gondi',
+        'model': 'hi-gondi.pt',
+        'indic_code': sanscript.DEVANAGARI,
+        'provide_help' : False,
+    },
+    # '*-e
     # '*-en' : {
     #     'src' : 'hi',
     #     'tgt' : 'en',
