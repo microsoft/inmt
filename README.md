@@ -7,7 +7,7 @@ Interactive Machine Translation app uses Django and jQuery as its tech stack. Pl
 ```
 git clone https://github.com/microsoft/inmt
 ```
-2. Make a new model folder using `mkdir model` where the models need to be placed. Models can be downloaded from [here](https://microsoft-my.sharepoint.com/:f:/p/t-sesan/Evsn3riZxktJuterr5A09lABTVjhaL_NoH430IMgkzws9Q?e=VXzX5T). These contain English to Hindi translation models in both directions. If you want to train your own models, refer to [Training MT Models](#training-mt-models)
+2. Make a new model folder using `mkdir model` where the models need to be placed. Models can be downloaded from [here](https://microsoftapc-my.sharepoint.com/:f:/g/personal/taganu_microsoft_com/EpG0E6SEqH9Eso4xChI14BQBxGDML3F7ksZ8Ibf1SZI46w?e=SVBmpA). These contain English to Hindi translation models in both directions. If you want to train your own models, refer to [Training MT Models](#training-mt-models)
 
 3. Rest of the installation can be carried out either bare or using docker. Docker is preferable for its ease of installation.
 
