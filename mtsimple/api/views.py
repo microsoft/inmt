@@ -8,6 +8,7 @@ import pickle
 
 from indic_transliteration import sanscript
 
+
 from onmt.translate.infertranslator import build_translator
 from onmt.utils.parse import ArgumentParser
 import mtsimple
@@ -51,7 +52,6 @@ with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
 
 engines = {}
-# The model engines are initialised here after loading opt (maybe it just specifies of how the model looks like?)
 for key, value in langspecs.items():
     opt.models = [os.path.join(dir_path, 'model', value['model'])]
     opt.n_best = 1
@@ -98,22 +98,12 @@ def translate_new(request):
     partial_trans = request.GET.get('partial_trans', '')
     translatorbest = engines[langspec]["translatorbest"]
     translatorbigram = engines[langspec]["translatorbigram"]
-    print("Before processing")
-    print("##########################")
-    print("##########################")
-    print(sentence.strip())
-    print("##########################")
-    print("##########################")
-    print("##########################")
 
-    L1 = toquotapos(sentence.strip()) # request.GET.get('a') contains the whole sentence to be translated
-    print("############After Processing########")
-    print((L1))
-    L2 = partial_trans # request.GET.get('b') contains the partial sentence to be translated
+    L1 = toquotapos(sentence.strip()) 
+    L2 = partial_trans 
     L2split = L2.split()
 
     if langspecs[langspec]['indic_code']:
-        # print(L2[-1])
         if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
             params = {}
             params['inString'] = L2split[-1]
@@ -123,7 +113,6 @@ def translate_new(request):
             L2 = ' '.join(L2split)
             # L2 = transliterate(L2, sanscript.ITRANS, langspec['indic_code'])
 
-    print(L2, u'\u0900-\u097F')
 
     something, pred, covatn2d, score_total, words_total = translatorbest.translate(
         src=[L1],
@@ -149,9 +138,7 @@ def translate_new(request):
     if L2 != '':
         transpattn = [*zip(*covatn2d)]
         attnind = [attn.index(max(attn)) for attn in transpattn]
-        print('attnind', attnind)
         attndist = [[ i for i, x in enumerate(attnind) if x==k] for k in range(len(L2.strip().split(" ")))]
-        print('attndist', attndist)
         sumattn = [1] * len(L1.split(" "))
         for i in attndist:
             for k in i:
@@ -175,17 +162,14 @@ def translate_new(request):
     sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[langspec]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
     # sentence = [x.replace(L2, "") for x in sentence]
     sentence = '\n'.join(sentence)
-    print("pred[0][0]", pred[0][0], pred[0][0][len(L2):])
     if langspecs[langspec]['provide_help'] and L2:
         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + L2 + '\n' + sentence
     else:
         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + sentence
     
-    print(sentence)
     perplexity = float(math.exp(-score_total / words_total))
     avg_score = float(score_total / words_total)
     
     print("sentence", sentence)
-    # print(something, pred)
-    return JsonResponse({'result': sentence.split('\n'), 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
+    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
 

@@ -1,12 +1,12 @@
 """ Main entry point of the ONMT library """
 from __future__ import division, print_function
 
-import onmt.inputters
-import onmt.encoders
-import onmt.decoders
-import onmt.models
-import onmt.utils
-import onmt.modules
+import opennmt.onmt.inputters
+import opennmt.onmt.encoders
+import opennmt.onmt.decoders
+import opennmt.onmt.models
+import opennmt.onmt.utils
+import opennmt.onmt.modules
 from onmt.trainer import Trainer
 import sys
 import onmt.utils.optimizers

@@ -786,11 +786,11 @@ $(document).ready(function() {
                 }));
             } 
             else {
-
             //OLD, JANKY HTTP REQUEST!!
                 searchRequest =  $.getJSON(http_translate, {
-                    a: hin_inp.text(), // Maybe use some good names here?
-                    b: partial.clone().children().remove().end().text()
+                    'langspec': langspec,
+                    'sentence': hin_inp.text(), // Maybe use some good names here?
+                    'partial_trans': partial.clone().children().remove().end().text()
                 }, function(data) {
                     // console.log(data)
                     parseProcessedJsonResultsfunction(data, globalPartial)

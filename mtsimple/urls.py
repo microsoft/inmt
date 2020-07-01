@@ -17,7 +17,7 @@ urlpatterns = [
     # path('translate', views.new, name='translate'),
     # path('corpusinput', views.corpusinput, name='corpusinput'),
     # path('getinput', views.getinput, name='getinput'),
-    path('translate_new', views.translate_new, name='translate_new'),
+    # path('translate_new', views.translate_new, name='translate_new'),
     # 
     # path('getoutput', views.getoutput, name='getoutput'),
     path('preview', views.end, name='preview'),

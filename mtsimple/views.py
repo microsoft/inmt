@@ -90,26 +90,25 @@ def toquotapos(s, lang="en"):
     
     return s
 
-with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
-        opt = pickle.load(f)
+# with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
+#         opt = pickle.load(f)
 
-engines = {}
-# The model engines are initialised here after loading opt (maybe it just specifies of how the model looks like?)
-for key, value in langspecs.items():
-    opt.models = [os.path.join(dir_path, 'model', value['model'])]
-    opt.n_best = 1
-    opt.max_length = 100
-    opt.global_attention_function = 'sparsemax'
-    ArgumentParser.validate_translate_opts(opt)
-    engines[key] = {"translatorbest": build_translator(opt, report_score=True)}
-    #translatorbest builds the best complete translation of the sentence
+# engines = {}
+# for key, value in langspecs.items():
+#     opt.models = [os.path.join(dir_path, 'model', value['model'])]
+#     opt.n_best = 1
+#     opt.max_length = 100
+#     opt.global_attention_function = 'sparsemax'
+#     ArgumentParser.validate_translate_opts(opt)
+#     engines[key] = {"translatorbest": build_translator(opt, report_score=True)}
+#     #translatorbest builds the best complete translation of the sentence
 
-    opt.n_best = 5
-    opt.max_length = 2
-    opt.global_attention_function = 'sparsemax'
-    ArgumentParser.validate_translate_opts(opt)
-    engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
-    #translatorbiagram builds 5 best translations of length two
+#     opt.n_best = 5
+#     opt.max_length = 2
+#     opt.global_attention_function = 'sparsemax'
+#     ArgumentParser.validate_translate_opts(opt)
+#     engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
+#     #translatorbiagram builds 5 best translations of length two
 
 global corpusops
 corpusops = []
@@ -146,16 +145,12 @@ def corpusinput(request):
     if langselect not in langspecs:
         langselect = '*-en'
     request.session["langspec"] = langselect
-    print(request.session["langspec"])
     s = corpusraw.strip()
 
-    print(s, "DEBUG: raw corpus before split_sentences")
     spsent = [k.strip() for k in split_sentences(s)]
-    print(spsent, "DEBUG: raw corpus after split_sentences")
 
     corpusinps = list(filter(lambda elem: elem.strip(), spsent))
     request.session["corpusinps"] = [[k, ''] for k in corpusinps]
-    print(request.session["corpusinps"])
     return HttpResponse('Success')
 
 def getinput(request):
@@ -180,97 +175,82 @@ def indic(request):
     data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
     return JsonResponse(data)
 
-def translate_new(request):
-    translatorbest = engines[request.session["langspec"]]["translatorbest"]
-    translatorbigram = engines[request.session["langspec"]]["translatorbigram"]
-    print("Before processing")
-    print("##########################")
-    print("##########################")
-    print(request.GET.get('a').strip())
-    print("##########################")
-    print("##########################")
-    print("##########################")
+# def translate_new(request):
+#     translatorbest = engines[request.session["langspec"]]["translatorbest"]
+#     translatorbigram = engines[request.session["langspec"]]["translatorbigram"]
 
-    L1 = toquotapos(request.GET.get('a').strip()) # request.GET.get('a') contains the whole sentence to be translated
-    print("############After Processing########")
-    print((L1))
-    L2 = request.GET.get('b', "") # request.GET.get('b') contains the partial sentence to be translated
-    L2split = L2.split()
+#     L1 = toquotapos(request.GET.get('a').strip()) 
+#     print((L1))
+#     L2 = request.GET.get('b', "") 
+#     L2split = L2.split()
 
-    if langspecs[request.session["langspec"]]['indic_code']:
-        # print(L2[-1])
-        if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
-            params = {}
-            params['inString'] = L2split[-1]
-            params['lang'] = 'hindi'
-            data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
-            L2split[-1] = data['twords'][0]['options'][0]
-            L2 = ' '.join(L2split)
-            # L2 = transliterate(L2, sanscript.ITRANS, langspec['indic_code'])
+#     if langspecs[request.session["langspec"]]['indic_code']:
+#         # print(L2[-1])
+#         if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
+#             params = {}
+#             params['inString'] = L2split[-1]
+#             params['lang'] = 'hindi'
+#             data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
+#             L2split[-1] = data['twords'][0]['options'][0]
+#             L2 = ' '.join(L2split)
+#             # L2 = transliterate(L2, sanscript.ITRANS, langspec['indic_code'])
 
-    print(L2, u'\u0900-\u097F')
+#     print(L2, u'\u0900-\u097F')
 
-    something, pred, covatn2d, score_total, words_total = translatorbest.translate(
-        src=[L1],
-        tgt=None,
-        src_dir='',
-        batch_size=30,
-        attn_debug=True,
-        partial = toquotapos(L2)
-        )
+#     something, pred, covatn2d, score_total, words_total = translatorbest.translate(
+#         src=[L1],
+#         tgt=None,
+#         src_dir='',
+#         batch_size=30,
+#         attn_debug=True,
+#         partial = toquotapos(L2)
+#         )
+
+#     scores, predictions, score_total, words_total = translatorbigram.translate(
+#         src=[L1],
+#         tgt=None,
+#         src_dir='',
+#         batch_size=30,
+#         attn_debug=False,
+#         partial = toquotapos(L2),
+#         dymax_len = 2,
+#         )
+
+
+#     print(covatn2d, 'convatn2d')
+#     if L2 != '':
+#         transpattn = [*zip(*covatn2d)]
+#         attnind = [attn.index(max(attn)) for attn in transpattn]
+#         attndist = [[ i for i, x in enumerate(attnind) if x==k] for k in range(len(L2.strip().split(" ")))]
+#         sumattn = [1] * len(L1.split(" "))
+#         for i in attndist:
+#             for k in i:
+#                 sumattn[k] = 0
+#         # attn = covatn2d[:len(L2.strip().split(" "))]
+#         # sumattn = [sum(i) for i in zip(*attn)]
+#         # for i in range(len(attn)):
+#         #     if max(attn[i]) > 0.30:
+#         #         sumattn[attn[i].index(max(attn[i]))] = 1
+#         #     print(max(attn[i]))
+#         # newattn = [float("{0:.2f}".format(1-(k/max(sumattn)))) for k in sumattn]
+#         # # sumattn = [float("{0:.2f}".format(k/sum(newattn))) for k in newattn]
+#         # newattn = [ 1.66*max(0, (k-0.4)) for k in newattn]
+
+#     else:
+#         sumattn = [1.00] * len(L1.split(" "))    
+#     predictions = predictions[0]
+#     print(predictions)
+#     seen = set()
+#     seen_add = seen.add
+#     sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
+#     # sentence = [x.replace(L2, "") for x in sentence]
+#     sentence = '\n'.join(sentence)
+#     if langspecs[request.session["langspec"]]['provide_help'] and L2:
+#         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + L2 + '\n' + sentence
+#     else:
+#         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + sentence
     
-    print("$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    scores, predictions, score_total, words_total = translatorbigram.translate(
-        src=[L1],
-        tgt=None,
-        src_dir='',
-        batch_size=30,
-        attn_debug=False,
-        partial = toquotapos(L2),
-        dymax_len = 2,
-        )
-
-
-    print(covatn2d, 'convatn2d')
-    if L2 != '':
-        transpattn = [*zip(*covatn2d)]
-        attnind = [attn.index(max(attn)) for attn in transpattn]
-        print('attnind', attnind)
-        attndist = [[ i for i, x in enumerate(attnind) if x==k] for k in range(len(L2.strip().split(" ")))]
-        print('attndist', attndist)
-        sumattn = [1] * len(L1.split(" "))
-        for i in attndist:
-            for k in i:
-                sumattn[k] = 0
-        # attn = covatn2d[:len(L2.strip().split(" "))]
-        # sumattn = [sum(i) for i in zip(*attn)]
-        # for i in range(len(attn)):
-        #     if max(attn[i]) > 0.30:
-        #         sumattn[attn[i].index(max(attn[i]))] = 1
-        #     print(max(attn[i]))
-        # newattn = [float("{0:.2f}".format(1-(k/max(sumattn)))) for k in sumattn]
-        # # sumattn = [float("{0:.2f}".format(k/sum(newattn))) for k in newattn]
-        # newattn = [ 1.66*max(0, (k-0.4)) for k in newattn]
-
-    else:
-        sumattn = [1.00] * len(L1.split(" "))    
-    predictions = predictions[0]
-    print(predictions)
-    seen = set()
-    seen_add = seen.add
-    sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
-    # sentence = [x.replace(L2, "") for x in sentence]
-    sentence = '\n'.join(sentence)
-    print("pred[0][0]", pred[0][0], pred[0][0][len(L2):])
-    if langspecs[request.session["langspec"]]['provide_help'] and L2:
-        sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + L2 + '\n' + sentence
-    else:
-        sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + sentence
-    
-    print(sentence)
-    perplexity = float(math.exp(-score_total / words_total))
-    avg_score = float(score_total / words_total)
-    print("sentence", sentence)
-    # print(something, pred)
-    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
+#     print(sentence)
+#     perplexity = float(math.exp(-score_total / words_total))
+#     avg_score = float(score_total / words_total)
+#     return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
