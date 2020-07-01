@@ -94,7 +94,6 @@ with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
 
 engines = {}
-# The model engines are initialised here after loading opt (maybe it just specifies of how the model looks like?)
 for key, value in langspecs.items():
     opt.models = [os.path.join(dir_path, 'model', value['model'])]
     opt.n_best = 1
@@ -146,16 +145,12 @@ def corpusinput(request):
     if langselect not in langspecs:
         langselect = '*-en'
     request.session["langspec"] = langselect
-    print(request.session["langspec"])
     s = corpusraw.strip()
 
-    print(s, "DEBUG: raw corpus before split_sentences")
     spsent = [k.strip() for k in split_sentences(s)]
-    print(spsent, "DEBUG: raw corpus after split_sentences")
 
     corpusinps = list(filter(lambda elem: elem.strip(), spsent))
     request.session["corpusinps"] = [[k, ''] for k in corpusinps]
-    print(request.session["corpusinps"])
     return HttpResponse('Success')
 
 def getinput(request):
@@ -183,18 +178,10 @@ def indic(request):
 def translate_new(request):
     translatorbest = engines[request.session["langspec"]]["translatorbest"]
     translatorbigram = engines[request.session["langspec"]]["translatorbigram"]
-    print("Before processing")
-    print("##########################")
-    print("##########################")
-    print(request.GET.get('a').strip())
-    print("##########################")
-    print("##########################")
-    print("##########################")
 
-    L1 = toquotapos(request.GET.get('a').strip()) # request.GET.get('a') contains the whole sentence to be translated
-    print("############After Processing########")
+    L1 = toquotapos(request.GET.get('a').strip()) 
     print((L1))
-    L2 = request.GET.get('b', "") # request.GET.get('b') contains the partial sentence to be translated
+    L2 = request.GET.get('b', "") 
     L2split = L2.split()
 
     if langspecs[request.session["langspec"]]['indic_code']:
@@ -218,8 +205,6 @@ def translate_new(request):
         attn_debug=True,
         partial = toquotapos(L2)
         )
-    
-    print("$$$$$$$$$$$$$$$$$$$$$$$$")
 
     scores, predictions, score_total, words_total = translatorbigram.translate(
         src=[L1],
@@ -236,9 +221,7 @@ def translate_new(request):
     if L2 != '':
         transpattn = [*zip(*covatn2d)]
         attnind = [attn.index(max(attn)) for attn in transpattn]
-        print('attnind', attnind)
         attndist = [[ i for i, x in enumerate(attnind) if x==k] for k in range(len(L2.strip().split(" ")))]
-        print('attndist', attndist)
         sumattn = [1] * len(L1.split(" "))
         for i in attndist:
             for k in i:
@@ -262,7 +245,6 @@ def translate_new(request):
     sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
     # sentence = [x.replace(L2, "") for x in sentence]
     sentence = '\n'.join(sentence)
-    print("pred[0][0]", pred[0][0], pred[0][0][len(L2):])
     if langspecs[request.session["langspec"]]['provide_help'] and L2:
         sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[request.session["langspec"]]["tgt"]) + '\n' + L2 + '\n' + sentence
     else:
@@ -271,6 +253,4 @@ def translate_new(request):
     print(sentence)
     perplexity = float(math.exp(-score_total / words_total))
     avg_score = float(score_total / words_total)
-    print("sentence", sentence)
-    # print(something, pred)
     return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
