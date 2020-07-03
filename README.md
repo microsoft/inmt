@@ -16,7 +16,7 @@ Assisting Translators with on-the-fly Translation Suggestions
 [![license](https://img.shields.io/badge/Demo-aka.ms%2Finmt-informational?style=&logo=microsoft-azure)](https://dev.azure.com/ELLORA/Interactive%20Machine%20Translation/_build?definitionId=3&amp;branchName=master)
 [![license](https://img.shields.io/badge/Paper-anthology%2FD19--3018-lightgrey?style=&logo=read-the-docs)](https://dev.azure.com/ELLORA/Interactive%20Machine%20Translation/_build?definitionId=3&amp;branchName=master)
 
-[![license](https://raw.githubusercontent.com/microsoft/inmt/master/docs/static/inmtv2-transparent.png)](docs/static/inmtv2-transparent.png)
+[![license](https://raw.githubusercontent.com/microsoft/inmt/master/docs/static/inmtv2-white.png)](docs/static/inmtv2-white.png)
 <!-- [![license](https://img.shields.io/badge/Paper-anthology%2FD19--3018-lightgrey?style=&logo=read-the-docs)](https://dev.azure.com/ELLORA/Interactive%20Machine%20Translation/_build?definitionId=3&amp;branchName=master) -->
 
 
