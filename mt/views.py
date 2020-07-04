@@ -4,6 +4,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
+import mtsimple
+
+
 from .models import *
 
 import re
@@ -41,12 +44,12 @@ from django.conf import settings
 
 # print(settings.SOCKETS)
 
-with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
-        opt = pickle.load(f)
-        print("###########################DEBUG######################################")
-        print(opt) # This is the file that mentions model details
-        print(dir_path + "/opt_data")
-        print("#######################################################################")
+# with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
+#         opt = pickle.load(f)
+#         print("###########################DEBUG######################################")
+#         print(opt) # This is the file that mentions model details
+#         print(dir_path + "/opt_data")
+#         print("#######################################################################")
 
 
 
@@ -67,24 +70,26 @@ langspecs = {
     }
 }
 
+id_to_spec = {'1': 'hi-en', '2': 'en-hi'}
+
 translatordict = {}
 
-for k, v in langspecs.items():
-    opt.models = [os.path.join(dir_path, 'model', v["model"])]
-    opt.n_best = 1
-    opt.max_length = 100
-    ArgumentParser.validate_translate_opts(opt)
-    logger = init_logger(opt.log_file)
-    translatorbest = build_translator(opt, report_score=True)
+# for k, v in langspecs.items():
+#     opt.models = [os.path.join(dir_path, 'model', v["model"])]
+#     opt.n_best = 1
+#     opt.max_length = 100
+#     ArgumentParser.validate_translate_opts(opt)
+#     logger = init_logger(opt.log_file)
+#     translatorbest = build_translator(opt, report_score=True)
 
-    opt.models = [os.path.join(dir_path, 'model', v["model"])]
-    opt.n_best = 5
-    opt.max_length = 2
-    ArgumentParser.validate_translate_opts(opt)
-    logger = init_logger(opt.log_file)
-    translatorbigram = build_translator(opt, report_score=True)
+#     opt.models = [os.path.join(dir_path, 'model', v["model"])]
+#     opt.n_best = 5
+#     opt.max_length = 2
+#     ArgumentParser.validate_translate_opts(opt)
+#     logger = init_logger(opt.log_file)
+#     translatorbigram = build_translator(opt, report_score=True)
 
-    translatordict[k] = {"translatorbest": translatorbest, "translatorbigram": translatorbigram}
+#     translatordict[k] = {"translatorbest": translatorbest, "translatorbigram": translatorbigram}
 
 
 def index(request):
@@ -358,70 +363,77 @@ def toquotapos(s, lang="en"):
 
 @login_required
 def translate_new(request):
-    L1 = toquotapos(request.GET.get('a').strip())
-    L2 = request.GET.get('b', "")
-    L2split = L2.split()
 
-    langtolangid = request.session['langtolangid']
+    request.GET._mutable = True
+    request.GET['langspec'] = id_to_spec[request.session['langtolangid']]
 
-    if langspecs[langtolangid]['indic_code']:
-        if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
-            params = {}
-            params['inString'] = L2split[-1]
-            params['lang'] = 'hindi'
-            data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
-            L2split[-1] = data['twords'][0]['options'][0]
-            L2 = ' '.join(L2split)
+    return mtsimple.api.views.translate_new(request)
+
+
+    # L1 = toquotapos(request.GET.get('a').strip())
+    # L2 = request.GET.get('b', "")
+    # L2split = L2.split()
+
+    # langtolangid = request.session['langtolangid']
+
+    # if langspecs[langtolangid]['indic_code']:
+    #     if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
+    #         params = {}
+    #         params['inString'] = L2split[-1]
+    #         params['lang'] = 'hindi'
+    #         data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
+    #         L2split[-1] = data['twords'][0]['options'][0]
+    #         L2 = ' '.join(L2split)
     
-    _, pred, covatn2d = translatordict[langtolangid]['translatorbest'].translate(
-        src=[L1],
-        tgt=None,
-        src_dir='',
-        batch_size=30,
-        attn_debug=True,
-        partial = toquotapos(L2)
-        )
+    # _, pred, covatn2d = translatordict[langtolangid]['translatorbest'].translate(
+    #     src=[L1],
+    #     tgt=None,
+    #     src_dir='',
+    #     batch_size=30,
+    #     attn_debug=True,
+    #     partial = toquotapos(L2)
+    #     )
 
-    scores, predictions = translatordict[langtolangid]['translatorbigram'].translate(
-        src=[L1],
-        tgt=None,
-        src_dir='',
-        batch_size=30,
-        attn_debug=False,
-        partial = toquotapos(L2),
-        dymax_len = 2,
-        )
+    # scores, predictions = translatordict[langtolangid]['translatorbigram'].translate(
+    #     src=[L1],
+    #     tgt=None,
+    #     src_dir='',
+    #     batch_size=30,
+    #     attn_debug=False,
+    #     partial = toquotapos(L2),
+    #     dymax_len = 2,
+    #     )
 
 
-    # print(covatn2d)
-    if L2 != '':
-        attn = covatn2d[:len(L2.strip().split(" "))]
-        sumattn = [sum(i) for i in zip(*attn)]
-        for i in range(len(attn)):
-            if max(attn[i]) > 0.30:
-                sumattn[attn[i].index(max(attn[i]))] = 1
-            print(max(attn[i]))
-        newattn = [float("{0:.2f}".format(1-(k/max(sumattn)))) for k in sumattn]
-        # sumattn = [float("{0:.2f}".format(k/sum(newattn))) for k in newattn]
-        newattn = [ 1.66*max(0, (k-0.4)) for k in newattn]
-        sumattn = newattn
-    else:
-        sumattn = [1.00] * len(L1.split(" "))    
-    predictions = predictions[0]
-    print(predictions)
-    seen = set()
-    seen_add = seen.add
-    sentence = [quotaposto(L2 + quotaposto(x).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + " " for x in predictions if not (x in seen or seen_add(x))]
-    # sentence = [x.replace(L2, "") for x in sentence]
-    sentence = '\n'.join(sentence)
-    if langspecs[langtolangid]['provide_help'] and L2:
-        sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + L2 + '\n' + sentence
-    else:
-        sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + sentence
+    # # print(covatn2d)
+    # if L2 != '':
+    #     attn = covatn2d[:len(L2.strip().split(" "))]
+    #     sumattn = [sum(i) for i in zip(*attn)]
+    #     for i in range(len(attn)):
+    #         if max(attn[i]) > 0.30:
+    #             sumattn[attn[i].index(max(attn[i]))] = 1
+    #         print(max(attn[i]))
+    #     newattn = [float("{0:.2f}".format(1-(k/max(sumattn)))) for k in sumattn]
+    #     # sumattn = [float("{0:.2f}".format(k/sum(newattn))) for k in newattn]
+    #     newattn = [ 1.66*max(0, (k-0.4)) for k in newattn]
+    #     sumattn = newattn
+    # else:
+    #     sumattn = [1.00] * len(L1.split(" "))    
+    # predictions = predictions[0]
+    # print(predictions)
+    # seen = set()
+    # seen_add = seen.add
+    # sentence = [quotaposto(L2 + quotaposto(x).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + " " for x in predictions if not (x in seen or seen_add(x))]
+    # # sentence = [x.replace(L2, "") for x in sentence]
+    # sentence = '\n'.join(sentence)
+    # if langspecs[langtolangid]['provide_help'] and L2:
+    #     sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + L2 + '\n' + sentence
+    # else:
+    #     sentence = quotaposto(L2 + quotaposto(pred[0][0]).capitalize()[len(L2):], langspecs[langtolangid]['tgt']) + '\n' + sentence
     
-    print(sentence)
-    # print(scores)
-    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
+    # print(sentence)
+    # # print(scores)
+    # return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2})
 
 
 

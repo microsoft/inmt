@@ -8,6 +8,7 @@ import pickle
 
 from indic_transliteration import sanscript
 
+
 from onmt.translate.infertranslator import build_translator
 from onmt.utils.parse import ArgumentParser
 import mtsimple
@@ -170,5 +171,5 @@ def translate_new(request):
     avg_score = float(score_total / words_total)
     
     print("sentence", sentence)
-    return JsonResponse({'result': sentence.split('\n'), 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
+    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
 
