@@ -27,25 +27,10 @@ langspecs = {
     'hi-en' : {
         'src' : 'hi',
         'tgt' : 'en',
-        'model': 'full_iitb_bpe_hien.pt',
+        'model': 'onmt-hien.pt',
         'indic_code': None,
         'provide_help' : False,
     },
-    'hi-gondi' : {
-        'src' : 'hi',
-        'tgt' : 'gondi',
-        'model': 'hi-gondi.pt',
-        'indic_code': sanscript.DEVANAGARI,
-        'provide_help' : False,
-    },
-    # '*-e
-    # '*-en' : {
-    #     'src' : 'hi',
-    #     'tgt' : 'en',
-    #     'model': 'multiling.pt',
-    #     'indic_code': None,
-    #     'provide_help' : False,
-    # }
 }
 
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:

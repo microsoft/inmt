@@ -54,14 +54,14 @@ from django.conf import settings
 
 
 langspecs = {
-    '2' : {
+    '1' : {
         'src' : 'en',
         'tgt' : 'hi',
         'model': 'full_iitb_enhi_50v.pt',
         'indic_code': sanscript.DEVANAGARI,
         'provide_help' : True,
     },
-    '1' : {
+    '2' : {
         'src' : 'hi',
         'tgt' : 'en',
         'model': 'full_iitb_bpe_hien.pt',
@@ -70,7 +70,7 @@ langspecs = {
     }
 }
 
-id_to_spec = {'1': 'hi-en', '2': 'en-hi'}
+id_to_spec = {'2': 'hi-en', '1': 'en-hi'}
 
 translatordict = {}
 
@@ -93,8 +93,8 @@ translatordict = {}
 
 
 def index(request):
-    # return render(request, 'index.html')
-    return redirect('/simple')
+    return render(request, 'index.html')
+    # return redirect('/simple')
 
 @login_required
 def export_keystroke_csv(request):
@@ -118,7 +118,7 @@ def set_keyboard_controls(request):
     controlScheme = request.POST['keyboardControlScheme']
     #Here, I should grab the entire control scheme model with this name; 
     request.session["controlscheme"] = controlScheme
-    return render(request, 'dashboard.html')
+    return render(request, '.html')
 
 @login_required
 def isControlSchemeDefined(request):
@@ -299,6 +299,7 @@ def new(request):
 def corpusinput(request):
     corpid = request.POST.get('corpid')
     langtolangid = request.POST.get('langtolangid')
+    print(langtolangid)
 
     request.session['langtolangid'] = langtolangid
     request.session['corpusid'] = corpid
@@ -325,7 +326,7 @@ def getinput(request):
     corpusinps = []
     for i in translatedsents:
         corpusinps.append([i.src, i.tgt])
-    return JsonResponse({'result': corpusinps, 'langtolangid': request.session["langtolangid"]})
+    return JsonResponse({'result': corpusinps, 'langspec': id_to_spec[request.session["langtolangid"]]})
 
 
 def quotapos(s, lang="en"):

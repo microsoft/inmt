@@ -26,61 +26,57 @@ Please select the corpus you want to translate!
     </div>
     <span>&nbsp;&nbsp;Loading Translator. Please wait ...</span>
   </div>
-
+<div class="container">
 <div class="row">
-  <div class="col s10">
-      
-  <ul class="pagination">
-      <li class="disabled waves-effect"><a href="#"><i class="material-icons">chevron_left</i></a></li>
-      <li class="active blue-grey"><a href="/corpus" class="white-text">Corpus</a></li>
-      <li class="waves-effect"><a href="/translate" class="white-text">Translate</a></li>
-      <li class="waves-effect"><a href="/preview" class="white-text">Submission Preview</a></li>
-      <li class="waves-effect"><a href="/translate" class="white-text"><i class="material-icons">chevron_right</i></a></li>
-    </ul>
-              
-    
-                {% for corp in corpus %}
-                <div class="card bmo">
-                  <div class="card-content">
-                    <div class="row">
-                      <div class="col s7">
-                        <p style="font-weight:600; font-size: large">{{ corp.name }}</p>
-                        <p>{{ corp.langtolang }}</p>
-                      </div>
-                      <div class="col s1">
-                        {% if corp.condition == 2 %}
-                          <span class="new badge green" data-badge-caption="Done"></span>
-                        {% endif %}
-                        {% if corp.condition == 1 %}
-                          <span class="new badge orange" data-badge-caption="Incomplete"></span>
-                        {% endif %}
-                        {% if corp.condition == 0 %}
-                          <span class="new badge red" data-badge-caption="Pending"></span>
-                        {% endif %}                      
-                      </div>
-                      <div class="col s1">
-                          
-                      </div>
-                      <div class="col s4">
-                          {% if corp.condition != 0 %}
-                          <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete waves-effect waves-light btn blue-grey"><i class="material-icons">delete_outline</i></a>
-                          {% else %}
-                          <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete waves-effect waves-light btn blue-grey" disabled><i class="material-icons">delete_outline</i></a>
-                          {% endif %}
-                          <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="corptrans waves-effect waves-light btn blue-grey"><i class="material-icons right">send</i>translate</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {% endfor %}
+  <div class="col">
+    <div id="translate-interface" class="row pt-5 pb-3">
+      <div class="col-5">
+        <ul class="nav nav-pills pb-2">
+          <li class="nav-item">
+            <a id="nav-source" class="nav-link active" href="#">Select Corpus</a>
+          </li>
+          <li class="nav-item">
+            <a id="nav-source" class="nav-link" href="/translate">Source</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% for corp in corpus %}
+    <div class="row">
+      <div class="col-9">
+        {% if corp.condition == 2 %}
+          <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(0, 255, 0, 0.3);">
+        {% endif %}
+        {% if corp.condition == 1 %}
+        <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(255, 0, 0, 0.3);">
+        {% endif %}
+        {% if corp.condition == 0 %}
+        <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(255, 255, 0, 0.3);">
+        {% endif %}
+          <div class="card-body">
+            <div class="row">
+              <div class="col-7">
+                <p style="font-weight:600; font-size: large">{{ corp.name }}</p>
+                <p>{{ corp.langtolang }}</p>
+              </div>
+              <div class="col-4 text-light">
+                {% if corp.condition != 0 %}
+                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-danger"> <i class="fa fa-trash-o fa-lg"></i></a>
+                  {% else %}
+                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-danger disabled"> <i class="fa fa-trash-o fa-lg"></i></a>
+                  {% endif %}
+                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="corptrans btn btn-primary"> Translate</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
         
   </div>
 </div>
-    <!--work collections end-->
-    
-    <!-- //////////////////////////////////////////////////////////////////////////// -->
   </div>
-  <!--end container-->
 </section>
 <style>
   .preloader-background {

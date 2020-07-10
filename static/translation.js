@@ -581,6 +581,7 @@ $(document).ready(function() {
     $.getJSON(http_getinput, {}, function(data) {
         inputs = data.result;
         langspec = data.langspec
+        console.log("skdjfhkjsadfkj" + inputs + langspec)
         // langtolangid = data.langtolangid;
 
         console.log(inputs)
@@ -856,26 +857,30 @@ $(document).ready(function() {
         }
 
         //PART OF CODE DEDICATED TO SUBMISSIONS
-        // $('.submittrans').click(function(elem){
+        $('#submittrans').click(function(elem){
         //   $('.preloader-background').css('display', 'flex')
-        //     // searchEvents($(this));
-        //     $(".partial").each(function() {
-        //       outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
-        //     })
-        //     $(this).data("end", parseInt($(this).data("end")) + 1)
+            // searchEvents($(this));
+            $(".partial").each(function() {
+              outputs.push([$(this).closest('.bmo').find('.hin_inp').text(), $(this).text()])
+            })
+            $(this).data("end", parseInt($(this).data("end")) + 1)
 
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: '/pushoutput',
-        //         data: { 'csrfmiddlewaretoken': '{{ csrf_token }}', 'ops': JSON.stringify(outputs), 'keytimeseries': JSON.stringify(globkeystrokes)},
-        //         traditional: true,
-        //         success: function(result) {
-        //             // console.log(result.result);
-        //             window.location.href='/preview';
-        //         }
-        //     }); 
+            $.ajax({
+                type: 'POST',
+                url: '/pushoutput',
+                data: {
+                    'csrfmiddlewaretoken': window.CSRF_TOKEN,
+                    'ops': JSON.stringify(outputs),
+                    'keytimeseries': JSON.stringify(globkeystrokes)
+                },
+                traditional: true,
+                success: function(result) {
+                    // console.log(result.result);
+                    window.location.href='/corpus';
+                }
+            }); 
 
-        // })
+        })
         //END SUBMISSION PORTION
 
         $(document).on('keydown', function(e) {

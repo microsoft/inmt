@@ -1,116 +1,100 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-<html>
-    <link type="text/css" rel="stylesheet" href="{% static 'materialize.css' %}"  media="screen,projection"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<head>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{% static 'materialize.js' %}"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>    
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-    <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
-    <script>        
-        $(document).ready(function(){
-            $('.modal').modal();
-        });
-    </script>
-
-    <!--Scripts Inherited from dependent HTML Pages-->
-    {% block js %}
-    {% endblock %}
+  <title>Simple Sidebar - Start Bootstrap Template</title>
+  
+  <script src="https://use.fontawesome.com/1bc594d5e0.js"></script>
 
 
-    <body>
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">  
+  <link href="https://fonts.googleapis.com/css2?family=Karma&family=Roboto&display=swap" rel="stylesheet">
 
-      <!--SideBar Navigation Menu-->
-      <ul id="slide-out" class="sidenav sidenav-fixed">
-        <li>
-          <div class="user-view">
-            <div class="background">
-              <img src="{% static 'images/gallary/1.png' %}">
-            </div>
-            <a href="#user"><img class="circle" src="{% static 'images/avatar/avatar-7.png' %}"></a>
-            <a href="name"><span class="white-text name">{{ request.user.translator.name }}</span></a>
-            <a href="#email"><span class="white-text email">{{ request.user.email }}</span></a>
-          </div>
-        </li>
-        <li class='{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}'>
-          <a class="waves-effect" href="/dashboard"><i class="material-icons">dashboard</i>Dashboard</a>
-        </li>
-        <li class='{% if request.resolver_match.url_name == "corpus" or request.resolver_match.url_name == "translate" or request.resolver_match.url_name == "preview" %}active{% endif %}'>
-          <a class="waves-effect" href="/corpus"> <i class="material-icons">translate</i>Translate</a>
-        </li>
-        <li class='{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}'>
-          <a class="waves-effect" href="/accounts/logout"><i class="material-icons">logout</i>Logout</a>
-        </li>
-      </ul>
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/sidebar.css' %}" rel="stylesheet">
 
-      <div class="contain">
-        <!--Top Bar navigation/logout-->
-        <!--nav>
-            <div class="nav-wrapper blue-grey darken-3">
-              <ul id="nav-mobile" class="right hide-on-med-and-down">
-              <li><a href="/accounts/logout">Logout</a></li>
-              </ul>
-            </div>
-        </nav-->
-        <!--Where sub-Module titles go-->
-        <!--div class="row white-text titli">
-          <h3>{% block title %}{% endblock %}</h3>
-          <p>{% block desc %} {% endblock %}</p>
-        </div>
-        <div class="pad-top"></div-->
-        <!--Where sub-module bodies go-->
-        <div class="titl">
+</head>
+
+<body>
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-white border-right shadow" id="sidebar-wrapper">
+      <div class="sidebar-heading">Interactive NMT </div>
+      <div class="list-group list-group-flush">
+        <a href="/dashboard" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+        <a href="/corpus" class="list-group-item list-group-item-action bg-light">Translate</a>
+        <a href="/accounts/logout" class="list-group-item list-group-item-action bg-light">Logout</a>
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow">
+      </nav>
+
+      <div class="container-fluid">
+        <!-- <h1 class="mt-4">Simple Sidebar</h1>
+        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on
+          larger screens. When toggled using the button below, the menu will change.</p>
+        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional,
+          and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the
+          menu when clicked.</p> -->
           {% block content %}
           {% endblock %}
-        </div>
+
       </div>
-    </body>
+    </div>
+    <!-- /#page-content-wrapper -->
 
-    <style>
-        body {
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script
+			  src="https://code.jquery.com/jquery-3.4.1.js"
+			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+
+  <!-- Menu Toggle Script -->
+  <script>
+    $("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+  </script>
+
+{% block js %}
+{% endblock %}
+</body>
+<style>
+  body {
+        font-family: 'Karma', serif;
         background: url(data:image/png;base64,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) fixed; 
-        background-color: #404040;
-          /* background-color: #00aaaa; */
-      }
-        /*.contain {
-            /*padding-left: 300px;*/
-        /*}
-        .titl {
-            /*padding-left: 15px;*/
-        /*}
-        .titli {
-            padding-left: 30px;
-        }*/
-        
-        .contain, .titl {
-          padding-left: 165px;
-          padding-right: 15px; 
+        overflow: hidden;
+        /* background-color: rgb(240, 240, 240); */
         }
-
-        @media only screen and (max-width : 992px) {
-          .contain, .titl {
-            padding-left: 15px;
-          }
-        }
-        .pad-top {
-        height: 2vh;
-      }
-      .bottom {
-        position: absolute;
-        bottom:0;
-        right:10;
+  .carder {
+        border: 1px solid rgb(150, 150, 150);
+        background-color: rgb(255, 255, 252);
       }
 
-      .centered{
-        text-align: center;
-        align-content: center;
-      }
-    </style>
+</style>
+
 </html>
+
     

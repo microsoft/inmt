@@ -16,23 +16,33 @@ Please translate according the instructions
     <script type=text/javascript>
 
 
-  var selectsingle =  {{ selectedControlScheme.select_single_word_from_suggestion }}
-  var selectentire = {{ selectedControlScheme.select_entire_suggestion }}
-  var navnext = {{ selectedControlScheme.navigate_to_next_corpus_fragment }}
-  var navprev = {{ selectedControlScheme.navigate_to_previous_corpus_fragment }}
-  var submit = {{ selectedControlScheme.submit_translation }}
-  var selectnextsug = {{ selectedControlScheme.select_next_translation_suggestion }}
-  var selectprevsug = {{ selectedControlScheme.select_previous_translation_suggestion }}
-  var controlname = "{{ selectedControlScheme }}"
+  // var selectsingle =  {{ selectedControlScheme.select_single_word_from_suggestion }}
+  // var selectentire = {{ selectedControlScheme.select_entire_suggestion }}
+  // var navnext = {{ selectedControlScheme.navigate_to_next_corpus_fragment }}
+  // var navprev = {{ selectedControlScheme.navigate_to_previous_corpus_fragment }}
+  // var submit = {{ selectedControlScheme.submit_translation }}
+  // var selectnextsug = {{ selectedControlScheme.select_next_translation_suggestion }}
+  // var selectprevsug = {{ selectedControlScheme.select_previous_translation_suggestion }}
+  // var controlname = "{{ selectedControlScheme }}"
 
-  var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = selectsingle ? selectsingle: default_key_commands[0];
-  var SELECT_ENTIRE_SUGGESTION = selectentire? selectentire: default_key_commands[1];
-  var SELECT_NEXT_TRANSLATION_SUGGESTION = selectnextsug? selectnextsug: default_key_commands[2];
-  var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = selectprevsug? selectprevsug: default_key_commands[3];
-  var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = navnext? navnext: default_key_commands[4];
-  var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = navprev? navprev: default_key_commands[5];
-  var SUBMIT_TRANSLATION = submit? submit: default_key_commands[6];
-  var CONTROL_SCHEME_NAME = controlname? controlname : "default";
+  // var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = default_key_commands[0];
+  // var SELECT_ENTIRE_SUGGESTION = selectentire? selectentire: default_key_commands[1];
+  // var SELECT_NEXT_TRANSLATION_SUGGESTION = selectnextsug? selectnextsug: default_key_commands[2];
+  // var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = selectprevsug? selectprevsug: default_key_commands[3];
+  // var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = navnext? navnext: default_key_commands[4];
+  // var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = navprev? navprev: default_key_commands[5];
+  // var SUBMIT_TRANSLATION = submit? submit: default_key_commands[6];
+  // var CONTROL_SCHEME_NAME = controlname? controlname : "default";
+
+var default_key_commands = [9, 13, 40, 38, 34, 33, 35]
+var SELECT_SINGLE_WORD_FROM_SUGGESTION_KEY = default_key_commands[0];
+var SELECT_ENTIRE_SUGGESTION = default_key_commands[1];
+var SELECT_NEXT_TRANSLATION_SUGGESTION = default_key_commands[2];
+var SELECT_PREVIOUS_TRANSLATION_SUGGESTION = default_key_commands[3];
+var NAVIGATE_TO_NEXT_CORPUS_FRAGMENT = default_key_commands[4];
+var NAVIGATE_TO_PREVIOUS_CORPUS_FRAGMENT = default_key_commands[5];
+var SUBMIT_TRANSLATION = default_key_commands[6];
+var CONTROL_SCHEME_NAME = "default";
 
 var sockets_use = {{ sockets|yesno:"true,false" }};
 var system_type = "{{ helpprovision|safe }}"
@@ -49,38 +59,51 @@ var http_preview = '/preview';
     <script type="text/javascript" src="{% static 'translation.js' %}"></script>
 {% endblock %}
 {% block content %}
-<div id="topdock" style="position: fixed; top:0; right:0;"></div>
-<div class="preloader-background">
-    <div class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
-        
-      </div>
+<script type="text/javascript">
+  window.CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<div class="container">
+  <div id="translate-interface" class="row pt-5 pb-3">
+    <div class="col-5">
+      <ul class="nav nav-pills pb-2">
+        <li class="nav-item">
+          <a id="nav-source" class="nav-link" href="/corpus">Select Corpus</a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-source" class="nav-link active" href="#">Source</a>
+        </li>
+      </ul>
     </div>
-    <span>&nbsp;&nbsp;Thank you! Please wait for preview ...</span>
-  </div>
-    
-  <div class="row">
-    <div class="col s10">
-        <ul class="pagination">
-            <li class="waves-effect"><a href="/corpus"  class="white-text"><i class="material-icons">chevron_left</i></a></li>
-            <li class="waves-effect"><a href="/corpus" class="white-text">Corpus</a></li>
-            <li class="active blue-grey"><a href="/translate" class="white-text">Translate</a></li>
-            <li class="waves-effect"><a href="/preview" class="white-text">Submission Preview</a></li>
-            <li class="waves-effect"><a href="/preview" class="white-text"><i class="material-icons">chevron_right</i></a></li>
-          </ul>
-      <div id="cardscoll">
-      </div>
-      <a class="submittrans waves-effect waves-light btn blue-grey"><i class="material-icons right">send</i>submit</a>
+    <div class="col-7">
+      <ul class="nav nav-pills pb-2" id="previewswitch">
+        <li class="nav-item">
+          <a id="nav-translate" class="nav-link active" href="#">Translate</a>
+        </li>
+        <li class="nav-item">
+          <a id="nav-preview" class="nav-link" href="#">Preview</a>
+        </li>
+      </ul>
     </div>
   </div>
-  <div id="bottomdock" style="position: fixed; bottom:0; right:0;"></div>
+    <div class="row">
+      <div class="col-5 left">
+        <div id="corpus-side">
+          <div id="corpusinput" class="shadow p-3 my-3 rounded carder">
+          </div>
+        </div>
+      </div>
+      <div class="col-7 right">
+        <div id="interactive">
+
+
+          <div id="cardscoll"></div>
+          <div id="cardsprev" style="display:none">
+            <div id="corpusoutput" class="shadow p-3 my-3 rounded carder">
+            </div>
+            <a id="submittrans" class="btn btn-primary"> Submit Translation</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
 {% endblock %}
