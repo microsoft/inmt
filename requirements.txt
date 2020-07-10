@@ -9,3 +9,4 @@ torch
 torchtext
 configargparse
 nltk
+subword-nmt

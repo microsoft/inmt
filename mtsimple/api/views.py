@@ -8,6 +8,7 @@ import pickle
 import json
 
 from indic_transliteration import sanscript
+from subword_nmt import apply_bpe
 
 
 from onmt.translate.infertranslator import build_translator
@@ -38,6 +39,31 @@ for key, value in langspecs.items():
     ArgumentParser.validate_translate_opts(opt)
     engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
     #translatorbiagram builds best translations of length two
+
+    if value['src_bpe']:
+        print("BPE in SRC side")
+        bpe_src_code = os.path.join(dir_path, 'model', value['src_bpe'])
+        merge_file = open(bpe_src_code, "r")
+        bpe = apply_bpe.BPE(codes=merge_file)
+        engines[key]["src_segmenter"] = lambda x: bpe.process_line(x.strip())
+    else:
+        engines[key]["src_segmenter"] = None
+
+def preprocess_src(s, preprocess):
+    s = s.lower()
+    s = re.sub(r"([\“\”])", r'"', s)
+    s = re.sub(r"([\‘\’])", r"'", s)
+    s = re.sub(r"([\ः])", r":", s)
+    s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
+    # s = re.sub(r'"', r'&quot;', s)
+    # s = re.sub(r"'", r"&apos;", s)
+    s = re.sub(r"(\s+)", r" ", s)
+
+    for p in preprocess:
+        if p:
+            s = p(s)
+    
+    return s
 
 def quotaposto(s, lang="en"):
     s = re.sub(r"&quot;", r'"', s)
@@ -71,7 +97,9 @@ def translate_new(request):
     translatorbest = engines[langspec]["translatorbest"]
     translatorbigram = engines[langspec]["translatorbigram"]
 
-    L1 = toquotapos(sentence.strip()) 
+    src_segmenter = engines[request.session["langspec"]]["src_segmenter"]
+
+    L1 = preprocess_src(sentence.strip(), [src_segmenter]) 
     L2 = partial_trans 
     L2split = L2.split()
 
