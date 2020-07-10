@@ -29,11 +29,14 @@ import requests
 
 import math
 
+from subword_nmt import apply_bpe
+
 langspecs = {
     'en-hi' : {
         'src' : 'en',
         'tgt' : 'hi',
         'model': 'full_iitb_enhi_50v.pt',
+        'src_bpe': 'BPE-tigmix-4000.codes',
         'indic_code': sanscript.DEVANAGARI,
         'provide_help' : True,
     },
@@ -41,13 +44,14 @@ langspecs = {
         'src' : 'hi',
         'tgt' : 'en',
         'model': 'full_iitb_bpe_hien.pt',
+        'src_bpe': None,
         'indic_code': None,
         'provide_help' : False,
     },
-    # '*-en' : {
-    #     'src' : 'hi',
-    #     'tgt' : 'en',
-    #     'model': 'multiling.pt',
+    # 'en-ti' : {
+    #     'src' : 'en',
+    #     'tgt' : 'ti',
+    #     'model': 'en_bpe-ti-generic-m001_step_451000.pt',
     #     'indic_code': None,
     #     'provide_help' : False,
     # }
@@ -57,6 +61,23 @@ global langspec
 langspec = None
 
 global translatorbest, translatorbigram
+
+def preprocess_src(s, preprocess):
+    s = s.lower()
+    s = re.sub(r"([\“\”])", r'"', s)
+    s = re.sub(r"([\‘\’])", r"'", s)
+    s = re.sub(r"([\ः])", r":", s)
+    s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
+    # s = re.sub(r'"', r'&quot;', s)
+    # s = re.sub(r"'", r"&apos;", s)
+    s = re.sub(r"(\s+)", r" ", s)
+
+    for p in preprocess:
+        if p:
+            s = p(s)
+    
+    return s
+
 
 def quotaposto(s, lang="en"):
     s = re.sub(r"&quot;", r'"', s)
@@ -98,6 +119,15 @@ for key, value in langspecs.items():
     opt.global_attention_function = 'sparsemax'
     ArgumentParser.validate_translate_opts(opt)
     engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
+
+    if value['src_bpe']:
+        print("BPE in SRC side")
+        bpe_src_code = os.path.join(dir_path, 'model', value['src_bpe'])
+        merge_file = open(bpe_src_code, "r")
+        bpe = apply_bpe.BPE(codes=merge_file)
+        engines[key]["src_segmenter"] = lambda x: bpe.process_line(x.strip())
+    else:
+        engines[key]["src_segmenter"] = None
 
 global corpusops
 corpusops = []
@@ -159,7 +189,10 @@ def indic(request):
 def translate_new(request):
     translatorbest = engines[request.session["langspec"]]["translatorbest"]
     translatorbigram = engines[request.session["langspec"]]["translatorbigram"]
-    L1 = toquotapos(request.GET.get('a').strip())
+
+    src_segmenter = engines[request.session["langspec"]]["src_segmenter"]
+
+    L1 = preprocess_src(request.GET.get('a').strip(), [src_segmenter])
     L2 = request.GET.get('b', "")
     L2split = L2.split()
 

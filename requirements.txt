@@ -4,3 +4,4 @@ channels
 editdistance
 indic_transliteration
 jsonfield
+subword-nmt
