@@ -264,6 +264,7 @@ def dashboard(request):
 @login_required
 def new(request):
     # global translatedsetid
+
     if request.session['translatedsetid'] == 0:
         return redirect('/corpus')
     
@@ -310,14 +311,14 @@ def corpusinput(request):
     translatedsets, created = translatedSet.objects.update_or_create(user=request.user, corpus=corp, langtolang=langtolang.objects.get(pk=langtolangid))
     request.session['translatedsetid'] = translatedsets.id
     for i in corp.corpusdivide.all():
+        translatedsent, created = translatedSentence.objects.get_or_create(translatedSet=translatedsets, src=i.src)
+        if created:
+            translatedsent.tgt = ''
+            translatedsent.save()
         # translatedsent, created = translatedSentence.objects.get_or_create(translatedSet=translatedsets, src=i.src)
         # if created:
-        #     translatedsent.tgt = ''
-        #     translatedsent.save()
-        translatedsent, created = translatedSentence.objects.get_or_create(translatedSet=translatedsets, src=i.src)
-        # if created:
-        translatedsent.tgt = ''
-        translatedsent.save()
+        # translatedsent.tgt = ''
+        # translatedsent.save()
     return HttpResponse('Success')
 
 @login_required
@@ -325,6 +326,7 @@ def getinput(request):
     translatedsents = translatedSentence.objects.filter(translatedSet__id=request.session['translatedsetid']).order_by('id')
     corpusinps = []
     for i in translatedsents:
+        print([i.src, i.tgt])
         corpusinps.append([i.src, i.tgt])
     return JsonResponse({'result': corpusinps, 'langspec': id_to_spec[request.session["langtolangid"]]})
 

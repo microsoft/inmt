@@ -45,27 +45,28 @@ Please select the corpus you want to translate!
     <div class="row">
       <div class="col-9">
         {% if corp.condition == 2 %}
-          <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(0, 255, 0, 0.3);">
+          <div class="shadow p-2 mt-3 rounded" style="background-color: rgba(76, 175, 80,0.4)">
         {% endif %}
         {% if corp.condition == 1 %}
-        <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(255, 0, 0, 0.3);">
+        <div class="shadow p-2 mt-3 rounded" style="background-color: rgba(255, 152, 0,0.4)">
         {% endif %}
         {% if corp.condition == 0 %}
-        <div class="shadow p-2 mt-3 rounded carder" style="background-color: rgba(255, 255, 0, 0.3);">
+        <div class="shadow p-2 mt-3 rounded" style="background-color: rgba(255, 235, 59,0.4)">
         {% endif %}
           <div class="card-body">
             <div class="row">
-              <div class="col-7">
+              <div class="col-8">
                 <p style="font-weight:600; font-size: large">{{ corp.name }}</p>
                 <p>{{ corp.langtolang }}</p>
               </div>
-              <div class="col-4 text-light">
+              <div class="col-4 text-center">
                 {% if corp.condition != 0 %}
-                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-danger"> <i class="fa fa-trash-o fa-lg"></i></a>
+                  <!-- <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-danger"> <i class="fa fa-trash-o fa-lg"></i></a> -->
                   {% else %}
-                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-danger disabled"> <i class="fa fa-trash-o fa-lg"></i></a>
+                  <!-- <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="transdelete btn btn-secondary disabled"> <i class="fa fa-trash-o fa-lg"></i></a> -->
                   {% endif %}
-                  <a data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="corptrans btn btn-primary"> Translate</a>
+                  <!-- <a data-preview="true" data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="corptrans btn btn-info"> <i class="fa fa-search"></i> View</a> -->
+                  <a data-preview="false" data-corpid="{{ corp.id }}" data-langtolangid="{{ corp.langtolangid }}" class="corptrans btn btn-dark text-white"> <i class="fa fa-language"></i> Translate</a>
               </div>
             </div>
           </div>
@@ -107,7 +108,7 @@ Please select the corpus you want to translate!
                     langtolangid: $(this).data("langtolangid"),
                 }, function(data) {
                     // console.log(data.result);
-                    window.location.href='/translate';
+                    window.location='/translate';
                 });
             })
 

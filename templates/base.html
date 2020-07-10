@@ -29,11 +29,52 @@
 
     <!-- Sidebar -->
     <div class="bg-white border-right shadow" id="sidebar-wrapper">
-      <div class="sidebar-heading">Interactive NMT </div>
+      <div class="text-center pt-4">
+        <img src="{% static 'images/interactivemt.png' %}" width="120px">
+        <div class="sidebar-heading">Interactive NMT </div>
+      </div>
       <div class="list-group list-group-flush">
-        <a href="/dashboard" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="/corpus" class="list-group-item list-group-item-action bg-light">Translate</a>
-        <a href="/accounts/logout" class="list-group-item list-group-item-action bg-light">Logout</a>
+        <a href="/dashboard" class="list-group-item list-group-item-action bg-light"><i class="fa fa-tachometer fa-lg"></i> &nbsp; Dashboard</a>
+        <a href="/corpus" class="list-group-item list-group-item-action bg-light"><i class="fa fa-language fa-lg"></i> &nbsp; Translate</a>
+        <a href="/accounts/logout" class="list-group-item list-group-item-action bg-light"><i class="fa fa-sign-out fa-lg"></i> &nbsp; Logout</a>
+      </div>
+      <div class="p-5 text-right">
+        <div class="row">
+          <div class="col">
+            <div>
+              <div class="py-3">
+                Select :
+                <div class="keyshape">
+                  Up &#x2191
+                </div>
+                <div class="keyshape">
+                  Down &#x2193
+                </div>
+              </div>
+              <div class="py-3">
+                1 Word :
+                <div class="keyshape">
+                  Tab &#x2192
+                </div>
+              </div>
+              <div class="py-3">
+                Full Phrase :
+                <div class="keyshape">
+                  Enter &#x21B5
+                </div>
+              </div>
+              <div class="py-3">
+                Sentence Switch :
+                <div class="keyshape">
+                  PgUp &#x219F
+                </div>
+                <div class="keyshape">
+                  PgDn &#x21A1
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -89,9 +130,19 @@
         /* background-color: rgb(240, 240, 240); */
         }
   .carder {
-        border: 1px solid rgb(150, 150, 150);
+        /* border: 1px solid rgb(150, 150, 150); */
         background-color: rgb(255, 255, 252);
       }
+
+  .keyshape {
+        display: inline;
+        margin: 0px 2px;
+        font-size: 10px;
+        border: black 2px solid;
+        border-radius: 5px;
+        padding: 1px 2px;
+      }
+
 
 </style>
 

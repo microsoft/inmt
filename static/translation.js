@@ -581,10 +581,11 @@ $(document).ready(function() {
     $.getJSON(http_getinput, {}, function(data) {
         inputs = data.result;
         langspec = data.langspec
-        console.log("skdjfhkjsadfkj" + inputs + langspec)
+        // console.log("skdjfhkjsadfkj" + inputs + langspec)
         // langtolangid = data.langtolangid;
 
-        console.log(inputs)
+
+        
         $('#cardscoll').html('')
         $('#corpusinput').html('')
         
@@ -596,6 +597,7 @@ $(document).ready(function() {
                 $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
             }
             /*--------------------------------*/ 
+            console.log(inputs[i][0], inputs[i][1])
             $('#cardscoll').append(
                 `<div class="shadow p-3 my-3 rounded bmo cardescoll">
                                 <div class="row">
