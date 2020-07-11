@@ -454,7 +454,7 @@ def pushoutput(request):
         translatedsent.tgt = corpusops[i][1]
         translatedsent.save()
 
-    dockeystroke.objects.update_or_create(translatedSet=translatedsets, defaults={'keystrokeseries': keytimeseries, 'trump': 'Y'})
+    dockeystroke.objects.create(translatedSet=translatedsets, keystrokeseries = keytimeseries)
     return HttpResponse('Success')
 
 @login_required    

@@ -42,8 +42,8 @@ var inputs = []
 var timer1 = 0;
 var timer2 = 0;
 
-
-globkeystrokes.push([CONTROL_SCHEME_NAME, new Date() - docstarttime])
+globkeystrokes.push(["start", docstarttime.toString()])
+// globkeystrokes.push([CONTROL_SCHEME_NAME, new Date() - docstarttime])
 
 // This function is used to decide the common start between the received vs. input. Used for IT.
 function sharedStart(feed, partial) {
@@ -53,7 +53,7 @@ function sharedStart(feed, partial) {
     part1text = partial.substring(0, lastspace)
     part2text = partial.substring(lastspace+1)
     var count = 0
-    console.log("DEBUG part1text", part1text, )
+    // console.log("DEBUG part1text", part1text, )
     if (part1text) {
         newfeed = feed.replace(part1text + " ", '')
     } else {
@@ -451,6 +451,62 @@ function numberToColorHsl(i) {
     return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
 }
 
+function getXPath(node) {
+    var comp, comps = [];
+    var parent = null;
+    var xpath = '';
+    var getPos = function (node) {
+        var position = 1,
+            curNode;
+        if (node.nodeType == Node.ATTRIBUTE_NODE) {
+            return null;
+        }
+        for (curNode = node.previousSibling; curNode; curNode = curNode.previousSibling) {
+            if (curNode.nodeName == node.nodeName) {
+                ++position;
+            }
+        }
+        return position;
+    }
+
+    if (node instanceof Document) {
+        return '/';
+    }
+
+    for (; node && !(node instanceof Document); node = node.nodeType == Node.ATTRIBUTE_NODE ? node.ownerElement : node.parentNode) {
+        comp = comps[comps.length] = {};
+        switch (node.nodeType) {
+            case Node.TEXT_NODE:
+                comp.name = 'text()';
+                break;
+            case Node.ATTRIBUTE_NODE:
+                comp.name = '@' + node.nodeName;
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                comp.name = 'processing-instruction()';
+                break;
+            case Node.COMMENT_NODE:
+                comp.name = 'comment()';
+                break;
+            case Node.ELEMENT_NODE:
+                comp.name = node.nodeName;
+                break;
+        }
+        comp.position = getPos(node);
+    }
+
+    for (var i = comps.length - 1; i >= 0; i--) {
+        comp = comps[i];
+        xpath += '/' + comp.name.toLowerCase();
+        if (comp.position != null) {
+            xpath += '[' + comp.position + ']';
+        }
+    }
+
+    return xpath;
+
+}
+
 // As of now, this logic is for the results to be processed from sockets.
 function parseProcessedJsonResultsfunction(data, partial) {
     
@@ -477,7 +533,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
     progress = (parcount/totcount)*100
     $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
     $('.progress-bar').text(progress + '%')
-    console.log(parcount, totcount, progress)
+    // console.log(parcount, totcount, progress)
     // scores = data.scores
 
     // console.log(scores)
@@ -505,7 +561,7 @@ function parseProcessedJsonResultsfunction(data, partial) {
         finalresult = []
         for(var i = 0; i < result.length; i++) {
             var repres = sharedStart(result[i], partialret)
-            console.log(result[i] + '%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+            // console.log(result[i] + '%%%%%%%%%%%%%%%%%%%%%%%%%%%')
             if (repres !== "") {
                 container.append('<span id="res'+countcontainer+'" class="res'+countcontainer+' spanres p-1"> ' + repres + '</span>');
                 countcontainer += 1;
@@ -597,7 +653,7 @@ $(document).ready(function() {
                 $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
             }
             /*--------------------------------*/ 
-            console.log(inputs[i][0], inputs[i][1])
+            // console.log(inputs[i][0], inputs[i][1])
             $('#cardscoll').append(
                 `<div class="shadow p-3 my-3 rounded bmo cardescoll">
                                 <div class="row">
@@ -764,7 +820,7 @@ $(document).ready(function() {
         });
 
         $('.corp_out').on('click', function (event) {
-            console.log("Hello")
+            // console.log("Hello")
             var ind = $(this).index()
             $('.corp_inp').css('background-color', 'transparent');
             $('.corp_inp').eq(ind).css('background-color', 'yellow');
@@ -775,11 +831,11 @@ $(document).ready(function() {
 
             var hin_inp = partial.closest('.bmo').find('.hin_inp')
             globalPartial = partial;
-            console.log("#########################################3")
-            console.log("#########################################3")
-            console.log(partial.clone().children().remove().end().text())
-            console.log("#########################################4")
-            console.log("#########################################3")
+            // console.log("#########################################3")
+            // console.log("#########################################3")
+            // console.log(partial.clone().children().remove().end().text())
+            // console.log("#########################################4")
+            // console.log("#########################################3")
 
             if (sockets_use == true) {
                 connectSocket.send(JSON.stringify({
@@ -890,7 +946,17 @@ $(document).ready(function() {
         });
 
         $(document).on('mousedown', function(e) {
-            globkeystrokes.push([e.keyCode || e.which, new Date() - docstarttime])
+            var elemloc = getXPath(e.target)
+            
+            // Defining common XPaths
+            if (elemloc == '/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[1]/a[1]') elemloc = 'translate_tab';
+            if (elemloc == '/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[2]/a[1]') elemloc = 'preview_tab';
+            if (elemloc == '/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[2]/div[1]/div[2]/a[1]') elemloc = 'save_tran';
+            var elemsplit = elemloc.split("/");
+            if (elemsplit.length == 17) elemloc = "box_focus";
+            if (elemsplit.length == 18 && elemsplit[17].includes('span')) elemloc = "sugg_sel";
+            
+            globkeystrokes.push([elemloc || e.keyCode || e.which, new Date() - docstarttime])
         });
 
         $(".partial").on('keydown', function(e){
