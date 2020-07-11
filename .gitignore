@@ -5,4 +5,5 @@ pred.txt
 conf.py
 build
 dist
-*.egg-info
+*.egg-
+mt/migrations*
