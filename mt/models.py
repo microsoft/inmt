@@ -175,17 +175,16 @@ class translatedSentence(models.Model):
 
 
 class dockeystroke(models.Model):
-    translatedSet = models.OneToOneField(translatedSet, on_delete = models.CASCADE)
+    translatedSet = models.ForeignKey(translatedSet, on_delete = models.CASCADE)
     keystrokeseries = JSONField()
-    # To map with the keystroke objects
-    trump = models.CharField(max_length=1, default='N')
+    submittime = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Keystroke Time Series over the Document (Automatic)"
         verbose_name_plural = "Keystroke Time Series over the Document (Automatic)"
 
     def __str__(self):
-        return self.translatedSet.corpus.name + " | " + self.translatedSet.user.username + " | " + self.trump
+        return self.translatedSet.corpus.name + " | " + self.translatedSet.user.username + " | " + str(self.submittime)
 
 class keystrokes(models.Model):
     translatedSentence = models.OneToOneField(translatedSentence, on_delete = models.CASCADE)
