@@ -242,10 +242,32 @@
         background-color: #555 !important;
       } */
       .left {
+          height: 80vh;
           overflow: hidden;
+          overflow-y: scroll;
       }
       .right {
           height: 80vh;
           overflow: hidden;
           overflow-y: scroll;
       }
+      /* div * {
+        scrollbar-width: none;
+
+        -ms-overflow-style: none;
+
+
+        ::-webkit-scrollbar-track {
+          -webkit-box-shadow: none !important;
+          background-color: transparent;
+        }
+
+        ::-webkit-scrollbar {
+          width: 3px !important;
+          background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: transparent;
+        }
+      } */

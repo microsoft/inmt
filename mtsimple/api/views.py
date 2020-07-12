@@ -69,10 +69,10 @@ def toquotapos(s, lang="en"):
     s = re.sub(r"([\“\”])", r'"', s)
     s = re.sub(r"([\‘\’])", r"'", s)
     s = re.sub(r"([\ः])", r":", s)
-    s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
-    s = re.sub(r'"', r'&quot;', s)
-    s = re.sub(r"'", r"&apos;", s)
-    s = re.sub(r"(\s+)", r" ", s)
+    # s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
+    # s = re.sub(r'"', r'&quot;', s)
+    # s = re.sub(r"'", r"&apos;", s)
+    # s = re.sub(r"(\s+)", r" ", s)
     
     return s
 

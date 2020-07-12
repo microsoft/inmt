@@ -4,6 +4,8 @@ from jsonfield import JSONField
 
 import re
 
+from nltk.tokenize import word_tokenize
+
 def split_sentences(st):
     #Split sentences based 
     sentences = re.split(r'[!?।|.](?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)', st)
@@ -88,20 +90,37 @@ class corpus(models.Model):
         
         if self.corpus != self.__original_corpus:
             corpusdivide.objects.filter(corpus=self).delete()
-            s = self.corpus.strip()
-            if self.baselang.code == "en":
-                s = s.lower()
-            s = re.sub(r"([\“\”])", r'"', s)
-            s = re.sub(r"([\‘\’])", r"'", s)
-            s = re.sub(r"([\ः])", r":", s)
-            s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
-            s = re.sub(r"([\"])", r"&quot;", s)
-            s = re.sub(r"([\'])", r" &apos;", s)
-            s = re.sub(r"(\s+)", r" ", s)
-            corpusinps = list(filter(lambda elem: elem.strip(), split_sentences(s)))
+            if '\n' in self.corpus and self.baselang.code == "en":
+                s = self.corpus.strip()
+                s = re.sub(r"([\“\”])", r'"', s)
+                s = re.sub(r"([\‘\’])", r"'", s)
+                s = re.sub(r"([\ः])", r":", s)
+                corpusinps = s.split('\n')
+                for i in corpusinps:
+                    sent = word_tokenize(i.strip())
+                    flagq = (sent[-1] == "''")
+                    sent = ' '.join(sent)
+                    sent = sent.replace('``', '')
+                    if flagq:
+                        sent = sent.replace("''", '')
+                    else:
+                        sent = sent.replace("''", ',')
+                    corpusdivide(corpus=self, src=sent.strip()).save()
+            else:
+                s = self.corpus.strip()
+                if self.baselang.code == "en":
+                    s = s.lower()
+                s = re.sub(r"([\“\”])", r'"', s)
+                s = re.sub(r"([\‘\’])", r"'", s)
+                s = re.sub(r"([\ः])", r":", s)
+                s = re.sub(r"([-!$%^&*()_+|~=`{}\[\]:\";<>?,.\/#@।]+)", r" \1 ", s)
+                s = re.sub(r"([\"])", r"&quot;", s)
+                s = re.sub(r"([\'])", r" &apos;", s)
+                s = re.sub(r"(\s+)", r" ", s)
+                corpusinps = list(filter(lambda elem: elem.strip(), split_sentences(s)))
 
-            for i in corpusinps:
-                corpusdivide(corpus=self, src=i.strip()).save()
+                for i in corpusinps:
+                    corpusdivide(corpus=self, src=i.strip()).save()
 
     class Meta:
         verbose_name = "Corpus Identity"

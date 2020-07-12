@@ -646,11 +646,15 @@ $(document).ready(function() {
         $('#corpusinput').html('')
         
         for (i=0; i<inputs.length; i++) {
-            /*To set the source part of the page*/ 
+            /*To set the source part of the page*/
+            inplen = inputs[i][0].length
             if (langspec == 'hi-en') {
                 $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>| ') /* 1st index is the text with which the editable division is intitalised */
             } else {
-                $('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')
+                if (inputs[i][0].charAt(inplen-1) == '.' || inputs[i][0].charAt(inplen-1) == '?' || inputs[i][0].charAt(inplen-1) == '!')
+                    {$('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span> ')}
+                else
+                    {$('#corpusinput').append('<span class="corp_inp">' + inputs[i][0] + '</span>. ')}
             }
             /*--------------------------------*/ 
             // console.log(inputs[i][0], inputs[i][1])
@@ -785,7 +789,7 @@ $(document).ready(function() {
             $(this).addClass('active')
             $('#cardscoll').css('display','none')
             $('#cardsprev').css('display', 'block')
-            $('#corpusoutput').height(maxheight)
+            // $('#corpusoutput').height(maxheight)
             $('.corp_inp').css("background-color", 'transparent');
             $('#corpusoutput').html('')
 
@@ -799,11 +803,14 @@ $(document).ready(function() {
                         }
                         $('#corpusoutput').append('<span class="corp_out">' + span + '</span>. ')
                     } else {
-                        if (span.charAt(span.length - 1) == '।') {
-                            span = span.substring(0, span.length - 1).trim()
+                        if (span.charAt(span.length - 1) == '.' || span.charAt(span.length - 1) == '।' || span.charAt(span.length - 1) == '?' || span.charAt(span.length - 1) == '।') {
+                            $('#corpusoutput').append('<span class="corp_out">' + span + '</span> ')
+                        } else {
+                            $('#corpusoutput').append('<span class="corp_out">' + span + '</span>। ')
                         }
-                        $('#corpusoutput').append('<span class="corp_out">' + span + '</span>। ')
                     }
+                } else {
+                    $('#corpusoutput').append('<span class="corp_out">' + '_________' + '</span>। ')
                 }
             });
 

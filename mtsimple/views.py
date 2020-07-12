@@ -34,7 +34,7 @@ langspecs = {
     'en-hi' : {
         'src' : 'en',
         'tgt' : 'hi',
-        'model': 'full_iitb_enhi_50v.pt',
+        'model': 'en-hi.pt',
         'indic_code': sanscript.DEVANAGARI,
         'provide_help' : True,
     },
