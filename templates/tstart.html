@@ -41,6 +41,7 @@ Please select the corpus you want to translate!
         </ul>
       </div>
     </div>
+    <div class="corpi">
     {% for corp in corpus %}
     <div class="row">
       <div class="col-9">
@@ -74,7 +75,7 @@ Please select the corpus you want to translate!
       </div>
     </div>
     {% endfor %}
-        
+    </div>
   </div>
 </div>
   </div>
@@ -92,6 +93,12 @@ Please select the corpus you want to translate!
         left: 0;
         right: 0;
         bottom: 0;	
+      }
+
+  .corpi {
+          height: 80vh;
+          overflow: hidden;
+          overflow-y: scroll;
       }
 </style>
 {% endblock  %}
