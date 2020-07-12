@@ -4,3 +4,8 @@ channels
 editdistance
 indic_transliteration
 jsonfield
+djangorestframework
+torch
+torchtext
+configargparse
+nltk
