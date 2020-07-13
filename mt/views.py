@@ -287,7 +287,7 @@ def new(request):
     else:
         selectedControlScheme = "default"
 
-    helpprovision = translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision
+    helpprovision = translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.corpustranslators.filter(translator__user=request.user)[0].helpprovision
 
     return render(request, 'inmt.html', {'selectedControlScheme': selectedControlScheme, 'helpprovision': helpprovision, 'sockets': settings.SOCKETS})
     # if translatedSet.objects.get(pk=request.session['translatedsetid']).corpus.helpprovision:

@@ -76,7 +76,6 @@ class corpus(models.Model):
     name = models.CharField(max_length=120)
     corpus = models.TextField()
     baselang = models.ForeignKey(language, on_delete = models.CASCADE)
-    helpprovision = models.CharField(max_length=2, choices=translation_types, default='IT')
     # helpprovision = models.BooleanField()
 
     __original_corpus = None
@@ -156,6 +155,7 @@ class corpusLangReq(models.Model):
 class translatorcorpus(models.Model):
     translator = models.ForeignKey(translator, on_delete = models.CASCADE, related_name="translatorcorpus")
     corpus = models.ForeignKey(corpus, on_delete = models.CASCADE, related_name="corpustranslators")
+    helpprovision = models.CharField(max_length=2, choices=translation_types, default='IT')
 
     class Meta:
         verbose_name = "Translator Corpus Possible"
