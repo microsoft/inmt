@@ -12,6 +12,8 @@ Please translate according the instructions
 
 {% block js %}
     <link rel="stylesheet" type="text/css"href="{% static 'translation-page-mt.css' %}">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     <script type=text/javascript>
 
@@ -81,6 +83,10 @@ var http_preview = '/preview';
         </li>
         <li class="nav-item">
           <a id="nav-preview" class="nav-link" href="#">Preview</a>
+        </li>
+        <li class="nav-item pl-5">
+          <label for="highlight">Highlight? &nbsp; </label>
+          <input id="highlight" type="checkbox" data-toggle="toggle">
         </li>
       </ul>
     </div>
