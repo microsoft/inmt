@@ -163,7 +163,7 @@ class translatorcorpus(models.Model):
         unique_together = (("translator", "corpus"))
 
     def __str__(self):
-        return self.translator.name + " | " + self.corpus.name
+        return self.translator.name + " | " + self.corpus.name + " | " + self.helpprovision
 
 
 class translatedSet(models.Model):
