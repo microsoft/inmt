@@ -104,7 +104,8 @@ def translate_new(request):
     L2split = L2.split()
 
     if langspecs[langspec]['provide_help']:
-        if L2 != '' and (bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])) or bool(re.search(r"([^\s\u0B80-\u0BFF])", L2[-1]))):
+        if L2 != '' and bool(re.search(r"([^\s\u0B80-\u0BFF])", L2[-1])):
+            print("Hello")
             params = {}
             params['inString'] = L2split[-1]
             if langspecs[langspec]['tgt'] == 'ta':
