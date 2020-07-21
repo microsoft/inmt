@@ -45,6 +45,9 @@
                 if (lang == "hi-en") {
                   text = "आज मौसम सुहावना है। हमें शाम को बाहर जाना चाहिए।"
                 }
+                if (lang == "en-ta") {
+                text = "The weather is pleasant today. Let us go out to in the evening."
+                }
                 if (lang == "ml-en") {
                   text = "മൺസൂൺ മഴ ഒരു അനുഗ്രഹവും ശാപവുമാണെന്ന് വിശ്വസിക്കപ്പെടുന്നു. ആവശ്യത്തിന് അളവിൽ മഴ പെയ്യുമ്പോൾ, വേനൽക്കാലത്തെ കടുത്ത ചൂടിനുശേഷം ഇത് ഞങ്ങൾക്ക് ഒരു അനുഗ്രഹമാണ്. വിളകൾ ധാരാളമായി വളരുന്നതിനാൽ ഇത് കർഷകർക്കും ഒരു അനുഗ്രഹമാണ്. വരണ്ട വേനൽക്കാലത്ത് നദികൾ നിറയുന്നു."
                 }
@@ -79,7 +82,8 @@
                     <label for="sourcelang">Source Language</label>
                     <select class="form-control"  id="src">
                       <option value="hi">Hindi</option>
-                      <option value="en">English</option value="en">
+                      <option value="en">English</option>
+                      <option value="ta">Tamil</option>
                     </select>
                   </div>
                   
@@ -88,7 +92,8 @@
                     <select class="form-control" id="tgt">
                       <option value="en">English</option value="en">
                       <option value="hi">Hindi</option value="en">
-                      <option value="gondi" onselect="limitTgtOptions">Gondi</option value="en">
+                      <option value="ta">Tamil</option>
+                      <!-- <option value="gondi" onselect="limitTgtOptions">Gondi</option value="en"> -->
                     </select>
                   </div>
 

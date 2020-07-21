@@ -17,19 +17,33 @@ dir_path = os.path.dirname(os.path.dirname(mtsimple.__file__))
 #TODO: Find a Way to not repeat the below starter code from mtsimple/views.py
 
 langspecs = {
-    'en-hi' : {
-        'src' : 'en',
-        'tgt' : 'hi',
-        'model': 'full_iitb_enhi_50v.pt',
-        'indic_code': sanscript.DEVANAGARI,
-        'provide_help' : True,
-    },
-    'hi-en' : {
-        'src' : 'hi',
+    # 'en-hi' : {
+    #     'src' : 'en',
+    #     'tgt' : 'hi',
+    #     'model': 'full_iitb_enhi_50v.pt',
+    #     'indic_code': sanscript.DEVANAGARI,
+    #     'provide_help' : True,
+    # }d,
+    # 'hi-en' : {
+    #     'src' : 'hi',
+    #     'tgt' : 'en',
+    #     'model': 'onmt-hien.pt',
+    #     'indic_code': None,
+    #     'provide_help' : False,
+    # },
+    'ta-en' : {
+        'src' : 'ta',
         'tgt' : 'en',
-        'model': 'onmt-hien.pt',
+        'model': 'taen_final_step_100000.pt',
         'indic_code': None,
         'provide_help' : False,
+    },
+    'en-ta' : {
+        'src' : 'en',
+        'tgt' : 'ta',
+        'model': 'enta_final_step_100000.pt',
+        'indic_code': None,
+        'provide_help' : True,
     },
 }
 
@@ -57,6 +71,7 @@ def quotaposto(s, lang="en"):
     s = re.sub(r"&quot;", r'"', s)
     s = re.sub(r"&apos;", r"'", s)
     s = re.sub(r"(@@ )|(@@ ?$)", r"", s)
+    s = re.sub(r"<|unk|>", r"", s)
     #This is work in progress to make writing as natural as possible. taking care of spaces before and after certain characters.
     # s = re.sub(r"(\s+)([!:?,.।\']+)", r"\2", s)
     # s = re.sub(r"([({\[<]+)(\s+)", r"\1", s)
@@ -88,11 +103,14 @@ def translate_new(request):
     L2 = partial_trans 
     L2split = L2.split()
 
-    if langspecs[langspec]['indic_code']:
-        if L2 != '' and bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])):
+    if langspecs[langspec]['provide_help']:
+        if L2 != '' and (bool(re.search(r"([^\s\u0900-\u097F])", L2[-1])) or bool(re.search(r"([^\s\u0B80-\u0BFF])", L2[-1]))):
             params = {}
             params['inString'] = L2split[-1]
-            params['lang'] = 'hindi'
+            if langspecs[langspec]['tgt'] == 'ta':
+                params['lang'] = 'tamil'
+            if langspecs[langspec]['tgt'] == 'hi':
+                params['lang'] = 'hindi'
             data = requests.get('http://xlit.quillpad.in/quillpad_backend2/processWordJSON', params = params).json()
             L2split[-1] = data['twords'][0]['options'][0]
             L2 = ' '.join(L2split)
@@ -155,6 +173,7 @@ def translate_new(request):
     perplexity = float(math.exp(-score_total / words_total))
     avg_score = float(score_total / words_total)
     
-    print("sentence", sentence)
-    return JsonResponse({'result': sentence, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
+    print("sentence", quotaposto(sentence))
+    print(quotaposto("என் <unk> என்னை"))
+    return JsonResponse({'result': quotaposto(sentence), 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
 

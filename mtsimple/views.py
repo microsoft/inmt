@@ -142,8 +142,8 @@ Splits the sentence based on !?।| cleans it and saves the list in session["cor
 def corpusinput(request):
     corpusraw = request.POST.get('translate')
     langselect = request.POST.get('langselect')
-    if langselect not in langspecs:
-        langselect = '*-en'
+    # if langselect not in langspecs:
+        # langselect = '*-en'
     request.session["langspec"] = langselect
     s = corpusraw.strip()
 

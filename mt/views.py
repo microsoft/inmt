@@ -70,7 +70,7 @@ langspecs = {
     }
 }
 
-id_to_spec = {'2': 'hi-en', '1': 'en-hi'}
+id_to_spec = {'2': 'hi-en', '1': 'en-hi', '3': 'ta-en', '4': 'en-ta'}
 
 translatordict = {}
 
