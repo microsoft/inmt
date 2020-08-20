@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 import re, os, math
 import requests
 import pickle
+import json
 
 from indic_transliteration import sanscript
 
@@ -14,38 +15,9 @@ from onmt.utils.parse import ArgumentParser
 import mtsimple
 dir_path = os.path.dirname(os.path.dirname(mtsimple.__file__))
 
-#TODO: Find a Way to not repeat the below starter code from mtsimple/views.py
-
-langspecs = {
-    # 'en-hi' : {
-    #     'src' : 'en',
-    #     'tgt' : 'hi',
-    #     'model': 'full_iitb_enhi_50v.pt',
-    #     'indic_code': sanscript.DEVANAGARI,
-    #     'provide_help' : True,
-    # }d,
-    # 'hi-en' : {
-    #     'src' : 'hi',
-    #     'tgt' : 'en',
-    #     'model': 'onmt-hien.pt',
-    #     'indic_code': None,
-    #     'provide_help' : False,
-    # },
-    'ta-en' : {
-        'src' : 'ta',
-        'tgt' : 'en',
-        'model': 'taen_final_step_100000.pt',
-        'indic_code': None,
-        'provide_help' : False,
-    },
-    'en-ta' : {
-        'src' : 'en',
-        'tgt' : 'ta',
-        'model': 'enta_final_step_100000.pt',
-        'indic_code': None,
-        'provide_help' : True,
-    },
-}
+with open(os.path.join(dir_path, 'config.json')) as f:
+    enginedata = json.loads(f.read())["engines"]
+    langspecs = {key: value for key, value in enginedata.items() if value['active']}
 
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)

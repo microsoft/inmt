@@ -29,39 +29,6 @@ import requests
 
 import math
 
-# defines the configuration of the translation type selected by the user
-langspecs = {
-    'en-hi' : {
-        'src' : 'en',
-        'tgt' : 'hi',
-        'model': 'en-hi.pt',
-        'indic_code': sanscript.DEVANAGARI,
-        'provide_help' : True,
-    },
-    'hi-en' : {
-        'src' : 'hi',
-        'tgt' : 'en',
-        'model': 'onmt-hien.pt',
-        'indic_code': None,
-        'provide_help' : False,
-    },
-
-    'hi-gondi' : {
-        'src' : 'hi',
-        'tgt' : 'gondi',
-        'model': 'hi-gondi.pt',
-        'indic_code': sanscript.DEVANAGARI,
-        'provide_help' : False,
-    },
-    # '*-en' : {
-    #     'src' : 'hi',
-    #     'tgt' : 'en',
-    #     'model': 'multiling.pt',
-    #     'indic_code': None,
-    #     'provide_help' : False,
-    # }
-}
-
 global langspec
 langspec = None
 

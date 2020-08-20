@@ -7,3 +7,5 @@ build
 dist
 *.egg-
 mt/migrations*
+*.ipynb*
+config.json
