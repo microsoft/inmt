@@ -27,18 +27,21 @@ Interactive Machine Translation app uses Django and jQuery as its tech stack. Pl
 
 ## Installation Instructions
 
+### I. Prerequisites 
 1. Clone INMT and prepare MT models:
 ```
 git clone https://github.com/microsoft/inmt
 ```
-2. Make a new model folder using `mkdir model` where the models need to be placed. Models can be downloaded from [here](https://microsoftapc-my.sharepoint.com/:f:/g/personal/taganu_microsoft_com/EpG0E6SEqH9Eso4xChI14BQBxGDML3F7ksZ8Ibf1SZI46w?e=SVBmpA). These contain English to Hindi translation models in both directions. If you want to train your own models, refer to [Training MT Models](#training-mt-models)
+2. Make a new model folder using `mkdir model` where the models need to be placed. Models can be downloaded from [here](https://microsoftapc-my.sharepoint.com/:f:/g/personal/taganu_microsoft_com/EpG0E6SEqH9Eso4xChI14BQBxGDML3F7ksZ8Ibf1SZI46w?e=SVBmpA). These contain English to Hindi translation models in both directions. 
 
-3. Rest of the installation can be carried out either bare or using docker. Docker is preferable for its ease of installation.
+3. If you want to train your own models, refer to [Training MT Models](#training-mt-models).
 
-### Docker Installation
+Rest of the installation can be carried out either bare or using docker. Docker is preferable for its ease of installation.
+
+### II. Docker Installation
 Assuming you have docker setup in your system, simply run `docker-compose up -d`. This application requires atleast 4GB of memory in order to run. Allot your docker memory accordingly.
 
-### Bare Installation
+### III. Bare Installation
 1. Install dependencies using - `python -m pip install -r requirements.txt`. Be sure to check your python version. This tool is compatible with Python3.
 2. Install OpenNMT dependences using - `cd opennmt & python setup.py install & cd -`
 3. Run the migrations and start the server - `python manage.py makemigrations && python manage.py migrate && python manage.py runserver`
