@@ -5,6 +5,7 @@
             "tgt": "en",
             "model": "taen_final_step_100000.pt",
             "src_bpe": "bpe/bpe_codes_taen",
+            "tgt_bpe": null,
             "provide_help": false,
             "active": true
         },
@@ -13,14 +14,16 @@
             "tgt": "ta",
             "model": "enta_final_step_100000.pt",
             "src_bpe": null,
+            "tgt_bpe": null,
             "provide_help": true,
             "active": false
         },
         "hi-en": {
             "src": "hi",
             "tgt": "en",
-            "model": "onmt-hien.pt",
-            "src_bpe": null,
+            "model": "hien.pt",
+            "src_bpe": "bpe/bpe_codes_hihi",
+            "tgt_bpe": "bpe/bpe_codes_hien",
             "provide_help": false,
             "active": true
         },
@@ -29,6 +32,7 @@
             "tgt": "hi",
             "model": "full_iitb_enhi_50v.pt",
             "src_bpe": null,
+            "tgt_bpe": null,
             "provide_help": true,
             "active": true
         }
