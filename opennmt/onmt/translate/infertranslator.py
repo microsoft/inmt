@@ -289,6 +289,7 @@ class Translator(object):
             align_debug=False,
             phrase_table="",
             partial=None,
+            partialfcheck=True,
             dymax_len=None):
         """Translate content of ``src`` and get gold scores from ``tgt``.
 
@@ -311,9 +312,10 @@ class Translator(object):
         """
         self.dymax_len = dymax_len
         self.partialf = None
+        self.partialfcheck = partialfcheck
         
         # To check with partial words
-        partialfcheck = True
+        # partialfcheck = True #Now taking from the input function
 
         # To check with editdistance, put True. To check with just startswith which will be prone to errors due to spelling mistakes, put False.
         partialfedit = False
