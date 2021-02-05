@@ -594,9 +594,9 @@ class Translator(object):
                 max_length = self.max_length
                 if self.dymax_len is not None:
                     if self.partial:
-                        max_length = len(self.partial) + 3
+                        max_length = 4 + 1
                     if not self.partial and self.partialf:
-                        max_length = 3
+                        max_length = 4
                     
                 decode_strategy = BeamSearch(
                     self.beam_size,
