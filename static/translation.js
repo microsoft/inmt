@@ -856,7 +856,8 @@ $(document).ready(function() {
                 searchRequest =  $.getJSON(http_translate, {
                     'langspec': langspec,
                     'sentence': hin_inp.text(), // Maybe use some good names here?
-                    'partial_trans': partial.clone().children().remove().end().text()
+                    'partial_trans': partial.clone().children().remove().end().text(),
+                    'n_words': 2
                 }, function(data) {
                     // console.log(data)
                     parseProcessedJsonResultsfunction(data, globalPartial)
