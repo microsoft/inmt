@@ -94,8 +94,15 @@ def translate_new(request):
     langspec = request.GET.get('langspec')
     sentence = request.GET.get('sentence')
     partial_trans = request.GET.get('partial_trans', '')
+    n_words = request.GET.get('n_words', '')
     translatorbest = engines[langspec]["translatorbest"]
     translatorbigram = engines[langspec]["translatorbigram"]
+
+    #set the default value for number of words in the suggestions as 2
+    n_suggestions = 2
+    
+    if n_words != '':
+        n_suggestions = int(n_words)
 
     src_segmenter = engines[request.session["langspec"]]["src_segmenter"]
 
@@ -134,7 +141,7 @@ def translate_new(request):
         batch_size=30,
         attn_debug=False,
         partial = toquotapos(L2),
-        dymax_len = 2,
+        dymax_len = n_suggestions,
         )
 
 
@@ -177,4 +184,3 @@ def translate_new(request):
     print("sentence", quotaposto(sentence))
     print(quotaposto("என் <unk> என்னை"))
     return JsonResponse({'result': quotaposto(sentence), 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
-
