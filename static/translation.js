@@ -626,8 +626,8 @@ $(document).ready(function() {
     var bottomdock = $('#bottomdock')// For smooth scrolling
     
 
-    var topbar = $('#translate-interface').offset();
-    console.log(topbar)
+    // var topbar = $('#translate-interface').offset();
+    // console.log(topbar)
     // $('#topbar').css({'position': 'sticky', 'top': topbar})
 
     //Logging system variables
