@@ -23,32 +23,6 @@ with open(os.path.join(dir_path, 'config.json')) as f:
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
 
-"""engines = {}
-for key, value in langspecs.items():
-    opt.models = [os.path.join(dir_path, 'model', value['model'])]
-    opt.n_best = 1
-    opt.max_length = 100
-    opt.global_attention_function = 'sparsemax'
-    ArgumentParser.validate_translate_opts(opt)
-    engines[key] = {"translatorbest": build_translator(opt, report_score=True)}
-    #translatorbest builds the best complete translation of the sentence
-
-    opt.n_best = 5
-    opt.max_length = 2
-    opt.global_attention_function = 'sparsemax'
-    ArgumentParser.validate_translate_opts(opt)
-    engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
-    #translatorbiagram builds best translations of length two
-
-    if value['src_bpe']:
-        print("BPE in SRC side")
-        bpe_src_code = os.path.join(dir_path, 'model', value['src_bpe'])
-        merge_file = open(bpe_src_code, "r")
-        bpe = apply_bpe.BPE(codes=merge_file)
-        engines[key]["src_segmenter"] = lambda x: bpe.process_line(x.strip())
-    else:
-        engines[key]["src_segmenter"] = None"""
-
 def preprocess_src(s, preprocess):
     s = s.lower()
     s = re.sub(r"([\“\”])", r'"', s)
