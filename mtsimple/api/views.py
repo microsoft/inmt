@@ -23,7 +23,7 @@ with open(os.path.join(dir_path, 'config.json')) as f:
 with open(os.path.join(dir_path, 'opt_data'), 'rb') as f:
         opt = pickle.load(f)
 
-engines = {}
+"""engines = {}
 for key, value in langspecs.items():
     opt.models = [os.path.join(dir_path, 'model', value['model'])]
     opt.n_best = 1
@@ -47,7 +47,7 @@ for key, value in langspecs.items():
         bpe = apply_bpe.BPE(codes=merge_file)
         engines[key]["src_segmenter"] = lambda x: bpe.process_line(x.strip())
     else:
-        engines[key]["src_segmenter"] = None
+        engines[key]["src_segmenter"] = None"""
 
 def preprocess_src(s, preprocess):
     s = s.lower()
@@ -95,12 +95,44 @@ def translate_new(request):
     sentence = request.GET.get('sentence')
     partial_trans = request.GET.get('partial_trans', '')
     n_words = request.GET.get('n_words', '')
+
+    #n_best_partial and n_best_full represents the number of partial and full sentence suggestions 
+    n_best_partial = request.GET.get('n_best_partial', '')
+    n_best_full = request.GET.get('n_best_full', '')
+ 
+    engines = {}
+    for key, value in langspecs.items():
+        opt.models = [os.path.join(dir_path, 'model', value['model'])]
+        opt.n_best = 1
+        if n_best_full != '':
+            opt.n_best = int(n_best_full)
+        opt.max_length = 100
+        opt.global_attention_function = 'sparsemax'
+        ArgumentParser.validate_translate_opts(opt)
+        engines[key] = {"translatorbest": build_translator(opt, report_score=True)}
+        #translatorbest builds the best complete translation of the sentence
+
+        opt.n_best = 5
+        if n_best_partial != '':
+            opt.n_best = int(n_best_partial)
+        opt.max_length = 2
+        opt.global_attention_function = 'sparsemax'
+        ArgumentParser.validate_translate_opts(opt)
+        engines[key]["translatorbigram"] = build_translator(opt, report_score=True)
+        #translatorbiagram builds best translations of length two
+
+        if value['src_bpe']:
+            print("BPE in SRC side")
+            bpe_src_code = os.path.join(dir_path, 'model', value['src_bpe'])
+            merge_file = open(bpe_src_code, "r")
+            bpe = apply_bpe.BPE(codes=merge_file)
+            engines[key]["src_segmenter"] = lambda x: bpe.process_line(x.strip())
+        else:
+            engines[key]["src_segmenter"] = None
+
     translatorbest = engines[langspec]["translatorbest"]
     translatorbigram = engines[langspec]["translatorbigram"]
-
-    #set the default value for number of words in the suggestions as 2
     n_suggestions = 2
-    
     if n_words != '':
         n_suggestions = int(n_words)
 
