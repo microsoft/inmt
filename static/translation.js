@@ -100,6 +100,31 @@ function placeCaretAtEnd(el) {
     }
 }
 
+function getCaretPosition(editableDiv) {
+  var caretPos = 0,
+    sel, range;
+  if (window.getSelection) {
+    sel = window.getSelection();
+    if (sel.rangeCount) {
+      range = sel.getRangeAt(0);
+      if (range.commonAncestorContainer.parentNode == editableDiv) {
+        caretPos = range.endOffset;
+      }
+    }
+  } else if (document.selection && document.selection.createRange) {
+    range = document.selection.createRange();
+    if (range.parentElement() == editableDiv) {
+      var tempEl = document.createElement("span");
+      editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+      var tempRange = range.duplicate();
+      tempRange.moveToElementText(tempEl);
+      tempRange.setEndPoint("EndToEnd", range);
+      caretPos = tempRange.text.length;
+    }
+  }
+  return caretPos;
+}
+
 // This function condenses the corpus fragment code.
 function inputSpan(str) {
     var strlist = str.split(" ");
@@ -1241,29 +1266,47 @@ $(document).ready(function() {
         $(".partial").keyup(function(e){
             var keyCode = e.keyCode || e.which;
             if (keyCode != SELECT_NEXT_TRANSLATION_SUGGESTION && keyCode != SELECT_PREVIOUS_TRANSLATION_SUGGESTION && keyCode != 17 && !(e.ctrlKey && keyCode == 65) && keyCode != SUBMIT_TRANSLATION ) {
+                var inspos = getCaretPosition($(this).get(0))
+                var curlen = $(this).text().length
 
                 $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
-                if (system_type == 'IT'){
-                    var dropdown = $(this).parent().parent().children('.dropdown');
-                    var firsttext =  $(this).text()
-                    var textlist = firsttext.split(" ")
-                    var part2text = textlist.pop()
-                    var part1text = textlist.join(" ")
+                // Ability to add text in between: We show the suggestions iff the sentence length is the same as cursor position.
+                if ( inspos == curlen || inspos == 0 ) {
+                    if (system_type == 'IT'){
+                        var dropdown = $(this).parent().parent().children('.dropdown');
+                        var firsttext =  $(this).text()
+                        var textlist = firsttext.split(" ")
+                        var part2text = textlist.pop()
+                        var part1text = textlist.join(" ")
 
-                    $(this).html(part1text + '<div id="dummy"></div>' + part2text)
-                    if (firsttext) {
-                        dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
-                    } else {
-                        dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                        $(this).html(part1text + '<div id="dummy"></div>' + part2text)
+                        if (firsttext) {
+                            dropdown.css('left', $('#dummy')[0].offsetLeft + 2).css('top', $('#dummy')[0].offsetTop+7);
+                        } else {
+                            dropdown.css('left', $('#dummy')[0].offsetLeft).css('top', $('#dummy')[0].offsetTop+24);
+                        }
+                        $(this).html(firsttext)
+                        placeCaretAtEnd($(this).get(0)) 
+                    
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(searchEvents($(this)), 50);
                     }
-                    $(this).html(firsttext)
-                    placeCaretAtEnd($(this).get(0)) 
-                
-                    clearTimeout(debounceTimeout);
-                    debounceTimeout = setTimeout(searchEvents($(this)), 50);
                 }
             }
         });
+
+        $(".partial").mouseup(function(e) {
+            var inspos = getCaretPosition($(this).get(0))
+            var curlen = $(this).text().length
+
+            if ( inspos == curlen || inspos == curlen - 1) {
+                $(this).trigger( "focusin" );
+            } else {
+                $(this).closest('.bmo').find('.dropdown').css('visibility', 'hidden');
+                $(this).closest('.bmo').find('.suggest').css('visibility', 'hidden');
+            }
+
+        })
 
         $(".hin_inp").focusout(function(){
           // $('#hin_inp').html(strip($('#hin_inp').html()))
