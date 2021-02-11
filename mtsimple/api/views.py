@@ -104,7 +104,7 @@ def translate_new(request):
     if n_words != '':
         n_suggestions = int(n_words)
 
-    src_segmenter = engines[request.session["langspec"]]["src_segmenter"]
+    src_segmenter = engines[langspec]["src_segmenter"]
 
     L1 = preprocess_src(sentence.strip(), [src_segmenter]) 
     L2 = partial_trans 
