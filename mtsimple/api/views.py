@@ -172,15 +172,19 @@ def translate_new(request):
     seen_add = seen.add
     sentence = [quotaposto(L2 + x.capitalize()[len(L2):], langspecs[langspec]["tgt"]) + " " for x in predictions if not (x in seen or seen_add(x))]
     # sentence = [x.replace(L2, "") for x in sentence]
-    sentence = '\n'.join(sentence)
-    if langspecs[langspec]['provide_help'] and L2:
-        sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + L2 + '\n' + sentence
-    else:
-        sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + sentence
+    source_sent = L1.split()
+    partial_sentence = sentence
+    full_sentence = [quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"])]
+    #sentence = '\n'.join(sentence)
+
+    #if langspecs[langspec]['provide_help'] and L2:
+    #    sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + L2 + '\n' + sentence
+    #else:
+    #    sentence = quotaposto(L2 + pred[0][0].capitalize()[len(L2):], langspecs[langspec]["tgt"]) + '\n' + sentence
     
     perplexity = float(math.exp(-score_total / words_total))
     avg_score = float(score_total / words_total)
     
-    print("sentence", quotaposto(sentence))
+    print("partial_sentence", partial_sentence)
     print(quotaposto("என் <unk> என்னை"))
-    return JsonResponse({'result': quotaposto(sentence), 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})
+    return JsonResponse({'result': {'full_sentence': full_sentence, 'partial_sentence': partial_sentence}, 'source': source_sent, 'attn': sumattn, 'partial': L2, 'ppl': perplexity, 'avg': avg_score})

@@ -536,7 +536,7 @@ function getXPath(node) {
 function parseProcessedJsonResultsfunction(data, partial) {
     
     // Result is received in form of a single string. Need to split here.
-    result = data.result.split("\n")
+    result = data.result.full_sentence + data.result.partial_sentence
     partialret = data.partial
 
     ppl = Math.round(data.ppl * 100) / 100
