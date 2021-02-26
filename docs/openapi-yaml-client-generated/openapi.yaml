@@ -1,75 +1,102 @@
-openapi: 3.0.0
+---
+openapi: 3.0.1
 info:
-  title: SIMPLE TRANSLATION API
+  title: Interactive Neural Machine Translation
   description: Api for translation suggestions and attention score
-  version: "1.0"
+  version: "0.1"
 servers:
-- url: https://virtserver.swaggerhub.com/I927/INMT-SIMPLE/1.0
-  description: SwaggerHub API Auto Mocking
+- url: http://localhost:8000
 paths:
   /api/simple/translate_new:
     get:
-      tags:
-      - simple
-      summary: get suggestions, attension scores, preplex and average score for your
-        partial translation
-      operationId: translate_new
+      description: Auto generated using Swagger Inspector
       parameters:
-      - name: langspec
-        in: query
-        description: The type of translation
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
       - name: sentence
         in: query
         description: The sentence that is to be translated
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
+        example: '%E0%A4%86%E0%A4%9C%20%E0%A4%AE%E0%A5%8C%E0%A4%B8%E0%A4%AE%20%E0%A4%B8%E0%A5%81%E0%A4%B9%E0%A4%BE%E0%A4%B5%E0%A4%A8%E0%A4%BE%20%E0%A4%B9%E0%A5%88%20'
       - name: partial_trans
         in: query
         description: Partial translation done so far by the user
-        required: true
+        required: false
         style: form
         explode: true
         schema:
           type: string
+        example: The+weather+
+      - name: n_words
+        in: query
+        description: Number of next words in partial suggestions
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "3"
+      - name: n_best_partial
+        in: query
+        description: Number of partial sentences suggestion
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: "3"
+      - name: langspec
+        in: query
+        description: The source and target language of translation
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: hi-en
       responses:
         "200":
-          description: An array containing result (the suggestions), attentions, partial
-            translation by the user, perplexity and average score
+          description: Auto generated using Swagger Inspector
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_200'
-        "400":
-          description: Bad Request
-        "500":
-          description: Some internal server error
+              examples:
+                "0":
+                  value: '{"result": {"full_sentence": ["The weather is fine today"], "partial_sentence": ["The weather is fine today ", "The weather is beautiful today ", "The weather is fair today "]}, "source": ["\u0906\u091c", "\u092e\u094c\u0938\u092e", "\u0938\u0941\u0939\u093e\u0935\u0928\u093e", "\u0939\u0948"], "attn": [1, 0, 1, 1], "partial": "The weather ", "ppl": 2.579774035066862, "avg": -0.9477018117904663}'
+      servers:
+      - url: http://localhost:8000
+    servers:
+    - url: http://localhost:8000
 components:
   schemas:
     inline_response_200:
       type: object
       properties:
         result:
-          type: array
-          items:
-            type: string
+          type: object
+          properties:
+            partial_sentence:
+              type: array
+              items:
+                type: string
+            full_sentence:
+              type: array
+              items:
+                type: string
         attn:
           type: array
           items:
-            multipleOf: 0.1
-            type: number
+            type: integer
+        avg:
+          type: number
+        source:
+          type: array
+          items:
+            type: string
         partial:
           type: string
         ppl:
-          multipleOf: 0.1
-          type: number
-        avg:
-          multipleOf: 0.1
           type: number
