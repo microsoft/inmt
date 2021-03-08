@@ -290,7 +290,8 @@ class Translator(object):
             phrase_table="",
             partial=None,
             partialfcheck=True,
-            dymax_len=None):
+            dymax_len=None,
+            n_best=None):
         """Translate content of ``src`` and get gold scores from ``tgt``.
 
         Args:
@@ -311,6 +312,8 @@ class Translator(object):
             * attns is a list of attention scores for translation having highest cumilative log likelihood
         """
         self.dymax_len = dymax_len
+        if n_best and n_best <= 5:
+            self.n_best = n_best
         self.partialf = None
         self.partialfcheck = partialfcheck
         
