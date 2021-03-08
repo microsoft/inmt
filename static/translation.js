@@ -882,7 +882,8 @@ $(document).ready(function() {
                     'langspec': langspec,
                     'sentence': hin_inp.text(), // Maybe use some good names here?
                     'partial_trans': partial.clone().children().remove().end().text(),
-                    'n_words': 2
+                    'n_words': 2,
+                    'n_best_partial': 5,
                 }, function(data) {
                     // console.log(data)
                     parseProcessedJsonResultsfunction(data, globalPartial)
