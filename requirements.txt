@@ -4,7 +4,7 @@ attrs==19.3.0
 autobahn==20.6.2
 Automat==20.2.0
 backports.functools-lru-cache==1.6.1
-certifi==2019.11.28
+certifi==2022.12.7
 cffi==1.14.0
 channels==2.4.0
 chardet==3.0.4
