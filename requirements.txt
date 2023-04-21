@@ -47,7 +47,7 @@ sentencepiece==0.1.85
 service-identity==18.1.0
 six==1.14.0
 splinter==0.13.0
-sqlparse==0.3.1
+sqlparse==0.4.4
 subword-nmt==0.3.7
 toml==0.10.1
 toolwrapper==2.1.0
