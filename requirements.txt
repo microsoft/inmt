@@ -41,7 +41,7 @@ pylint==2.5.3
 pyOpenSSL==19.1.0
 pytz==2019.3
 regex==2020.6.8
-requests==2.23.0
+requests==2.31.0
 selenium==3.141.0
 sentencepiece==0.1.85
 service-identity==18.1.0
